@@ -10,12 +10,6 @@
 	--accent: #ff642e;
 	--selection: #ffd382;
 	--selection-foreground: #321207;
-	--badge-core: #ffe257;
-	--badge-hot: #ff9b18;
-	--badge-edge: #ef4a12;
-	--badge-deep: #c72b0c;
-	--badge-foreground: #281005;
-	--badge-glow: rgb(231 65 10 / 18%);
 	--icon-background: #f3f3ef;
 	--icon-hover: #e9eae4;
 	--popover-background: rgb(254 254 253 / 94%);
@@ -40,12 +34,6 @@
 		--accent: #ff7540;
 		--selection: #9d341e;
 		--selection-foreground: #ffffff;
-		--badge-core: #ffe45c;
-		--badge-hot: #ff9f1c;
-		--badge-edge: #f34a12;
-		--badge-deep: #d02c0c;
-		--badge-foreground: #240d03;
-		--badge-glow: rgb(255 67 8 / 24%);
 		--icon-background: #171815;
 		--icon-hover: #252720;
 		--popover-background: rgb(17 18 15 / 94%);
@@ -327,33 +315,6 @@ button {
 .streak-name-track[data-overflowing="true"] {
 	animation: streak-name-pan var(--streak-name-duration) ease-in-out infinite;
 	will-change: transform;
-}
-
-.streak-badge {
-	display: grid;
-	min-width: 2.85rem;
-	height: 2.35rem;
-	place-items: center;
-	padding: 0.05rem 0.62rem 0;
-	border: 1px solid rgb(117 39 13 / 10%);
-	border-radius: 0.65rem;
-	background:
-		radial-gradient(
-			ellipse at 42% 120%,
-			var(--badge-core) 0%,
-			var(--badge-hot) 38%,
-			transparent 67%
-		),
-		linear-gradient(145deg, var(--badge-hot) 0%, var(--badge-edge) 64%, var(--badge-deep) 100%);
-	box-shadow:
-		0 4px 14px var(--badge-glow),
-		inset 0 1px 0 rgb(255 255 255 / 22%);
-	color: var(--badge-foreground);
-	font-size: 1rem;
-	font-weight: 900;
-	font-variant-numeric: tabular-nums;
-	letter-spacing: -0.025em;
-	text-shadow: 0 1px 0 rgb(255 255 255 / 18%);
 }
 
 @keyframes streak-arrive {

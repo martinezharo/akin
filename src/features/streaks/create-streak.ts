@@ -5,8 +5,8 @@ export type Streak = {
 	days: number;
 };
 
-const MIN_STREAK_DAYS = 1;
-const MAX_STREAK_DAYS = 99;
+const MIN_STREAK_DAYS = 0;
+const MAX_STREAK_DAYS = 1100;
 
 export function createStreak(name: string, emoji: string): Streak {
 	return {

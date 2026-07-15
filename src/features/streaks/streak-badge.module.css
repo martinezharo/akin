@@ -1,0 +1,165 @@
+.badge {
+	position: relative;
+	display: inline-grid;
+	min-width: 2.85rem;
+	height: 2.35rem;
+	place-items: center;
+	isolation: isolate;
+	padding: 0.05rem 0.62rem 0;
+	border-radius: 0.65rem;
+	font-size: 1rem;
+	font-weight: 900;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.025em;
+	line-height: 1;
+}
+
+.value {
+	position: relative;
+	z-index: 2;
+}
+
+.glass {
+	border: 1px solid rgb(102 112 109 / 20%);
+	background:
+		linear-gradient(145deg, rgb(255 255 255 / 36%), rgb(255 255 255 / 5%)),
+		rgb(160 170 175 / 4%);
+	box-shadow:
+		0 5px 16px rgb(47 55 58 / 5%),
+		inset 0 1px 0 rgb(255 255 255 / 62%),
+		inset 0 -1px 0 rgb(74 83 88 / 8%);
+	color: #3d4341;
+	text-shadow: 0 1px 0 rgb(255 255 255 / 55%);
+	backdrop-filter: blur(10px) saturate(145%);
+}
+
+.silver {
+	border: 1px solid #a7aaa8;
+	background:
+		linear-gradient(115deg, transparent 18%, rgb(255 255 255 / 80%) 36%, transparent 52%) 0 0 / 200% 100%,
+		linear-gradient(160deg, #f8f9f7 0%, #b9bdbb 42%, #eceeeb 67%, #989c9a 100%);
+	box-shadow:
+		0 5px 15px rgb(55 60 58 / 15%),
+		inset 0 1px 0 rgb(255 255 255 / 90%),
+		inset 0 -1px 0 rgb(62 67 65 / 20%);
+	color: #303532;
+	text-shadow: 0 1px 0 rgb(255 255 255 / 72%);
+}
+
+.silver::after {
+	position: absolute;
+	inset: 0.16rem;
+	z-index: -1;
+	border: 1px solid rgb(255 255 255 / 35%);
+	border-radius: 0.47rem;
+	content: "";
+}
+
+.fire {
+	border: 1px solid rgb(117 39 13 / 10%);
+	background:
+		radial-gradient(ellipse at 42% 120%, #ffe257 0%, #ff9b18 38%, transparent 67%),
+		linear-gradient(145deg, #ff9b18 0%, #ef4a12 64%, #c72b0c 100%);
+	box-shadow:
+		0 4px 14px rgb(231 65 10 / 18%),
+		inset 0 1px 0 rgb(255 255 255 / 22%);
+	color: #281005;
+	text-shadow: 0 1px 0 rgb(255 255 255 / 18%);
+}
+
+.god {
+	min-width: 3.4rem;
+	border: 1px solid transparent;
+	background:
+		linear-gradient(#15141c, #090a0f) padding-box,
+		conic-gradient(from var(--god-angle), #fff6a1, #ff8a47, #f859ff, #6db9ff, #75ffe6, #fff6a1) border-box;
+	box-shadow:
+		0 0 0 1px rgb(255 255 255 / 10%) inset,
+		0 0 9px rgb(255 249 166 / 72%),
+		0 0 22px rgb(117 205 255 / 50%),
+		0 0 38px rgb(242 90 255 / 24%);
+	color: #fffde9;
+	text-shadow:
+		0 0 5px #fff,
+		0 0 12px #ffe999;
+	animation:
+		god-border-spin 3s linear infinite,
+		god-breathe 2.4s ease-in-out infinite;
+}
+
+.god::before {
+	position: absolute;
+	inset: 0.16rem;
+	z-index: 1;
+	border-radius: 0.43rem;
+	background: linear-gradient(105deg, transparent 22%, rgb(255 255 255 / 35%) 43%, transparent 57%) -150% 0 / 65% 100% no-repeat;
+	content: "";
+	animation: god-sweep 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.god::after {
+	position: absolute;
+	inset: -0.28rem;
+	z-index: -2;
+	border-radius: 0.9rem;
+	background: conic-gradient(from var(--god-angle), transparent, rgb(255 220 99 / 38%), transparent 22%, rgb(114 225 255 / 42%), transparent 45%, rgb(251 111 255 / 38%), transparent 70%);
+	filter: blur(0.38rem);
+	content: "";
+	animation: god-border-spin 3s linear infinite;
+}
+
+@property --god-angle {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: false;
+}
+
+@keyframes god-border-spin {
+	to {
+		--god-angle: 360deg;
+	}
+}
+
+@keyframes god-breathe {
+	0%,
+	100% {
+		transform: translateY(0) scale(1);
+		filter: saturate(1);
+	}
+	50% {
+		transform: translateY(-0.08rem) scale(1.035);
+		filter: saturate(1.25);
+	}
+}
+
+@keyframes god-sweep {
+	0%,
+	18% {
+		background-position: -150% 0;
+	}
+	72%,
+	100% {
+		background-position: 350% 0;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.glass {
+		border-color: rgb(255 255 255 / 20%);
+		background: linear-gradient(145deg, rgb(255 255 255 / 15%), rgb(255 255 255 / 3%));
+		box-shadow:
+			0 5px 16px rgb(0 0 0 / 20%),
+			inset 0 1px 0 rgb(255 255 255 / 24%),
+			inset 0 -1px 0 rgb(0 0 0 / 28%);
+		color: #d9ddda;
+		text-shadow: 0 1px 0 rgb(0 0 0 / 45%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.god,
+	.god::before,
+	.god::after {
+		animation: none;
+	}
+}

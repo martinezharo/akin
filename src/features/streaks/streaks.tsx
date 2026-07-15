@@ -4,6 +4,7 @@ import { type CSSProperties, type FormEvent, useEffect, useRef, useState } from 
 import { ui } from "@/i18n/en";
 import { createStreak, type Streak } from "./create-streak";
 import { EmojiPicker } from "./emoji-picker";
+import { StreakBadge } from "./streak-badge";
 import { DEFAULT_STREAK_EMOJI } from "./streak-emojis";
 
 type StreakNameStyle = CSSProperties & {
@@ -122,12 +123,10 @@ export function Streaks() {
 							{streak.emoji}
 						</span>
 						<OverflowingStreakName name={streak.name} />
-						<span
-							className="streak-badge"
-							aria-label={ui.streaks.currentCountLabel(streak.days)}
-						>
-							{streak.days}
-						</span>
+						<StreakBadge
+							days={streak.days}
+							ariaLabel={ui.streaks.currentCountLabel(streak.days)}
+						/>
 					</li>
 				))}
 			</ul>
