@@ -1,26 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
+const nunito = Nunito({
+	variable: "--font-nunito",
 	subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"],
+	display: "swap",
 });
 
 export const metadata: Metadata = {
 	title: "Akin",
-	description: "Convierte tus objetivos en hábitos.",
 	applicationName: "Akin",
 	manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
-	themeColor: "#ffffff",
+	themeColor: [
+		{ media: "(prefers-color-scheme: light)", color: "#fefefd" },
+		{ media: "(prefers-color-scheme: dark)", color: "#050505" },
+	],
 };
 
 export default function RootLayout({
@@ -29,11 +27,8 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="es">
-			<head>
-				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
-			</head>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+		<html lang="en" className={nunito.variable}>
+			<body>{children}</body>
 		</html>
 	);
 }
