@@ -3,6 +3,8 @@
 import { type CSSProperties, type FormEvent, useEffect, useRef, useState } from "react";
 import { ui } from "@/i18n/en";
 import { createStreak, type Streak } from "./create-streak";
+import { EmojiPicker } from "./emoji-picker";
+import { DEFAULT_STREAK_EMOJI } from "./streak-emojis";
 
 type StreakNameStyle = CSSProperties & {
 	"--streak-name-distance": string;
@@ -65,6 +67,7 @@ function OverflowingStreakName({ name }: { name: string }) {
 
 export function Streaks() {
 	const [name, setName] = useState("");
+	const [emoji, setEmoji] = useState(DEFAULT_STREAK_EMOJI);
 	const [streaks, setStreaks] = useState<Streak[]>([]);
 
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -73,8 +76,9 @@ export function Streaks() {
 		const trimmedName = name.trim();
 		if (!trimmedName) return;
 
-		setStreaks((currentStreaks) => [createStreak(trimmedName), ...currentStreaks]);
+		setStreaks((currentStreaks) => [createStreak(trimmedName, emoji), ...currentStreaks]);
 		setName("");
+		setEmoji(DEFAULT_STREAK_EMOJI);
 	}
 
 	return (
@@ -84,6 +88,7 @@ export function Streaks() {
 			</h1>
 
 			<form className="streak-form" onSubmit={handleSubmit}>
+				<EmojiPicker value={emoji} onChange={setEmoji} />
 				<label className="sr-only" htmlFor="streak-name">
 					{ui.streaks.nameLabel}
 				</label>
@@ -113,6 +118,9 @@ export function Streaks() {
 			<ul className="streak-list" aria-label={ui.streaks.listLabel} aria-live="polite">
 				{streaks.map((streak) => (
 					<li className="streak-row" key={streak.id}>
+						<span className="streak-icon" aria-hidden="true">
+							{streak.emoji}
+						</span>
 						<OverflowingStreakName name={streak.name} />
 						<span
 							className="streak-badge"
