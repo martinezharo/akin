@@ -5,7 +5,7 @@ import { ui } from "@/i18n/en";
 import { createStreak, type Streak } from "./create-streak";
 import { IconPicker } from "./icon-picker";
 import { StreakBadge } from "./streak-badge";
-import { DEFAULT_STREAK_ICON, StreakIcon, type StreakIconValue } from "./streak-icons";
+import { DEFAULT_STREAK_ICON, type StreakIconValue } from "./streak-icons";
 
 type StreakNameStyle = CSSProperties & {
 	"--streak-name-distance": string;
@@ -82,6 +82,12 @@ export function Streaks() {
 		setIcon(DEFAULT_STREAK_ICON);
 	}
 
+	function updateStreakIcon(streakId: string, icon: StreakIconValue) {
+		setStreaks((currentStreaks) =>
+			currentStreaks.map((streak) => (streak.id === streakId ? { ...streak, icon } : streak)),
+		);
+	}
+
 	return (
 		<section className="streaks-shell" aria-labelledby="streaks-title">
 			<h1 id="streaks-title" className="sr-only">
@@ -119,9 +125,12 @@ export function Streaks() {
 			<ul className="streak-list" aria-label={ui.streaks.listLabel} aria-live="polite">
 				{streaks.map((streak) => (
 					<li className="streak-row" key={streak.id}>
-						<span className="streak-icon">
-							<StreakIcon value={streak.icon} />
-						</span>
+						<IconPicker
+							value={streak.icon}
+							onChange={(icon) => updateStreakIcon(streak.id, icon)}
+							variant="streak"
+							triggerLabel={ui.streaks.changeIconAction(streak.name)}
+						/>
 						<OverflowingStreakName name={streak.name} />
 						<StreakBadge
 							days={streak.days}

@@ -142,6 +142,7 @@ button {
 }
 
 .icon-picker-trigger:focus-visible,
+.streak-icon-trigger:focus-visible,
 .icon-option:focus-visible,
 .custom-emoji-input:focus-visible {
 	outline: 3px solid var(--accent);
@@ -347,6 +348,27 @@ button {
 	border-radius: 1.05rem;
 	font-size: 2.25rem;
 	line-height: 1;
+}
+
+.streak-icon-trigger {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	transition:
+		background 160ms ease,
+		transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.streak-icon-trigger:hover,
+.streak-icon-trigger[aria-expanded="true"] {
+	background: var(--icon-background);
+	transform: scale(1.06);
+}
+
+.streak-icon-trigger:active {
+	transform: scale(0.94);
 }
 
 .streak-icon-emoji {

@@ -14,13 +14,21 @@ import {
 type IconPickerProps = {
 	value: StreakIconValue;
 	onChange: (icon: StreakIconValue) => void;
+	variant?: "composer" | "streak";
+	triggerLabel?: string;
 };
 
-export function IconPicker({ value, onChange }: IconPickerProps) {
+export function IconPicker({
+	value,
+	onChange,
+	variant = "composer",
+	triggerLabel = ui.streaks.iconAction,
+}: IconPickerProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isCustomInputOpen, setIsCustomInputOpen] = useState(false);
 	const pickerRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
+	const isStreakVariant = variant === "streak";
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -67,17 +75,17 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
 	}
 
 	return (
-		<div className="icon-picker" ref={pickerRef}>
+		<div className={`icon-picker icon-picker-${variant}`} ref={pickerRef}>
 			<button
-				className="icon-picker-trigger"
+				className={isStreakVariant ? "streak-icon streak-icon-trigger" : "icon-picker-trigger"}
 				type="button"
 				ref={triggerRef}
-				aria-label={ui.streaks.iconAction}
+				aria-label={triggerLabel}
 				aria-expanded={isOpen}
 				aria-haspopup="dialog"
 				onClick={togglePicker}
 			>
-				<IconPickerIcon value={value} />
+				{isStreakVariant ? <StreakIcon value={value} /> : <IconPickerIcon value={value} />}
 			</button>
 
 			{isOpen ? (

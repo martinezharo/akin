@@ -7,6 +7,7 @@ export const ui = {
 		iconAction: "Choose an icon",
 		iconPickerLabel: "Streak icon picker",
 		iconPickerTitle: "Choose your icon",
+		changeIconAction: (name: string) => `Change icon for ${name}`,
 		customIconAction: "Add your own emoji",
 		customIconLabel: "Custom emoji",
 		customIconHint: "Use your emoji keyboard · one emoji only",
