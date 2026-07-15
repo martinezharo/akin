@@ -8,6 +8,7 @@ import {
 	IconPickerIcon,
 	STREAK_ICON_OPTIONS,
 	StreakIcon,
+	type StreakIconOption,
 	type StreakIconValue,
 } from "./streak-icons";
 
@@ -16,6 +17,7 @@ type IconPickerProps = {
 	onChange: (icon: StreakIconValue) => void;
 	variant?: "composer" | "streak";
 	triggerLabel?: string;
+	options?: readonly StreakIconOption[];
 };
 
 export function IconPicker({
@@ -23,6 +25,7 @@ export function IconPicker({
 	onChange,
 	variant = "composer",
 	triggerLabel = ui.streaks.iconAction,
+	options = STREAK_ICON_OPTIONS,
 }: IconPickerProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isCustomInputOpen, setIsCustomInputOpen] = useState(false);
@@ -92,11 +95,11 @@ export function IconPicker({
 				<div className="icon-picker-popover" role="dialog" aria-label={ui.streaks.iconPickerLabel}>
 					<p className="icon-picker-title">{ui.streaks.iconPickerTitle}</p>
 					<div className="icon-picker-grid">
-						{STREAK_ICON_OPTIONS.map((option) => (
+						{options.map((option) => (
 							<button
 								className="icon-option"
 								type="button"
-								key={option.value ?? "default"}
+								key={option.value}
 								aria-label={option.label}
 								aria-pressed={value === option.value}
 								onClick={() => selectIcon(option.value)}

@@ -5,7 +5,12 @@ import { ui } from "@/i18n/en";
 import { createStreak, type Streak } from "./create-streak";
 import { IconPicker } from "./icon-picker";
 import { StreakBadge } from "./streak-badge";
-import { DEFAULT_STREAK_ICON, type StreakIconValue } from "./streak-icons";
+import {
+	DEFAULT_STREAK_ICON,
+	getStreakIconOptions,
+	STREAK_ICON_OPTIONS,
+	type StreakIconValue,
+} from "./streak-icons";
 
 type StreakNameStyle = CSSProperties & {
 	"--streak-name-distance": string;
@@ -70,6 +75,24 @@ export function Streaks() {
 	const [name, setName] = useState("");
 	const [icon, setIcon] = useState<StreakIconValue>(DEFAULT_STREAK_ICON);
 	const [streaks, setStreaks] = useState<Streak[]>([]);
+	const [recentIcons, setRecentIcons] = useState<string[]>([]);
+	const iconOptions = getStreakIconOptions(recentIcons);
+
+	function rememberIcon(selectedIcon: StreakIconValue) {
+		if (selectedIcon === null) return;
+
+		setRecentIcons((currentIcons) =>
+			[selectedIcon, ...currentIcons.filter((icon) => icon !== selectedIcon)].slice(
+				0,
+				STREAK_ICON_OPTIONS.length,
+			),
+		);
+	}
+
+	function selectComposerIcon(selectedIcon: StreakIconValue) {
+		setIcon(selectedIcon);
+		rememberIcon(selectedIcon);
+	}
 
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -86,6 +109,7 @@ export function Streaks() {
 		setStreaks((currentStreaks) =>
 			currentStreaks.map((streak) => (streak.id === streakId ? { ...streak, icon } : streak)),
 		);
+		rememberIcon(icon);
 	}
 
 	return (
@@ -95,7 +119,7 @@ export function Streaks() {
 			</h1>
 
 			<form className="streak-form" onSubmit={handleSubmit}>
-				<IconPicker value={icon} onChange={setIcon} />
+				<IconPicker value={icon} onChange={selectComposerIcon} options={iconOptions} />
 				<label className="sr-only" htmlFor="streak-name">
 					{ui.streaks.nameLabel}
 				</label>
@@ -128,6 +152,7 @@ export function Streaks() {
 						<IconPicker
 							value={streak.icon}
 							onChange={(icon) => updateStreakIcon(streak.id, icon)}
+							options={iconOptions}
 							variant="streak"
 							triggerLabel={ui.streaks.changeIconAction(streak.name)}
 						/>
