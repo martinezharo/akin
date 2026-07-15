@@ -8,7 +8,7 @@ This repository is a VERY EARLY WIP. Proposing sweeping changes that improve lon
 
 ## Priorities
 
-- Totally dazzling aesthetic design, worthy of a native mobile application developed by a billion-dollar company.
+- Totally dazzling aesthetic design, worthy of a native mobile application developed by a billion-dollar company. We are allergic to generic HTML styles in menus, selects, inputs, buttons, etc. We always strive to create our own that perfectly fit the site's aesthetics and are completely original—none of those typical, basic, AI-generated designs.
 
 ## Maintainability
 
