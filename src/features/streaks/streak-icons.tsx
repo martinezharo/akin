@@ -5,7 +5,6 @@ export type StreakIconValue = string | null;
 export const DEFAULT_STREAK_ICON: StreakIconValue = null;
 
 export const STREAK_ICON_OPTIONS = [
-	{ value: "🔥", label: "Fire" },
 	{ value: "💪", label: "Strength" },
 	{ value: "🧠", label: "Learning" },
 	{ value: "📚", label: "Reading" },

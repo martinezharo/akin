@@ -12,6 +12,7 @@
 	--selection-foreground: #321207;
 	--icon-background: #f3f3ef;
 	--icon-hover: #e9eae4;
+	--custom-icon-background: #fff7e8;
 	--popover-background: rgb(254 254 253 / 94%);
 	--popover-shadow: 0 20px 50px rgb(30 32 26 / 16%), 0 2px 8px rgb(30 32 26 / 8%);
 	color-scheme: light;
@@ -36,6 +37,7 @@
 		--selection-foreground: #ffffff;
 		--icon-background: #171815;
 		--icon-hover: #252720;
+		--custom-icon-background: #241a12;
 		--popover-background: rgb(17 18 15 / 94%);
 		--popover-shadow: 0 22px 54px rgb(0 0 0 / 54%), 0 2px 8px rgb(0 0 0 / 36%);
 		color-scheme: dark;
@@ -140,7 +142,8 @@ button {
 }
 
 .icon-picker-trigger:focus-visible,
-.icon-option:focus-visible {
+.icon-option:focus-visible,
+.custom-emoji-input:focus-visible {
 	outline: 3px solid var(--accent);
 	outline-offset: 3px;
 }
@@ -200,6 +203,58 @@ button {
 .icon-option[aria-pressed="true"] {
 	background: var(--icon-hover);
 	box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.icon-option-custom {
+	border: 1.5px dashed var(--muted);
+	color: var(--muted);
+}
+
+.icon-option-custom svg {
+	width: 1.35rem;
+	height: 1.35rem;
+	stroke-width: 2.4;
+}
+
+.icon-option-custom:hover,
+.icon-option-custom:focus-visible {
+	border-color: var(--accent);
+	background: var(--custom-icon-background);
+	color: var(--accent);
+}
+
+.custom-emoji-input {
+	display: grid;
+	width: 100%;
+	aspect-ratio: 1;
+	padding: 0;
+	border: 1.5px dashed var(--accent);
+	border-radius: 0.8rem;
+	outline: 0;
+	background: var(--custom-icon-background);
+	color: var(--foreground);
+	font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+	font-size: 1.75rem;
+	line-height: 1;
+	text-align: center;
+	caret-color: transparent;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+	animation: custom-emoji-slot-arrive 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.custom-emoji-input::placeholder {
+	opacity: 0.48;
+}
+
+.custom-emoji-hint {
+	margin: 0.65rem 0.15rem 0;
+	color: var(--muted);
+	font-size: 0.68rem;
+	font-weight: 750;
+	letter-spacing: 0.015em;
+	line-height: 1.2;
+	text-align: center;
+	animation: custom-emoji-hint-arrive 180ms 40ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .streak-form:focus-within {
@@ -366,6 +421,28 @@ button {
 	to {
 		opacity: 1;
 		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes custom-emoji-slot-arrive {
+	from {
+		opacity: 0;
+		transform: scale(0.82) rotate(-4deg);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) rotate(0);
+	}
+}
+
+@keyframes custom-emoji-hint-arrive {
+	from {
+		opacity: 0;
+		transform: translateY(-0.2rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
 	}
 }
 

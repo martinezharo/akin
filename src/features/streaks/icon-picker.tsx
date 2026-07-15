@@ -1,7 +1,9 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ui } from "@/i18n/en";
+import { parseSingleEmoji } from "./emoji";
 import {
 	IconPickerIcon,
 	STREAK_ICON_OPTIONS,
@@ -16,6 +18,7 @@ type IconPickerProps = {
 
 export function IconPicker({ value, onChange }: IconPickerProps) {
 	const [isOpen, setIsOpen] = useState(false);
+	const [isCustomInputOpen, setIsCustomInputOpen] = useState(false);
 	const pickerRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -25,12 +28,14 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
 		function handlePointerDown(event: PointerEvent) {
 			if (!pickerRef.current?.contains(event.target as Node)) {
 				setIsOpen(false);
+				setIsCustomInputOpen(false);
 			}
 		}
 
 		function handleKeyDown(event: KeyboardEvent) {
 			if (event.key === "Escape") {
 				setIsOpen(false);
+				setIsCustomInputOpen(false);
 				triggerRef.current?.focus();
 			}
 		}
@@ -47,7 +52,18 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
 	function selectIcon(icon: StreakIconValue) {
 		onChange(icon);
 		setIsOpen(false);
+		setIsCustomInputOpen(false);
 		triggerRef.current?.focus();
+	}
+
+	function togglePicker() {
+		if (isOpen) setIsCustomInputOpen(false);
+		setIsOpen((currentValue) => !currentValue);
+	}
+
+	function handleCustomEmojiChange(inputValue: string) {
+		const emoji = parseSingleEmoji(inputValue);
+		if (emoji) selectIcon(emoji);
 	}
 
 	return (
@@ -59,7 +75,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
 				aria-label={ui.streaks.iconAction}
 				aria-expanded={isOpen}
 				aria-haspopup="dialog"
-				onClick={() => setIsOpen((currentValue) => !currentValue)}
+				onClick={togglePicker}
 			>
 				<IconPickerIcon value={value} />
 			</button>
@@ -80,7 +96,37 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
 								<StreakIcon value={option.value} />
 							</button>
 						))}
+						{isCustomInputOpen ? (
+							<input
+								className="custom-emoji-input"
+								type="text"
+								value=""
+								onChange={(event) => handleCustomEmojiChange(event.currentTarget.value)}
+								placeholder="☺️"
+								autoComplete="off"
+								autoCorrect="off"
+								autoFocus
+								spellCheck={false}
+								aria-label={ui.streaks.customIconLabel}
+								aria-describedby="custom-emoji-hint"
+							/>
+						) : (
+							<button
+								className="icon-option icon-option-custom"
+								type="button"
+								aria-label={ui.streaks.customIconAction}
+								onClick={() => setIsCustomInputOpen(true)}
+							>
+								<Plus aria-hidden="true" />
+							</button>
+						)}
 					</div>
+
+					{isCustomInputOpen ? (
+						<p className="custom-emoji-hint" id="custom-emoji-hint">
+							{ui.streaks.customIconHint}
+						</p>
+					) : null}
 				</div>
 			) : null}
 		</div>
