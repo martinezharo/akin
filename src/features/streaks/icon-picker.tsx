@@ -2,14 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ui } from "@/i18n/en";
-import { STREAK_EMOJIS } from "./streak-emojis";
+import {
+	IconPickerIcon,
+	STREAK_ICON_OPTIONS,
+	StreakIcon,
+	type StreakIconValue,
+} from "./streak-icons";
 
-type EmojiPickerProps = {
-	value: string;
-	onChange: (emoji: string) => void;
+type IconPickerProps = {
+	value: StreakIconValue;
+	onChange: (icon: StreakIconValue) => void;
 };
 
-export function EmojiPicker({ value, onChange }: EmojiPickerProps) {
+export function IconPicker({ value, onChange }: IconPickerProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const pickerRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
@@ -39,40 +44,40 @@ export function EmojiPicker({ value, onChange }: EmojiPickerProps) {
 		};
 	}, [isOpen]);
 
-	function selectEmoji(emoji: string) {
-		onChange(emoji);
+	function selectIcon(icon: StreakIconValue) {
+		onChange(icon);
 		setIsOpen(false);
 		triggerRef.current?.focus();
 	}
 
 	return (
-		<div className="emoji-picker" ref={pickerRef}>
+		<div className="icon-picker" ref={pickerRef}>
 			<button
-				className="emoji-picker-trigger"
+				className="icon-picker-trigger"
 				type="button"
 				ref={triggerRef}
-				aria-label={ui.streaks.emojiAction}
+				aria-label={ui.streaks.iconAction}
 				aria-expanded={isOpen}
 				aria-haspopup="dialog"
 				onClick={() => setIsOpen((currentValue) => !currentValue)}
 			>
-				<span aria-hidden="true">{value}</span>
+				<IconPickerIcon value={value} />
 			</button>
 
 			{isOpen ? (
-				<div className="emoji-picker-popover" role="dialog" aria-label={ui.streaks.emojiPickerLabel}>
-					<p className="emoji-picker-title">{ui.streaks.emojiPickerTitle}</p>
-					<div className="emoji-picker-grid">
-						{STREAK_EMOJIS.map((option) => (
+				<div className="icon-picker-popover" role="dialog" aria-label={ui.streaks.iconPickerLabel}>
+					<p className="icon-picker-title">{ui.streaks.iconPickerTitle}</p>
+					<div className="icon-picker-grid">
+						{STREAK_ICON_OPTIONS.map((option) => (
 							<button
-								className="emoji-option"
+								className="icon-option"
 								type="button"
-								key={option.emoji}
+								key={option.value ?? "default"}
 								aria-label={option.label}
-								aria-pressed={value === option.emoji}
-								onClick={() => selectEmoji(option.emoji)}
+								aria-pressed={value === option.value}
+								onClick={() => selectIcon(option.value)}
 							>
-								<span aria-hidden="true">{option.emoji}</span>
+								<StreakIcon value={option.value} />
 							</button>
 						))}
 					</div>

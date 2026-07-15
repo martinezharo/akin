@@ -104,13 +104,13 @@ button {
 	transition: border-color 180ms ease;
 }
 
-.emoji-picker {
+.icon-picker {
 	position: relative;
 	display: grid;
 	place-items: center;
 }
 
-.emoji-picker-trigger {
+.icon-picker-trigger {
 	display: grid;
 	width: 3rem;
 	height: 3rem;
@@ -119,30 +119,33 @@ button {
 	border: 0;
 	border-radius: 1rem;
 	background: transparent;
+	color: var(--muted);
 	font-size: 1.95rem;
 	line-height: 1;
 	cursor: pointer;
 	transition:
 		background 160ms ease,
+		color 160ms ease,
 		transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.emoji-picker-trigger:hover,
-.emoji-picker-trigger[aria-expanded="true"] {
+.icon-picker-trigger:hover,
+.icon-picker-trigger[aria-expanded="true"] {
 	background: var(--icon-hover);
+	color: var(--foreground);
 }
 
-.emoji-picker-trigger:active {
+.icon-picker-trigger:active {
 	transform: scale(0.94);
 }
 
-.emoji-picker-trigger:focus-visible,
-.emoji-option:focus-visible {
+.icon-picker-trigger:focus-visible,
+.icon-option:focus-visible {
 	outline: 3px solid var(--accent);
 	outline-offset: 3px;
 }
 
-.emoji-picker-popover {
+.icon-picker-popover {
 	position: absolute;
 	z-index: 10;
 	top: calc(100% + 0.75rem);
@@ -154,10 +157,10 @@ button {
 	background: var(--popover-background);
 	box-shadow: var(--popover-shadow);
 	backdrop-filter: blur(18px);
-	animation: emoji-picker-arrive 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation: icon-picker-arrive 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.emoji-picker-title {
+.icon-picker-title {
 	margin: 0 0 0.75rem 0.2rem;
 	color: var(--muted);
 	font-size: 0.72rem;
@@ -166,13 +169,13 @@ button {
 	text-transform: uppercase;
 }
 
-.emoji-picker-grid {
+.icon-picker-grid {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
 	gap: 0.35rem;
 }
 
-.emoji-option {
+.icon-option {
 	display: grid;
 	width: 100%;
 	aspect-ratio: 1;
@@ -189,12 +192,12 @@ button {
 		transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.emoji-option:hover {
+.icon-option:hover {
 	background: var(--icon-background);
 	transform: scale(1.1);
 }
 
-.emoji-option[aria-pressed="true"] {
+.icon-option[aria-pressed="true"] {
 	background: var(--icon-hover);
 	box-shadow: inset 0 0 0 1.5px var(--line);
 }
@@ -291,10 +294,22 @@ button {
 	line-height: 1;
 }
 
-.emoji-picker-trigger,
-.emoji-option,
-.streak-icon {
+.streak-icon-emoji {
 	font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.default-streak-icon {
+	width: 1.85rem;
+	height: 1.85rem;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+}
+
+.streak-icon > .default-streak-icon {
+	width: 2.3rem;
+	height: 2.3rem;
+	color: var(--foreground);
 }
 
 .streak-name {
@@ -343,7 +358,7 @@ button {
 	}
 }
 
-@keyframes emoji-picker-arrive {
+@keyframes icon-picker-arrive {
 	from {
 		opacity: 0;
 		transform: translateY(-0.35rem) scale(0.97);
