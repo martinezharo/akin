@@ -18,14 +18,15 @@ export const ui = {
 	review: {
 		dailyKicker: "A tiny time capsule",
 		dailyTitle: "How did you do?",
-		dailyCopy: "Take a breath, then give yesterday the ending it actually had.",
+		dailyCopy: (page: number) =>
+			[
+				"Mark the promises you kept that day. Leave the rest blank. Honesty counts too.",
+				"Check off what you completed that day. Anything left blank simply means not this time.",
+				"One last look back. Mark what you completed and leave everything else blank.",
+			][page - 1] ??
+			"Mark what you completed that day and leave everything else blank.",
 		dailyQuestion: (name: string) => `Did you complete ${name}?`,
 		bulkQuestion: (name: string) => `Did you keep ${name} every day?`,
-		yes: "I did",
-		no: "Not quite",
-		everyDay: "Every day",
-		notEveryDay: "Not all",
-		progress: (page: number, total: number) => `Day ${page} of ${total}`,
 		nextDay: "Next day",
 		finish: "All caught up",
 		gapKicker: "An honesty pact",
@@ -33,7 +34,7 @@ export const ui = {
 		gapCopy: (days: number) =>
 			`${days} days slipped by while we weren’t looking. Which promises did you truly keep every single day?`,
 		honestyNote:
-			"Be kind, but be real — an unearned streak only steals the little victory your future self deserves.",
+			"Check only the promises you kept every single day. Leave the rest blank. Be kind, but be real.",
 		keepPromise: "That’s the honest version",
 	},
 	demo: {

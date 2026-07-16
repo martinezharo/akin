@@ -3,6 +3,10 @@
 	--review-paper: #fffdf5;
 	--review-coral: #b93412;
 	--review-mint: #c7f3ce;
+	--review-sticker: #ff815c;
+	--review-sticker-ink: #492012;
+	--review-sticker-shadow: #ffd99d;
+	--review-sticker-halo: rgb(255 253 245 / 88%);
 	position: fixed;
 	z-index: 100;
 	inset: 0;
@@ -47,46 +51,6 @@
 	pointer-events: none;
 }
 
-.atmosphere {
-	position: fixed;
-	inset: 0;
-	z-index: -1;
-	overflow: hidden;
-	pointer-events: none;
-}
-
-.atmosphere span {
-	position: absolute;
-	width: 0.65rem;
-	height: 0.65rem;
-	border: 2px solid rgb(36 33 22 / 22%);
-	border-radius: 35% 65% 60% 40%;
-	animation: reviewFloat 8s ease-in-out infinite;
-}
-
-.atmosphere span:nth-child(1) {
-	top: 12%;
-	left: 8%;
-	width: 1.1rem;
-	height: 1.1rem;
-	border-color: var(--review-coral);
-	transform: rotate(18deg);
-}
-
-.atmosphere span:nth-child(2) {
-	top: 32%;
-	right: 7%;
-	animation-delay: -3s;
-}
-
-.atmosphere span:nth-child(3) {
-	bottom: 11%;
-	left: 16%;
-	width: 0.8rem;
-	height: 0.8rem;
-	animation-delay: -5s;
-}
-
 .card {
 	position: relative;
 	width: min(100%, 37rem);
@@ -109,14 +73,13 @@
 	pointer-events: none;
 }
 
-.progress {
+.reviewHeader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 2rem;
 }
 
-.progressLabel,
 .kicker {
 	margin: 0;
 	font-size: 0.72rem;
@@ -124,11 +87,6 @@
 	letter-spacing: 0.13em;
 	text-transform: uppercase;
 }
-
-.progressLabel {
-	color: rgb(36 33 22 / 62%);
-}
-
 .progressDots {
 	display: flex;
 	gap: 0.4rem;
@@ -158,7 +116,6 @@
 }
 
 .title {
-	max-width: 12ch;
 	margin: 0;
 	font-size: clamp(2.35rem, 10vw, 4rem);
 	font-weight: 950;
@@ -167,20 +124,28 @@
 }
 
 .date {
-	width: fit-content;
-	margin: 1rem 0 0;
-	padding: 0.4rem 0.7rem;
-	border: 1px solid rgb(36 33 22 / 18%);
-	border-radius: var(--radius-pill);
-	background: rgb(255 255 255 / 45%);
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin: 0;
+	color: rgb(36 33 22 / 64%);
 	font-size: 0.82rem;
-	font-weight: 850;
+	font-weight: 900;
+	letter-spacing: 0.025em;
 	text-transform: capitalize;
+}
+
+.date::before {
+	width: 1.25rem;
+	height: 0.18rem;
+	border-radius: var(--radius-pill);
+	background: var(--review-coral);
+	content: "";
 }
 
 .copy {
 	max-width: 30rem;
-	margin: 1.15rem 0 1.6rem;
+	margin: 1.3rem 0 1.6rem;
 	color: rgb(36 33 22 / 70%);
 	font-size: 1rem;
 	font-weight: 650;
@@ -189,7 +154,7 @@
 
 .streaks {
 	display: grid;
-	gap: 0.75rem;
+	gap: 0.25rem;
 }
 
 .streak {
@@ -199,11 +164,8 @@
 	gap: 1rem;
 	min-width: 0;
 	margin: 0;
-	padding: 0.75rem;
-	border: 1px solid rgb(36 33 22 / 10%);
-	border-radius: 1.3rem;
-	background: rgb(255 255 255 / 48%);
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 75%);
+	padding: 0.65rem 0.1rem;
+	border: 0;
 }
 
 .identity {
@@ -223,70 +185,120 @@
 }
 
 .streakIcon {
-	--streak-icon-size: 1.5rem;
+	--streak-icon-size: 1.65rem;
 	display: grid;
-	width: 2.65rem;
-	height: 2.65rem;
+	width: 2.25rem;
+	height: 2.25rem;
 	flex: 0 0 auto;
 	place-items: center;
-	border-radius: 0.85rem;
-	background: #f3ead1;
-	font-size: 1.55rem;
+	font-size: 1.7rem;
 }
 
-.options {
-	display: flex;
-	gap: 0.4rem;
-}
-
-.option {
-	display: grid;
-	width: 2.75rem;
-	height: 2.75rem;
-	place-items: center;
-	padding: 0;
-	border: 1px solid rgb(36 33 22 / 16%);
-	border-radius: 0.9rem;
-	background: rgb(255 255 255 / 60%);
-	color: rgb(36 33 22 / 66%);
+.checklistStreak {
+	position: relative;
 	cursor: pointer;
-	transition: transform var(--motion-spring), background var(--motion-standard),
-		color var(--motion-standard), box-shadow var(--motion-standard);
 }
 
-.option svg {
+.checkboxInput {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.checkbox {
+	position: relative;
+	display: grid;
+	width: 2.55rem;
+	height: 2.55rem;
+	place-items: center;
+	color: rgb(36 33 22 / 30%);
+	transform: rotate(-5deg);
+	transition: color var(--motion-standard), transform var(--motion-spring);
+}
+
+.checkbox::before {
+	position: absolute;
+	inset: 0.32rem;
+	border: 2px solid currentColor;
+	border-radius: 46% 54% 43% 57% / 55% 42% 58% 45%;
+	background: transparent;
+	content: "";
+	transition: inset var(--motion-spring), border-color var(--motion-standard),
+		background var(--motion-standard), box-shadow var(--motion-spring),
+		transform var(--motion-spring);
+}
+
+.checkbox::after {
+	position: absolute;
+	top: 0.22rem;
+	right: 0.2rem;
+	width: 0.42rem;
+	height: 0.42rem;
+	border-radius: 50%;
+	background: var(--review-sticker);
+	box-shadow: 0 0 0 0.13rem var(--review-sticker-halo);
+	content: "";
+	transition: top var(--motion-spring), right var(--motion-spring),
+		border-radius var(--motion-standard), box-shadow var(--motion-standard),
+		clip-path var(--motion-standard), transform var(--motion-spring);
+}
+
+.checkbox svg {
+	position: relative;
+	z-index: 1;
 	width: 1.15rem;
 	height: 1.15rem;
-	stroke-width: 2.8;
+	opacity: 0;
+	stroke-width: 3;
+	transform: scale(0.3) rotate(-22deg);
+	transition: opacity 120ms ease, transform var(--motion-spring);
 }
 
-.option span {
-	display: none;
+.checklistStreak:hover .checkbox {
+	color: var(--review-coral);
+	transform: rotate(2deg) scale(1.06);
 }
 
-.option:hover {
-	transform: translateY(-0.12rem);
+.checklistStreak:active .checkbox {
+	transform: rotate(-2deg) scale(0.9);
 }
 
-.option:active {
-	transform: scale(0.94);
+.checkboxInput:checked + .checkbox {
+	color: var(--review-sticker-ink);
+	transform: rotate(0);
+	animation: checkboxPop 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.optionYes[data-selected="true"] {
-	border-color: #75bf84;
-	background: var(--review-mint);
-	box-shadow: 0 0.35rem 1rem rgb(78 151 91 / 18%);
-	color: #185d27;
+.checkboxInput:checked + .checkbox::before {
+	inset: 0.15rem;
+	border-color: var(--review-sticker);
+	background: var(--review-sticker);
+	box-shadow: 0.27rem 0.3rem 0 var(--review-sticker-shadow),
+		inset 0 1px 0 rgb(255 255 255 / 36%);
+	transform: rotate(4deg);
 }
 
-.optionNo[data-selected="true"] {
-	border-color: #f09a7e;
-	background: #ffe0d4;
-	box-shadow: 0 0.35rem 1rem rgb(213 83 45 / 13%);
-	color: #a33215;
+.checkboxInput:checked + .checkbox::after {
+	top: -0.05rem;
+	right: -0.12rem;
+	width: 0.55rem;
+	height: 0.55rem;
+	border-radius: 0;
+	background: var(--review-sticker-shadow);
+	box-shadow: none;
+	clip-path: polygon(50% 0%, 62% 36%, 100% 50%, 62% 64%, 50% 100%, 38% 64%, 0% 50%, 38% 36%);
+	transform: rotate(18deg);
 }
 
-.option:focus-visible,
+.checkboxInput:checked + .checkbox svg {
+	opacity: 1;
+	transform: scale(1) rotate(0);
+}
+
+.checkboxInput:focus-visible + .checkbox,
 .submit:focus-visible {
 	outline: 3px solid var(--review-coral);
 	outline-offset: 3px;
@@ -331,7 +343,9 @@
 }
 
 .gapTitle {
-	max-width: 9ch;
+	font-size: clamp(2.35rem, 8vw, 3.45rem);
+	line-height: 0.98;
+	text-wrap: balance;
 }
 
 .heart {
@@ -390,33 +404,21 @@
 	}
 }
 
-@keyframes reviewFloat {
-	0%,
-	100% {
-		transform: translateY(0) rotate(0);
+@keyframes checkboxPop {
+	0% {
+		transform: rotate(-8deg) scale(0.78);
 	}
-	50% {
-		transform: translateY(-1rem) rotate(35deg);
+	58% {
+		transform: rotate(3deg) scale(1.14);
+	}
+	100% {
+		transform: rotate(0) scale(1);
 	}
 }
 
 @media (min-width: 34rem) {
 	.gapCard {
 		width: min(100%, 41rem);
-	}
-
-	.labeledOption {
-		width: auto;
-		min-width: 5.75rem;
-		grid-auto-flow: column;
-		gap: 0.35rem;
-		padding-inline: 0.75rem;
-	}
-
-	.labeledOption span {
-		display: inline;
-		font-size: 0.68rem;
-		font-weight: 900;
 	}
 }
 
@@ -432,17 +434,25 @@
 
 	.streak {
 		gap: 0.45rem;
-		padding: 0.55rem;
+		padding-block: 0.55rem;
 	}
 
 	.streakIcon {
-		width: 2.35rem;
-		height: 2.35rem;
+		width: 2rem;
+		height: 2rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.checkbox,
+	.checkbox::before,
+	.checkbox::after,
+	.checkbox svg {
+		transition: none;
 	}
 
-	.option {
-		width: 2.45rem;
-		height: 2.45rem;
+	.checkboxInput:checked + .checkbox {
+		animation: none;
 	}
 }
 
@@ -451,6 +461,7 @@
 		--review-ink: #f7f4e9;
 		--review-paper: #171711;
 		--review-coral: #ff815c;
+		--review-sticker-halo: rgb(20 20 15 / 92%);
 		background:
 			radial-gradient(circle at 12% 8%, rgb(118 68 27 / 62%), transparent 24rem),
 			radial-gradient(circle at 90% 82%, rgb(35 86 58 / 60%), transparent 27rem),
@@ -468,7 +479,7 @@
 		box-shadow: 0 2rem 6rem rgb(0 0 0 / 38%), inset 0 1px 0 rgb(255 255 255 / 8%);
 	}
 
-	.progressLabel,
+	.date,
 	.copy {
 		color: rgb(247 244 233 / 68%);
 	}
@@ -481,33 +492,16 @@
 		background: rgb(255 255 255 / 38%);
 	}
 
-	.date,
-	.streak {
-		border-color: rgb(255 255 255 / 10%);
-		background: rgb(255 255 255 / 5%);
-		box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+	.checkbox {
+		color: rgb(247 244 233 / 28%);
 	}
 
-	.streakIcon {
-		background: #302919;
+	.checklistStreak:hover .checkbox {
+		color: var(--review-sticker);
 	}
 
-	.option {
-		border-color: rgb(255 255 255 / 16%);
-		background: rgb(255 255 255 / 7%);
-		color: rgb(247 244 233 / 68%);
-	}
-
-	.optionYes[data-selected="true"] {
-		border-color: #5e9e68;
-		background: #214929;
-		color: #bdedc4;
-	}
-
-	.optionNo[data-selected="true"] {
-		border-color: #a9543c;
-		background: #522719;
-		color: #ffc0ad;
+	.checkboxInput:checked + .checkbox {
+		color: var(--review-sticker-ink);
 	}
 
 	.submit {
