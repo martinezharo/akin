@@ -1,4 +1,5 @@
 import styles from "./streak-badge.module.css";
+import { APP_LOCALE } from "@/i18n/config";
 
 export type StreakBadgeTier = "glass" | "silver" | "fire" | "god";
 
@@ -13,7 +14,7 @@ const tierClassNames: Record<StreakBadgeTier, string> = {
 	god: styles.god,
 };
 
-const streakCountFormatter = new Intl.NumberFormat("es-ES");
+const streakCountFormatter = new Intl.NumberFormat(APP_LOCALE);
 
 export function getStreakBadgeTier(days: number): StreakBadgeTier {
 	if (days >= GOD_STREAK_MIN_DAYS) return "god";

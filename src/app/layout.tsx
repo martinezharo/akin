@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
+import { APP_LANGUAGE } from "@/i18n/config";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -27,7 +28,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" className={nunito.variable}>
+		<html lang={APP_LANGUAGE} className={nunito.variable}>
 			<body>{children}</body>
 		</html>
 	);

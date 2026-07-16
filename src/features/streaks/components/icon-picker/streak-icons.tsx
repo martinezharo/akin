@@ -1,4 +1,5 @@
 import { Goal, SmilePlus } from "lucide-react";
+import styles from "./streak-icons.module.css";
 
 export type StreakIconValue = string | null;
 
@@ -63,7 +64,7 @@ export function getStreakIconOptions(recentIcons: readonly string[]): StreakIcon
 
 export function IconPickerIcon({ value }: { value: StreakIconValue }) {
 	if (value === DEFAULT_STREAK_ICON) {
-		return <SmilePlus className="default-streak-icon" aria-hidden="true" />;
+		return <SmilePlus className={styles.defaultIcon} aria-hidden="true" />;
 	}
 
 	return <StreakIcon value={value} />;
@@ -72,11 +73,11 @@ export function IconPickerIcon({ value }: { value: StreakIconValue }) {
 export function StreakIcon({ value }: { value: StreakIconValue }) {
 	if (value !== DEFAULT_STREAK_ICON) {
 		return (
-			<span className="streak-icon-emoji" aria-hidden="true">
+				<span className={styles.emoji} aria-hidden="true">
 				{value}
 			</span>
 		);
 	}
 
-	return <Goal className="default-streak-icon" aria-hidden="true" />;
+	return <Goal className={styles.defaultIcon} aria-hidden="true" />;
 }

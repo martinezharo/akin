@@ -1,10 +1,10 @@
-import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import styles from "@/features/streaks/app/streaks-page.module.css";
+import { StreaksDemo } from "@/features/streaks/app/streaks-demo";
 
-export default function Home() {
+export default function DemoPage() {
 	return (
 		<main className={styles.page}>
-			<StreaksApp />
+			<StreaksDemo />
 		</main>
 	);
 }

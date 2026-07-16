@@ -1,0 +1,75 @@
+.list {
+	display: grid;
+	margin: 2.75rem 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.row {
+	position: relative;
+	display: grid;
+	grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 1.25rem;
+	min-height: 5.75rem;
+	animation: streakArrive 380ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.row:focus-within,
+.row:has([data-icon-picker-open="true"]) {
+	z-index: 20;
+}
+
+.name {
+	display: block;
+	min-width: 0;
+	overflow: hidden;
+	font-size: clamp(1.12rem, 4.8vw, 1.35rem);
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	white-space: nowrap;
+}
+
+.nameTrack {
+	display: inline-block;
+	min-width: max-content;
+}
+
+.nameTrack[data-overflowing="true"] {
+	animation: streakNamePan var(--streak-name-duration) ease-in-out infinite;
+	will-change: transform;
+}
+
+@keyframes streakArrive {
+	from {
+		opacity: 0;
+		transform: translateY(-0.65rem) scale(0.985);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes streakNamePan {
+	0%,
+	12% {
+		transform: translateX(0);
+	}
+	44%,
+	56% {
+		transform: translateX(calc(var(--streak-name-distance) * -1));
+	}
+	88%,
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nameTrack {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
