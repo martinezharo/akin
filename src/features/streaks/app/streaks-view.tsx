@@ -30,6 +30,9 @@ export function StreaksView({
 					streaks={controller.streaks}
 					iconOptions={controller.iconOptions}
 					onUpdateIcon={controller.updateIcon}
+					onRename={controller.rename}
+					onAdjustDays={controller.adjustDays}
+					onRemove={controller.remove}
 				/>
 			</section>
 

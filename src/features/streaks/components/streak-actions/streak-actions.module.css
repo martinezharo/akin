@@ -1,0 +1,443 @@
+.actions {
+	position: relative;
+	display: grid;
+	place-items: center;
+}
+
+.trigger {
+	display: grid;
+	width: 2.75rem;
+	height: 2.75rem;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: 0.9rem;
+	background: transparent;
+	color: color-mix(in srgb, var(--muted) 78%, transparent);
+	cursor: pointer;
+	transition: color var(--motion-standard), background var(--motion-standard),
+		transform var(--motion-spring);
+}
+
+.trigger svg {
+	width: 1.35rem;
+	height: 1.35rem;
+	stroke-width: 2.6;
+}
+
+.trigger:hover,
+.trigger[aria-expanded="true"] {
+	background: var(--icon-background);
+	color: var(--foreground);
+}
+
+.trigger:active {
+	transform: scale(0.9);
+}
+
+.trigger:focus-visible,
+.menu button:focus-visible,
+.close:focus-visible,
+.nameInput:focus-visible,
+.daysInput:focus-visible,
+.nudge:focus-visible,
+.cancel:focus-visible,
+.save:focus-visible,
+.deleteConfirm:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 3px;
+}
+
+.menu {
+	position: absolute;
+	z-index: 30;
+	top: calc(100% + 0.45rem);
+	right: 0;
+	display: grid;
+	width: 12.5rem;
+	max-height: calc(100dvh - 1.5rem);
+	overflow-y: auto;
+	padding: 0.45rem;
+	border: 1px solid var(--line);
+	border-radius: 1.15rem;
+	background: var(--popover-background);
+	box-shadow: var(--popover-shadow);
+	backdrop-filter: blur(18px) saturate(120%);
+	transform-origin: top right;
+	animation: menuArrive 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.menu[data-placement="top"] {
+	top: auto;
+	bottom: calc(100% + 0.45rem);
+	transform-origin: bottom right;
+}
+
+.menu button {
+	display: grid;
+	grid-template-columns: 1.5rem minmax(0, 1fr);
+	align-items: center;
+	gap: 0.7rem;
+	min-height: 2.85rem;
+	padding: 0.55rem 0.7rem;
+	border: 0;
+	border-radius: 0.8rem;
+	background: transparent;
+	color: var(--foreground);
+	font-weight: 800;
+	text-align: left;
+	cursor: pointer;
+	transition: background var(--motion-standard), transform var(--motion-spring);
+}
+
+.menu button:hover {
+	background: var(--icon-background);
+}
+
+.menu button:active {
+	transform: scale(0.98);
+}
+
+.menu svg {
+	width: 1.08rem;
+	height: 1.08rem;
+	stroke-width: 2.4;
+}
+
+.menu .deleteItem {
+	position: relative;
+	margin-top: 0.35rem;
+	color: #c83c27;
+}
+
+.menu .deleteItem::before {
+	position: absolute;
+	top: -0.2rem;
+	right: 0.4rem;
+	left: 0.4rem;
+	height: 1px;
+	background: var(--line);
+	content: "";
+}
+
+.dialog {
+	position: fixed;
+	z-index: 100;
+	inset: 0;
+	display: none;
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	max-height: none;
+	overflow: auto;
+	place-items: end center;
+	margin: 0;
+	padding: max(1rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+		max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+	border: 0;
+	background: transparent;
+}
+
+.dialog[open] {
+	display: grid;
+}
+
+.dialog::backdrop {
+	background: rgb(10 11 9 / 52%);
+	backdrop-filter: blur(7px);
+}
+
+.editor {
+	--editor-accent: var(--accent);
+	position: relative;
+	width: min(100%, 31rem);
+	padding: 1.5rem;
+	border: 1px solid var(--line);
+	border-radius: 1.75rem;
+	background:
+		radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--editor-accent) 13%, transparent), transparent 12rem),
+		var(--background);
+	box-shadow: 0 2rem 6rem rgb(0 0 0 / 28%);
+	color: var(--foreground);
+	animation: editorArrive 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.editor[data-danger="true"] {
+	--editor-accent: #df472e;
+}
+
+.close {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	display: grid;
+	width: 2.65rem;
+	height: 2.65rem;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background: var(--icon-background);
+	color: var(--muted);
+	cursor: pointer;
+	transition: color var(--motion-standard), transform var(--motion-spring);
+}
+
+.close:hover {
+	color: var(--foreground);
+	transform: rotate(4deg) scale(1.04);
+}
+
+.close svg {
+	width: 1.15rem;
+	height: 1.15rem;
+	stroke-width: 2.6;
+}
+
+.identity {
+	--streak-icon-size: 1.9rem;
+	display: grid;
+	width: 3.2rem;
+	height: 3.2rem;
+	place-items: center;
+	margin-bottom: 1.1rem;
+	border-radius: 1.05rem 1.05rem 1.05rem 0.35rem;
+	background: var(--icon-background);
+	box-shadow: 0.3rem 0.35rem 0 color-mix(in srgb, var(--editor-accent) 22%, var(--line));
+	font-size: 1.9rem;
+	transform: rotate(-3deg);
+}
+
+.kicker {
+	margin: 0 0 0.4rem;
+	color: var(--editor-accent);
+	font-size: 0.69rem;
+	font-weight: 950;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.title {
+	max-width: calc(100% - 2.75rem);
+	margin: 0;
+	font-size: clamp(2rem, 9vw, 2.75rem);
+	font-weight: 950;
+	letter-spacing: -0.055em;
+	line-height: 0.98;
+	text-wrap: balance;
+}
+
+.copy {
+	margin: 0.9rem 0 1.4rem;
+	color: var(--muted);
+	font-size: 0.94rem;
+	font-weight: 650;
+	line-height: 1.45;
+}
+
+.form {
+	display: grid;
+	gap: 1.2rem;
+}
+
+.nameInput {
+	width: 100%;
+	height: 3.8rem;
+	padding: 0 1rem;
+	border: 1.5px solid var(--line);
+	border-radius: 1.05rem;
+	outline: 0;
+	background: var(--icon-background);
+	color: var(--foreground);
+	font-size: 1.1rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	caret-color: var(--editor-accent);
+	transition: border-color var(--motion-standard), box-shadow var(--motion-standard);
+}
+
+.nameInput:focus {
+	border-color: var(--editor-accent);
+	box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--editor-accent) 13%, transparent);
+}
+
+.counter {
+	display: grid;
+	grid-template-columns: 3.2rem minmax(0, 1fr) 3.2rem;
+	align-items: center;
+	gap: 0.7rem;
+}
+
+.daysInput {
+	width: 100%;
+	height: 5rem;
+	padding: 0 0.5rem;
+	border: 1.5px solid var(--line);
+	border-radius: 1.25rem;
+	outline: 0;
+	background: var(--icon-background);
+	color: var(--foreground);
+	font-size: clamp(2rem, 11vw, 3rem);
+	font-weight: 950;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.05em;
+	text-align: center;
+	-moz-appearance: textfield;
+}
+
+.daysInput::-webkit-inner-spin-button,
+.daysInput::-webkit-outer-spin-button {
+	margin: 0;
+	-webkit-appearance: none;
+}
+
+.nudge {
+	display: grid;
+	width: 3.2rem;
+	height: 3.2rem;
+	place-items: center;
+	padding: 0;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--background);
+	color: var(--foreground);
+	cursor: pointer;
+	transition: background var(--motion-standard), transform var(--motion-spring),
+		opacity var(--motion-standard);
+}
+
+.nudge:hover:not(:disabled) {
+	background: var(--icon-background);
+	transform: scale(1.05) rotate(-2deg);
+}
+
+.nudge:active:not(:disabled) {
+	transform: scale(0.92);
+}
+
+.nudge:disabled {
+	opacity: 0.25;
+	cursor: default;
+}
+
+.nudge svg {
+	width: 1.2rem;
+	height: 1.2rem;
+	stroke-width: 2.8;
+}
+
+.footer {
+	display: grid;
+	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+	gap: 0.65rem;
+	margin-top: 1.2rem;
+}
+
+.cancel,
+.save,
+.deleteConfirm {
+	min-height: 3.35rem;
+	padding: 0.75rem 1rem;
+	border: 0;
+	border-radius: 1rem;
+	font-weight: 900;
+	cursor: pointer;
+	transition: transform var(--motion-spring), opacity var(--motion-standard),
+		background var(--motion-standard);
+}
+
+.cancel {
+	background: var(--icon-background);
+	color: var(--foreground);
+}
+
+.save {
+	background: var(--button-background);
+	color: var(--button-foreground);
+}
+
+.deleteConfirm {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	background: #d9432a;
+	color: #fff;
+}
+
+.deleteConfirm svg {
+	width: 1.05rem;
+	height: 1.05rem;
+	stroke-width: 2.6;
+}
+
+.cancel:hover,
+.save:hover:not(:disabled),
+.deleteConfirm:hover {
+	transform: translateY(-0.1rem);
+}
+
+.cancel:active,
+.save:active:not(:disabled),
+.deleteConfirm:active {
+	transform: scale(0.97);
+}
+
+.save:disabled {
+	opacity: 0.22;
+	cursor: default;
+}
+
+@keyframes menuArrive {
+	from {
+		opacity: 0;
+		transform: translateY(-0.3rem) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes editorArrive {
+	from {
+		opacity: 0;
+		transform: translateY(1.4rem) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (min-width: 34rem) {
+	.dialog {
+		place-items: center;
+		padding: 1.5rem;
+	}
+}
+
+@media (max-width: 23rem) {
+	.editor {
+		padding: 1.25rem;
+	}
+
+	.footer {
+		grid-template-columns: 1fr;
+	}
+
+	.cancel {
+		order: 2;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.menu .deleteItem,
+	.kicker {
+		color: #ff795f;
+	}
+
+	.deleteConfirm {
+		background: #e14d33;
+	}
+}

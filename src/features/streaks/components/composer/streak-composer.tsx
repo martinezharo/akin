@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { ui } from "@/i18n/en";
+import { STREAK_NAME_MAX_LENGTH } from "../../model/streak";
 import { ComposerIconPicker } from "../icon-picker/icon-picker";
 import {
 	DEFAULT_STREAK_ICON,
@@ -53,7 +54,7 @@ export function StreakComposer({
 				value={name}
 				onChange={(event) => setName(event.target.value)}
 				placeholder={ui.streaks.namePlaceholder}
-				maxLength={72}
+				maxLength={STREAK_NAME_MAX_LENGTH}
 				autoComplete="off"
 			/>
 			<button

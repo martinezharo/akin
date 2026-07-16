@@ -9,7 +9,12 @@ import {
 } from "../components/icon-picker/streak-icons";
 import { addLocalDays, getUnreviewedDays, type LocalDateKey } from "../model/calendar";
 import { resolveGap, resolveSingleDay, type ReviewAnswers } from "../model/progress";
-import { createStreak, type Streak } from "../model/streak";
+import {
+	adjustStreakDays,
+	createStreak,
+	renameStreak,
+	type Streak,
+} from "../model/streak";
 import {
 	loadStreaksData,
 	saveStreaksData,
@@ -31,6 +36,9 @@ export type StreaksController = {
 	create: (name: string, icon: StreakIconValue) => void;
 	rememberIcon: (icon: StreakIconValue) => void;
 	updateIcon: (streakId: string, icon: StreakIconValue) => void;
+	rename: (streakId: string, name: string) => void;
+	adjustDays: (streakId: string, days: number) => void;
+	remove: (streakId: string) => void;
 	resolveDay: (day: LocalDateKey, answers: ReviewAnswers) => void;
 	resolveGap: (days: LocalDateKey[], answers: ReviewAnswers) => void;
 	replaceData: (data: StreaksData) => void;
@@ -98,6 +106,18 @@ export function useStreaksController({
 		);
 	}
 
+	function updateStreak(
+		streakId: string,
+		updater: (streak: Streak) => Streak,
+	) {
+		setData((currentData) => ({
+			...currentData,
+			streaks: currentData.streaks.map((streak) =>
+				streak.id === streakId ? updater(streak) : streak,
+			),
+		}));
+	}
+
 	return {
 		today,
 		streaks: data.streaks,
@@ -107,6 +127,15 @@ export function useStreaksController({
 		create,
 		rememberIcon,
 		updateIcon,
+		rename: (streakId, name) =>
+			updateStreak(streakId, (streak) => renameStreak(streak, name)),
+		adjustDays: (streakId, days) =>
+			updateStreak(streakId, (streak) => adjustStreakDays(streak, days)),
+		remove: (streakId) =>
+			setData((currentData) => ({
+				...currentData,
+				streaks: currentData.streaks.filter((streak) => streak.id !== streakId),
+			})),
 		resolveDay: (day, answers) =>
 			setData((currentData) => resolveSingleDay(currentData, day, answers)),
 		resolveGap: (days, answers) =>

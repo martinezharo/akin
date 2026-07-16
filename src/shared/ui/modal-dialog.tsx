@@ -6,10 +6,14 @@ export function ModalDialog({
 	children,
 	className,
 	labelledBy,
+	describedBy,
+	onDismiss,
 }: {
 	children: ReactNode;
 	className: string;
 	labelledBy: string;
+	describedBy?: string;
+	onDismiss?: () => void;
 }) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -32,7 +36,14 @@ export function ModalDialog({
 			className={className}
 			ref={dialogRef}
 			aria-labelledby={labelledBy}
-			onCancel={(event) => event.preventDefault()}
+			aria-describedby={describedBy}
+			onCancel={(event) => {
+				event.preventDefault();
+				onDismiss?.();
+			}}
+			onClick={(event) => {
+				if (event.target === event.currentTarget) onDismiss?.();
+			}}
 		>
 			{children}
 		</dialog>

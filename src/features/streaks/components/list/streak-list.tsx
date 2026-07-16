@@ -6,6 +6,7 @@ import type { Streak } from "../../model/streak";
 import { StreakBadge } from "../badge/streak-badge";
 import { StreakIconPicker } from "../icon-picker/icon-picker";
 import type { StreakIconOption, StreakIconValue } from "../icon-picker/streak-icons";
+import { StreakActions } from "../streak-actions/streak-actions";
 import styles from "./streak-list.module.css";
 
 const EMPTY_STREAK_PREVIEW = [
@@ -94,10 +95,16 @@ export function StreakList({
 	streaks,
 	iconOptions,
 	onUpdateIcon,
+	onRename,
+	onAdjustDays,
+	onRemove,
 }: {
 	streaks: Streak[];
 	iconOptions: readonly StreakIconOption[];
 	onUpdateIcon: (streakId: string, icon: StreakIconValue) => void;
+	onRename: (streakId: string, name: string) => void;
+	onAdjustDays: (streakId: string, days: number) => void;
+	onRemove: (streakId: string) => void;
 }) {
 	const isEmpty = streaks.length === 0;
 
@@ -124,6 +131,12 @@ export function StreakList({
 							<StreakBadge
 								days={streak.days}
 								ariaLabel={ui.streaks.currentCountLabel(streak.days)}
+							/>
+							<StreakActions
+								streak={streak}
+								onRename={(name) => onRename(streak.id, name)}
+								onAdjustDays={(days) => onAdjustDays(streak.id, days)}
+								onRemove={() => onRemove(streak.id)}
 							/>
 						</li>
 					))

@@ -19,11 +19,17 @@ beforeAll(() => {
 afterEach(cleanup);
 
 const options = [{ value: "📚", label: "Reading" }] as const;
+const actions = {
+	onUpdateIcon: vi.fn(),
+	onRename: vi.fn(),
+	onAdjustDays: vi.fn(),
+	onRemove: vi.fn(),
+};
 
 describe("streak list", () => {
 	it("shows a disabled preview only while the list is empty", () => {
 		const { rerender } = render(
-			<StreakList streaks={[]} iconOptions={options} onUpdateIcon={vi.fn()} />,
+			<StreakList streaks={[]} iconOptions={options} {...actions} />,
 		);
 
 		expect(screen.getByText(ui.streaks.emptyPreview)).toBeTruthy();
@@ -44,7 +50,7 @@ describe("streak list", () => {
 		};
 
 		rerender(
-			<StreakList streaks={[streak]} iconOptions={options} onUpdateIcon={vi.fn()} />,
+			<StreakList streaks={[streak]} iconOptions={options} {...actions} />,
 		);
 
 		expect(screen.queryByText(ui.streaks.emptyPreview)).toBeNull();
