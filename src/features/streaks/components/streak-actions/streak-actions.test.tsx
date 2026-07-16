@@ -29,13 +29,15 @@ const streak: Streak = {
 	createdOn: "2026-07-01",
 };
 
-function renderActions() {
+function renderActions(
+	props: Partial<React.ComponentProps<typeof StreakActions>> = {},
+) {
 	const callbacks = {
 		onRename: vi.fn(),
 		onAdjustDays: vi.fn(),
 		onRemove: vi.fn(),
 	};
-	render(<StreakActions streak={streak} {...callbacks} />);
+	render(<StreakActions streak={streak} {...callbacks} {...props} />);
 	return callbacks;
 }
 
@@ -90,5 +92,21 @@ describe("streak actions", () => {
 		await user.click(screen.getByRole("button", { name: ui.streaks.confirmDelete }));
 
 		expect(onRemove).toHaveBeenCalledOnce();
+	});
+
+	it("opens the counter editor from the post-creation suggestion", async () => {
+		const user = userEvent.setup();
+		const onDismissAdjustHint = vi.fn();
+		renderActions({ showAdjustHint: true, onDismissAdjustHint });
+
+		expect(screen.getByRole("status").textContent).toBe(ui.streaks.newStreakHint);
+		await user.click(
+			screen.getByRole("button", { name: ui.streaks.newStreakHintAction }),
+		);
+
+		expect(onDismissAdjustHint).toHaveBeenCalledOnce();
+		expect(
+			await screen.findByRole("dialog", { name: ui.streaks.adjustTitle }),
+		).toBeTruthy();
 	});
 });

@@ -24,6 +24,8 @@ const actions = {
 	onRename: vi.fn(),
 	onAdjustDays: vi.fn(),
 	onRemove: vi.fn(),
+	adjustHintStreakId: null,
+	onDismissAdjustHint: vi.fn(),
 };
 
 describe("streak list", () => {
@@ -57,5 +59,15 @@ describe("streak list", () => {
 		expect(screen.queryByText("Drink some water")).toBeNull();
 		expect(screen.getByText("Read every day")).toBeTruthy();
 		expect(screen.getByRole("list", { name: ui.streaks.listLabel }).children).toHaveLength(1);
+
+		rerender(
+			<StreakList
+				streaks={[streak]}
+				iconOptions={options}
+				{...actions}
+				adjustHintStreakId={streak.id}
+			/>,
+		);
+		expect(screen.getByText(ui.streaks.newStreakHint)).toBeTruthy();
 	});
 });

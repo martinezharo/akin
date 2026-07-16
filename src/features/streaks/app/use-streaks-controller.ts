@@ -33,7 +33,7 @@ export type StreaksController = {
 	iconOptions: StreakIconOption[];
 	unreviewedDays: LocalDateKey[];
 	hasPendingReview: boolean;
-	create: (name: string, icon: StreakIconValue) => void;
+	create: (name: string, icon: StreakIconValue) => string;
 	rememberIcon: (icon: StreakIconValue) => void;
 	updateIcon: (streakId: string, icon: StreakIconValue) => void;
 	rename: (streakId: string, name: string) => void;
@@ -77,6 +77,7 @@ export function useStreaksController({
 	}
 
 	function create(name: string, icon: StreakIconValue) {
+		const streak = createStreak(name, icon, today);
 		setData((currentData) =>
 			withRememberedIcon(
 				{
@@ -85,11 +86,12 @@ export function useStreaksController({
 						currentData.streaks.length === 0
 							? addLocalDays(today, -1)
 							: currentData.lastReviewedOn,
-					streaks: [createStreak(name, icon, today), ...currentData.streaks],
+					streaks: [streak, ...currentData.streaks],
 				},
 				icon,
 			),
 		);
+		return streak.id;
 	}
 
 	function updateIcon(streakId: string, icon: StreakIconValue) {

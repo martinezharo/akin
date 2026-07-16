@@ -9,7 +9,15 @@ import {
 	Trash2,
 	X,
 } from "lucide-react";
-import { type FormEvent, type ReactNode, useId, useState } from "react";
+import {
+	type CSSProperties,
+	type FormEvent,
+	type ReactNode,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from "react";
 import { ui } from "@/i18n/en";
 import {
 	useAdaptivePopoverPlacement,
@@ -22,11 +30,23 @@ import styles from "./streak-actions.module.css";
 
 type ActionName = "rename" | "adjust" | "delete";
 
+const STARTING_COUNT_HINT_DURATION_MS = 12_000;
+
+type StartingCountHintStyle = CSSProperties & {
+	"--starting-count-hint-duration": string;
+};
+
+const startingCountHintStyle: StartingCountHintStyle = {
+	"--starting-count-hint-duration": `${STARTING_COUNT_HINT_DURATION_MS}ms`,
+};
+
 type StreakActionsProps = {
 	streak: Streak;
 	onRename: (name: string) => void;
 	onAdjustDays: (days: number) => void;
 	onRemove: () => void;
+	showAdjustHint?: boolean;
+	onDismissAdjustHint?: () => void;
 };
 
 type EditorShellProps = {
@@ -245,11 +265,71 @@ function DeleteEditor({
 	);
 }
 
+function StartingCountHint({
+	onAdjust,
+	onDismiss,
+}: {
+	onAdjust: () => void;
+	onDismiss: () => void;
+}) {
+	const [isPaused, setIsPaused] = useState(false);
+	const remainingMsRef = useRef(STARTING_COUNT_HINT_DURATION_MS);
+	const onDismissRef = useRef(onDismiss);
+
+	useEffect(() => {
+		onDismissRef.current = onDismiss;
+	}, [onDismiss]);
+
+	useEffect(() => {
+		if (isPaused) return;
+
+		const startedAt = performance.now();
+		const timeout = window.setTimeout(
+			() => onDismissRef.current(),
+			remainingMsRef.current,
+		);
+
+		return () => {
+			window.clearTimeout(timeout);
+			remainingMsRef.current = Math.max(
+				0,
+				remainingMsRef.current - (performance.now() - startedAt),
+			);
+		};
+	}, [isPaused]);
+
+	return (
+		<div
+			className={styles.startingHint}
+			data-paused={isPaused}
+			style={startingCountHintStyle}
+			onMouseEnter={() => setIsPaused(true)}
+			onMouseLeave={() => setIsPaused(false)}
+			onFocusCapture={() => setIsPaused(true)}
+			onBlurCapture={(event) => {
+				if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
+			}}
+		>
+			<span className={styles.hintCopy} role="status">
+				{ui.streaks.newStreakHint}
+			</span>
+			<button className={styles.hintAction} type="button" onClick={onAdjust}>
+				{ui.streaks.newStreakHintAction}
+			</button>
+			<span className={styles.countdown} aria-hidden="true">
+				<span className={styles.countdownProgress} />
+			</span>
+		</div>
+	);
+}
+
 export function StreakActions({
 	streak,
 	onRename,
 	onAdjustDays,
 	onRemove,
+	showAdjustHint = false,
+	onDismissAdjustHint,
 }: StreakActionsProps) {
 	const [action, setAction] = useState<ActionName | null>(null);
 	const menuId = useId();
@@ -268,6 +348,16 @@ export function StreakActions({
 	function closeEditor() {
 		setAction(null);
 		requestAnimationFrame(() => triggerRef.current?.focus());
+	}
+
+	function openSuggestedAdjust() {
+		onDismissAdjustHint?.();
+		openEditor("adjust");
+	}
+
+	function toggleMenu() {
+		if (!isOpen) onDismissAdjustHint?.();
+		toggle();
 	}
 
 	function handleMenuKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -294,7 +384,7 @@ export function StreakActions({
 					aria-expanded={isOpen}
 					aria-controls={isOpen ? menuId : undefined}
 					aria-haspopup="menu"
-					onClick={toggle}
+					onClick={toggleMenu}
 				>
 					<Ellipsis aria-hidden="true" />
 				</button>
@@ -329,6 +419,13 @@ export function StreakActions({
 					</div>
 				) : null}
 			</div>
+
+			{showAdjustHint ? (
+				<StartingCountHint
+					onAdjust={openSuggestedAdjust}
+					onDismiss={() => onDismissAdjustHint?.()}
+				/>
+			) : null}
 
 			{action === "rename" ? (
 				<RenameEditor

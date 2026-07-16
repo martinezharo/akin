@@ -98,6 +98,8 @@ export function StreakList({
 	onRename,
 	onAdjustDays,
 	onRemove,
+	adjustHintStreakId,
+	onDismissAdjustHint,
 }: {
 	streaks: Streak[];
 	iconOptions: readonly StreakIconOption[];
@@ -105,6 +107,8 @@ export function StreakList({
 	onRename: (streakId: string, name: string) => void;
 	onAdjustDays: (streakId: string, days: number) => void;
 	onRemove: (streakId: string) => void;
+	adjustHintStreakId: string | null;
+	onDismissAdjustHint: () => void;
 }) {
 	const isEmpty = streaks.length === 0;
 
@@ -137,6 +141,8 @@ export function StreakList({
 								onRename={(name) => onRename(streak.id, name)}
 								onAdjustDays={(days) => onAdjustDays(streak.id, days)}
 								onRemove={() => onRemove(streak.id)}
+								showAdjustHint={adjustHintStreakId === streak.id}
+								onDismissAdjustHint={onDismissAdjustHint}
 							/>
 						</li>
 					))

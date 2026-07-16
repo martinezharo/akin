@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { ui } from "@/i18n/en";
 import { StreakComposer } from "../components/composer/streak-composer";
 import { StreakList } from "../components/list/streak-list";
@@ -15,6 +15,13 @@ export function StreaksView({
 	controller: StreaksController;
 	children?: ReactNode;
 }) {
+	const [adjustHintStreakId, setAdjustHintStreakId] = useState<string | null>(null);
+
+	function createStreak(...args: Parameters<StreaksController["create"]>) {
+		const streakId = controller.create(...args);
+		setAdjustHintStreakId(streakId);
+	}
+
 	return (
 		<>
 			<section className={styles.shell} aria-labelledby="streaks-title">
@@ -23,7 +30,7 @@ export function StreaksView({
 				</h1>
 				<StreakComposer
 					iconOptions={controller.iconOptions}
-					onCreate={controller.create}
+					onCreate={createStreak}
 					onRememberIcon={controller.rememberIcon}
 				/>
 				<StreakList
@@ -33,6 +40,8 @@ export function StreaksView({
 					onRename={controller.rename}
 					onAdjustDays={controller.adjustDays}
 					onRemove={controller.remove}
+					adjustHintStreakId={adjustHintStreakId}
+					onDismissAdjustHint={() => setAdjustHintStreakId(null)}
 				/>
 			</section>
 

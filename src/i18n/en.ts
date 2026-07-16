@@ -42,6 +42,8 @@ export const ui = {
 		deleteTitle: (name: string) => `Delete “${name}”?`,
 		deleteCopy: "This removes the streak from Akin for good. This can’t be undone.",
 		confirmDelete: "Yes, delete it",
+		newStreakHint: "Already started?",
+		newStreakHintAction: "Set count",
 		loading: "Loading your streaks",
 	},
 	review: {
