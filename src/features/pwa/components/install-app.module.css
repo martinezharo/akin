@@ -1,0 +1,280 @@
+.install {
+	position: fixed;
+	z-index: 80;
+	top: max(0.85rem, env(safe-area-inset-top));
+	right: max(0.85rem, env(safe-area-inset-right));
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	padding: 0.38rem 0.8rem 0.38rem 0.38rem;
+	border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+	border-radius: var(--radius-pill);
+	background: color-mix(in srgb, var(--background) 90%, transparent);
+	box-shadow: 0 0.65rem 2rem rgb(20 22 17 / 12%), inset 0 1px 0 rgb(255 255 255 / 50%);
+	color: var(--foreground);
+	backdrop-filter: blur(18px) saturate(140%);
+	cursor: pointer;
+	animation: installArrive 500ms 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	transition: border-color var(--motion-standard), transform var(--motion-spring);
+}
+
+.install:hover {
+	border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+	transform: translateY(-0.12rem) rotate(-1deg);
+}
+
+.install:active {
+	transform: translateY(0) scale(0.96);
+}
+
+.install:focus-visible,
+.close:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 3px;
+}
+
+.installIcon {
+	display: grid;
+	width: 2.05rem;
+	height: 2.05rem;
+	flex: 0 0 auto;
+	place-items: center;
+	border-radius: 50%;
+	background: var(--accent);
+	box-shadow: 0.14rem 0.15rem 0 var(--selection);
+	color: #fff;
+}
+
+.installIcon svg {
+	width: 1rem;
+	height: 1rem;
+	stroke-width: 2.8;
+}
+
+.installCopy {
+	display: grid;
+	text-align: left;
+}
+
+.installCopy small,
+.installCopy strong {
+	line-height: 1.05;
+}
+
+.installCopy small {
+	color: var(--muted);
+	font-size: 0.57rem;
+	font-weight: 850;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.installCopy strong {
+	font-size: 0.78rem;
+	font-weight: 950;
+}
+
+.dialog {
+	position: fixed;
+	z-index: 300;
+	inset: 0;
+	display: none;
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	max-height: none;
+	place-items: center;
+	margin: 0;
+	padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+		max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+	border: 0;
+	background: transparent;
+	color: #252116;
+}
+
+.dialog[open] {
+	display: grid;
+}
+
+.dialog::backdrop {
+	background: rgb(15 16 13 / 62%);
+	backdrop-filter: blur(12px) saturate(80%);
+}
+
+.guide {
+	position: relative;
+	width: min(100%, 25rem);
+	overflow: hidden;
+	padding: clamp(1.4rem, 6vw, 2.15rem);
+	border: 1px solid rgb(83 60 24 / 13%);
+	border-radius: 2.25rem;
+	background:
+		radial-gradient(circle at 100% 0, rgb(255 208 118 / 66%), transparent 14rem),
+		linear-gradient(145deg, #fffef8, #f9f1dc);
+	box-shadow: 0 2.4rem 7rem rgb(0 0 0 / 28%);
+	isolation: isolate;
+	animation: guideArrive 440ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.guide::after {
+	position: absolute;
+	inset: 0.55rem;
+	z-index: -1;
+	border: 1px dashed rgb(80 62 31 / 10%);
+	border-radius: 1.8rem;
+	content: "";
+	pointer-events: none;
+}
+
+.close {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	display: grid;
+	width: 2.3rem;
+	height: 2.3rem;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgb(37 33 22 / 8%);
+	color: #252116;
+	cursor: pointer;
+}
+
+.close svg {
+	width: 1rem;
+	height: 1rem;
+	stroke-width: 2.8;
+}
+
+.mark {
+	display: grid;
+	width: 4.25rem;
+	height: 4.25rem;
+	place-items: center;
+	margin-bottom: 1.5rem;
+	border-radius: 1.25rem 1.25rem 1.25rem 0.45rem;
+	background: #171814;
+	box-shadow: 0.35rem 0.4rem 0 #ff7540;
+	color: #fffdf5;
+	transform: rotate(-4deg);
+}
+
+.mark span {
+	font-size: 2.15rem;
+	font-style: italic;
+	font-weight: 950;
+	letter-spacing: -0.12em;
+}
+
+.kicker {
+	margin: 0 0 0.5rem;
+	color: #b93412;
+	font-size: 0.68rem;
+	font-weight: 950;
+	letter-spacing: 0.11em;
+	text-transform: uppercase;
+}
+
+.guide h2 {
+	max-width: 18rem;
+	margin: 0;
+	font-size: clamp(2rem, 10vw, 3.1rem);
+	font-weight: 950;
+	letter-spacing: -0.06em;
+	line-height: 0.94;
+}
+
+.intro {
+	max-width: 20rem;
+	margin: 1rem 0 1.35rem;
+	color: rgb(37 33 22 / 66%);
+	font-size: 0.9rem;
+	font-weight: 750;
+	line-height: 1.45;
+}
+
+.steps {
+	display: grid;
+	gap: 0.55rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: install-step;
+}
+
+.steps li {
+	display: grid;
+	grid-template-columns: 2.6rem 1fr;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.65rem;
+	border: 1px solid rgb(37 33 22 / 8%);
+	border-radius: 1rem;
+	background: rgb(255 255 255 / 57%);
+	counter-increment: install-step;
+}
+
+.steps li > span {
+	display: grid;
+	width: 2.6rem;
+	height: 2.6rem;
+	place-items: center;
+	border-radius: 0.8rem;
+	background: #ffd382;
+	color: #321207;
+}
+
+.steps svg {
+	width: 1.2rem;
+	height: 1.2rem;
+	stroke-width: 2.5;
+}
+
+.steps strong {
+	font-size: 0.84rem;
+	font-weight: 900;
+}
+
+.done {
+	margin: 1.1rem 0 0;
+	color: rgb(37 33 22 / 54%);
+	font-size: 0.7rem;
+	font-weight: 800;
+	text-align: center;
+}
+
+@keyframes installArrive {
+	from {
+		opacity: 0;
+		transform: translateY(-0.7rem) scale(0.9) rotate(2deg);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1) rotate(0);
+	}
+}
+
+@keyframes guideArrive {
+	from {
+		opacity: 0;
+		transform: translateY(1.5rem) scale(0.95) rotate(1deg);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1) rotate(0);
+	}
+}
+
+@media (max-width: 25rem) {
+	.installCopy small {
+		display: none;
+	}
+}
+
+@media (min-width: 48rem) {
+	.install {
+		display: none;
+	}
+}

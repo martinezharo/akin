@@ -52,4 +52,15 @@ export const ui = {
 		expand: "Expand time controls",
 		finishReview: "Finish the check-in to travel again",
 	},
+	pwa: {
+		install: "Install Akin",
+		installHint: "Keep it close",
+		iosKicker: "A tiny home for your promises",
+		iosTitle: "Put Akin in your pocket",
+		iosCopy: "Add Akin to your Home Screen and it will open like an app.",
+		iosShareStep: "Tap Share in your browser",
+		iosAddStep: "Choose Add to Home Screen",
+		iosDone: "That’s it — Akin will appear with your other apps.",
+		closeGuide: "Close installation guide",
+	},
 } as const;
