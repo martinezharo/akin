@@ -12,6 +12,12 @@ export const ui = {
 		customIconLabel: "Custom emoji",
 		customIconHint: "Use your emoji keyboard · one emoji only",
 		listLabel: "Your streaks",
+		emptyPreview: "A little preview of what’s next",
+		emptyExamples: {
+			hydration: "Drink some water",
+			reading: "Read a few pages",
+			progress: "Make a little progress",
+		},
 		currentCountLabel: (days: number) => `Current streak: ${days}`,
 		loading: "Loading your streaks",
 	},

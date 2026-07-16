@@ -8,6 +8,12 @@ import { StreakIconPicker } from "../icon-picker/icon-picker";
 import type { StreakIconOption, StreakIconValue } from "../icon-picker/streak-icons";
 import styles from "./streak-list.module.css";
 
+const EMPTY_STREAK_PREVIEW = [
+	{ icon: "💧", name: ui.streaks.emptyExamples.hydration, days: 9 },
+	{ icon: "📚", name: ui.streaks.emptyExamples.reading, days: 23 },
+	{ icon: "🌱", name: ui.streaks.emptyExamples.progress, days: 25 },
+] as const;
+
 type StreakNameStyle = CSSProperties & {
 	"--streak-name-distance": string;
 	"--streak-name-duration": string;
@@ -63,6 +69,27 @@ function OverflowingStreakName({ name }: { name: string }) {
 	);
 }
 
+function EmptyStreakPreview() {
+	return (
+		<>
+			{EMPTY_STREAK_PREVIEW.map((streak) => (
+				<li
+					className={`${styles.row} ${styles.emptyRow}`}
+					key={streak.name}
+					aria-hidden="true"
+				>
+					<span className={styles.emptyIcon}>{streak.icon}</span>
+					<span className={styles.emptyName}>{streak.name}</span>
+					<StreakBadge
+						days={streak.days}
+						ariaLabel={ui.streaks.currentCountLabel(streak.days)}
+					/>
+				</li>
+			))}
+		</>
+	);
+}
+
 export function StreakList({
 	streaks,
 	iconOptions,
@@ -72,23 +99,36 @@ export function StreakList({
 	iconOptions: readonly StreakIconOption[];
 	onUpdateIcon: (streakId: string, icon: StreakIconValue) => void;
 }) {
+	const isEmpty = streaks.length === 0;
+
 	return (
-		<ul className={styles.list} aria-label={ui.streaks.listLabel} aria-live="polite">
-			{streaks.map((streak) => (
-				<li className={styles.row} key={streak.id}>
-					<StreakIconPicker
-						value={streak.icon}
-						onChange={(icon) => onUpdateIcon(streak.id, icon)}
-						options={iconOptions}
-						triggerLabel={ui.streaks.changeIconAction(streak.name)}
-					/>
-					<OverflowingStreakName name={streak.name} />
-					<StreakBadge
-						days={streak.days}
-						ariaLabel={ui.streaks.currentCountLabel(streak.days)}
-					/>
-				</li>
-			))}
-		</ul>
+		<>
+			{isEmpty ? <p className={styles.emptyHint}>{ui.streaks.emptyPreview}</p> : null}
+			<ul
+				className={`${styles.list} ${isEmpty ? styles.emptyList : ""}`}
+				aria-label={ui.streaks.listLabel}
+				aria-live="polite"
+			>
+				{isEmpty ? (
+					<EmptyStreakPreview />
+				) : (
+					streaks.map((streak) => (
+						<li className={styles.row} key={streak.id}>
+							<StreakIconPicker
+								value={streak.icon}
+								onChange={(icon) => onUpdateIcon(streak.id, icon)}
+								options={iconOptions}
+								triggerLabel={ui.streaks.changeIconAction(streak.name)}
+							/>
+							<OverflowingStreakName name={streak.name} />
+							<StreakBadge
+								days={streak.days}
+								ariaLabel={ui.streaks.currentCountLabel(streak.days)}
+							/>
+						</li>
+					))
+				)}
+			</ul>
+		</>
 	);
 }
