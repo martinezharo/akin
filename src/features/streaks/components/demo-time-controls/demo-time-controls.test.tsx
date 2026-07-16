@@ -8,6 +8,28 @@ import { DemoTimeControls } from "./demo-time-controls";
 afterEach(cleanup);
 
 describe("demo time controls", () => {
+	it("hides the copy and controls from assistive technology when collapsed", async () => {
+		const user = userEvent.setup();
+		render(
+			<DemoTimeControls
+				today="2026-07-16"
+				hasPendingReview={false}
+				onAdvance={vi.fn()}
+				onReset={vi.fn()}
+			/>,
+		);
+
+		const title = screen.getByText("Pocket time machine");
+		const panel = document.querySelector("#demo-clock-panel");
+
+		await user.click(screen.getByRole("button", { name: "Collapse time controls" }));
+
+		expect(title.parentElement?.getAttribute("aria-hidden")).toBe("true");
+		expect(panel?.getAttribute("aria-hidden")).toBe("true");
+		expect(panel?.hasAttribute("inert")).toBe(true);
+		expect(screen.getByRole("button", { name: "Expand time controls" })).toBeTruthy();
+	});
+
 	it("advances by a custom number of days", async () => {
 		const user = userEvent.setup();
 		const onAdvance = vi.fn();

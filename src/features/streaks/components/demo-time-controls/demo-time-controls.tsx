@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, ChevronDown, ChevronUp, Clock3, RotateCcw, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, Clock3, RotateCcw, Sparkles } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { ui } from "@/i18n/en";
 import { formatLocalDate, type LocalDateKey } from "../../model/calendar";
@@ -56,69 +56,76 @@ export function DemoTimeControls({
 				<span className={styles.icon}>
 					<Clock3 aria-hidden="true" />
 				</span>
-				<div className={styles.copy}>
+				<div className={styles.copy} aria-hidden={isCollapsed}>
 					<p>{ui.demo.title}</p>
 					<time dateTime={today}>{formatLocalDate(today)}</time>
 				</div>
-				{isCollapsed ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
+				<ChevronDown className={styles.chevron} aria-hidden="true" />
 			</button>
-			<div className={styles.panel} id="demo-clock-panel" hidden={isCollapsed}>
-				<div className={styles.actions}>
-				<button type="button" disabled={hasPendingReview} onClick={() => advance(1)}>
-					<span>{ui.demo.tomorrow}</span>
-					<Sparkles aria-hidden="true" />
-				</button>
-				<button type="button" disabled={hasPendingReview} onClick={() => advance(3)}>
-					<span>{ui.demo.threeDays}</span>
-					<Sparkles aria-hidden="true" />
-				</button>
-				<button type="button" disabled={hasPendingReview} onClick={() => advance(4)}>
-					<span>{ui.demo.fourDays}</span>
-					<Sparkles aria-hidden="true" />
-				</button>
-				<button
-					className={styles.reset}
-					type="button"
-					aria-label={ui.demo.reset}
-					onClick={reset}
-				>
-					<RotateCcw aria-hidden="true" />
-				</button>
-				</div>
-				<form
-					className={styles.customJump}
-					data-disabled={hasPendingReview}
-					onSubmit={advanceCustom}
-				>
-					<label className={styles.customCopy} htmlFor={customDaysId}>
-						<span>{ui.demo.customLeap}</span>
-						<small>{ui.demo.customHint}</small>
-					</label>
-					<div className={styles.customControl}>
-						<input
-							id={customDaysId}
-							name="days"
-							type="number"
-							inputMode="numeric"
-							min={1}
-							max={MAX_CUSTOM_DAYS}
-							step={1}
-							defaultValue={DEFAULT_CUSTOM_DAYS}
-							disabled={hasPendingReview}
-							required
-							aria-label={ui.demo.customDaysLabel}
-						/>
-						<span aria-hidden="true">{ui.demo.days}</span>
+			<div
+				className={styles.panel}
+				id="demo-clock-panel"
+				aria-hidden={isCollapsed}
+				inert={isCollapsed}
+			>
+				<div className={styles.panelContent}>
+					<div className={styles.actions}>
+						<button type="button" disabled={hasPendingReview} onClick={() => advance(1)}>
+							<span>{ui.demo.tomorrow}</span>
+							<Sparkles aria-hidden="true" />
+						</button>
+						<button type="button" disabled={hasPendingReview} onClick={() => advance(3)}>
+							<span>{ui.demo.threeDays}</span>
+							<Sparkles aria-hidden="true" />
+						</button>
+						<button type="button" disabled={hasPendingReview} onClick={() => advance(4)}>
+							<span>{ui.demo.fourDays}</span>
+							<Sparkles aria-hidden="true" />
+						</button>
 						<button
-							type="submit"
-							disabled={hasPendingReview}
-							aria-label={ui.demo.leap}
+							className={styles.reset}
+							type="button"
+							aria-label={ui.demo.reset}
+							onClick={reset}
 						>
-							<ArrowRight aria-hidden="true" />
+							<RotateCcw aria-hidden="true" />
 						</button>
 					</div>
-				</form>
-				{hasPendingReview ? <p className={styles.hint}>{ui.demo.finishReview}</p> : null}
+					<form
+						className={styles.customJump}
+						data-disabled={hasPendingReview}
+						onSubmit={advanceCustom}
+					>
+						<label className={styles.customCopy} htmlFor={customDaysId}>
+							<span>{ui.demo.customLeap}</span>
+							<small>{ui.demo.customHint}</small>
+						</label>
+						<div className={styles.customControl}>
+							<input
+								id={customDaysId}
+								name="days"
+								type="number"
+								inputMode="numeric"
+								min={1}
+								max={MAX_CUSTOM_DAYS}
+								step={1}
+								defaultValue={DEFAULT_CUSTOM_DAYS}
+								disabled={hasPendingReview}
+								required
+								aria-label={ui.demo.customDaysLabel}
+							/>
+							<span aria-hidden="true">{ui.demo.days}</span>
+							<button
+								type="submit"
+								disabled={hasPendingReview}
+								aria-label={ui.demo.leap}
+							>
+								<ArrowRight aria-hidden="true" />
+							</button>
+						</div>
+					</form>
+					{hasPendingReview ? <p className={styles.hint}>{ui.demo.finishReview}</p> : null}
+				</div>
 			</div>
 		</aside>
 	);
