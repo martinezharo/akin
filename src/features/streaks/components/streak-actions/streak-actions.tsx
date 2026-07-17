@@ -30,7 +30,7 @@ import styles from "./streak-actions.module.css";
 
 type ActionName = "rename" | "adjust" | "delete";
 
-const STARTING_COUNT_HINT_DURATION_MS = 12_000;
+const STARTING_COUNT_HINT_DURATION_MS = 5_000;
 
 type StartingCountHintStyle = CSSProperties & {
 	"--starting-count-hint-duration": string;
