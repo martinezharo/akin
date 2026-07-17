@@ -68,6 +68,13 @@ export const ui = {
 			"Check only the promises you kept every single day. Leave the rest blank. Be kind, but be real.",
 		keepPromise: "That’s the honest version",
 	},
+	undo: {
+		reviewDone: "All caught up — nicely done",
+		deleted: (name: string | null) =>
+			name ? `“${name}” is gone` : "Streak deleted",
+		action: "Undo",
+		dismiss: "Dismiss",
+	},
 	demo: {
 		title: "Pocket time machine",
 		tomorrow: "+1 day",

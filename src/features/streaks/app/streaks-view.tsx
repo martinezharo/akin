@@ -1,7 +1,9 @@
 "use client";
 
+import { Sparkles, Trash2 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { ui } from "@/i18n/en";
+import { UndoToast } from "@/shared/ui/undo-toast";
 import { StreakComposer } from "../components/composer/streak-composer";
 import { StreakList } from "../components/list/streak-list";
 import { StreakReviewFlow } from "../components/review/streak-review";
@@ -51,6 +53,28 @@ export function StreaksView({
 					streaks={controller.streaks}
 					onResolveDay={controller.resolveDay}
 					onResolveGap={controller.resolveGap}
+				/>
+			) : null}
+
+			{controller.undoToast ? (
+				<UndoToast
+					key={controller.undoToast.key}
+					icon={
+						controller.undoToast.kind === "review" ? (
+							<Sparkles aria-hidden="true" />
+						) : (
+							<Trash2 aria-hidden="true" />
+						)
+					}
+					message={
+						controller.undoToast.kind === "review"
+							? ui.undo.reviewDone
+							: ui.undo.deleted(controller.undoToast.name)
+					}
+					actionLabel={ui.undo.action}
+					dismissLabel={ui.undo.dismiss}
+					onUndo={controller.undo}
+					onDismiss={controller.dismissUndo}
 				/>
 			) : null}
 
