@@ -13,12 +13,11 @@ import {
 	type CSSProperties,
 	type FormEvent,
 	type ReactNode,
-	useEffect,
 	useId,
-	useRef,
 	useState,
 } from "react";
 import { ui } from "@/i18n/en";
+import { usePausableTimeout } from "@/shared/hooks/use-pausable-timeout";
 import {
 	useAdaptivePopoverPlacement,
 	usePopover,
@@ -273,30 +272,11 @@ function StartingCountHint({
 	onDismiss: () => void;
 }) {
 	const [isPaused, setIsPaused] = useState(false);
-	const remainingMsRef = useRef(STARTING_COUNT_HINT_DURATION_MS);
-	const onDismissRef = useRef(onDismiss);
-
-	useEffect(() => {
-		onDismissRef.current = onDismiss;
-	}, [onDismiss]);
-
-	useEffect(() => {
-		if (isPaused) return;
-
-		const startedAt = performance.now();
-		const timeout = window.setTimeout(
-			() => onDismissRef.current(),
-			remainingMsRef.current,
-		);
-
-		return () => {
-			window.clearTimeout(timeout);
-			remainingMsRef.current = Math.max(
-				0,
-				remainingMsRef.current - (performance.now() - startedAt),
-			);
-		};
-	}, [isPaused]);
+	usePausableTimeout({
+		durationMs: STARTING_COUNT_HINT_DURATION_MS,
+		paused: isPaused,
+		onTimeout: onDismiss,
+	});
 
 	return (
 		<div
