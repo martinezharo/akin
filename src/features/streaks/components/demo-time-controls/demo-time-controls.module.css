@@ -145,6 +145,10 @@
 	overflow: hidden;
 }
 
+.clock:not([data-collapsed="true"]) .panelContent {
+	overflow: visible;
+}
+
 .clock[data-collapsed="true"] .panel {
 	grid-template-rows: 0fr;
 	padding-top: 0;
