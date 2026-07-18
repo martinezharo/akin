@@ -1,5 +1,5 @@
-const SHELL_CACHE = "akin-shell-v1";
-const RUNTIME_CACHE = "akin-runtime-v1";
+const SHELL_CACHE = "akin-shell-v2";
+const RUNTIME_CACHE = "akin-runtime-v2";
 const APP_SHELL = [
 	"/",
 	"/manifest.webmanifest",
