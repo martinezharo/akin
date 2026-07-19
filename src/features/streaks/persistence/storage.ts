@@ -39,6 +39,14 @@ function isStreaksData(value: unknown): value is StreaksData {
 	);
 }
 
+function readStreaksData(storageKey: string): StreaksData | null {
+	const serializedData = localStorage.getItem(storageKey);
+	if (!serializedData) return null;
+
+	const data: unknown = JSON.parse(serializedData);
+	return isStreaksData(data) ? data : null;
+}
+
 export function createEmptyStreaksData(today: LocalDateKey): StreaksData {
 	return {
 		streaks: [],
@@ -66,11 +74,7 @@ export function loadStreaksData(
 	fallback: StreaksData,
 ): StreaksData {
 	try {
-		const serializedData = localStorage.getItem(storageKey);
-		if (!serializedData) return fallback;
-
-		const data: unknown = JSON.parse(serializedData);
-		return isStreaksData(data) ? data : fallback;
+		return readStreaksData(storageKey) ?? fallback;
 	} catch {
 		return fallback;
 	}
@@ -87,7 +91,16 @@ export function saveStreaksData(storageKey: string, data: StreaksData): void {
 export function loadDemoDate(fallback: LocalDateKey): LocalDateKey {
 	try {
 		const storedDate = localStorage.getItem(DEMO_CLOCK_STORAGE_KEY);
-		return isLocalDateKey(storedDate) ? storedDate : fallback;
+		const date = isLocalDateKey(storedDate) ? storedDate : fallback;
+		const demoData = readStreaksData(DEMO_STREAKS_STORAGE_KEY);
+		if (!demoData) return date;
+
+		// The clock and streak data live in separate keys. If a browser restores,
+		// evicts or writes only one of them, the clock can end up behind the last
+		// completed review and time travel appears to do nothing. Move it to the
+		// first valid day without discarding the user's demo progress.
+		const firstDayAfterReview = addLocalDays(demoData.lastReviewedOn, 1);
+		return date < firstDayAfterReview ? firstDayAfterReview : date;
 	} catch {
 		return fallback;
 	}

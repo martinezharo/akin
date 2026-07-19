@@ -1,5 +1,5 @@
-const SHELL_CACHE = "akin-shell-v2";
-const RUNTIME_CACHE = "akin-runtime-v2";
+const SHELL_CACHE = "akin-shell-v3";
+const RUNTIME_CACHE = "akin-runtime-v3";
 const APP_SHELL = [
 	"/",
 	"/manifest.webmanifest",
@@ -9,7 +9,13 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", (event) => {
-	event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL)));
+	event.waitUntil(
+		caches
+			.open(SHELL_CACHE)
+			.then((cache) =>
+				cache.addAll(APP_SHELL.map((url) => new Request(url, { cache: "reload" }))),
+			),
+	);
 	self.skipWaiting();
 });
 
@@ -38,7 +44,7 @@ self.addEventListener("fetch", (event) => {
 
 	if (request.mode === "navigate") {
 		event.respondWith(
-			fetch(request)
+			fetch(new Request(request, { cache: "no-store" }))
 				.then((response) => {
 					if (response.ok) {
 						const copy = response.clone();
@@ -53,18 +59,20 @@ self.addEventListener("fetch", (event) => {
 
 	if (["font", "image", "script", "style", "worker"].includes(request.destination)) {
 		event.respondWith(
-			caches.match(request).then((cachedResponse) => {
+			caches.open(RUNTIME_CACHE).then(async (cache) => {
+				const cachedResponse = await cache.match(request);
 				const networkResponse = fetch(request)
 					.then((response) => {
 						if (response.ok) {
 							const copy = response.clone();
-							event.waitUntil(
-								caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)),
-							);
+							event.waitUntil(cache.put(request, copy));
 						}
 						return response;
 					})
-					.catch(() => cachedResponse);
+					.catch((error) => {
+						if (cachedResponse) return cachedResponse;
+						throw error;
+					});
 
 				return cachedResponse ?? networkResponse;
 			}),

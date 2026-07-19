@@ -2,6 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { LocalDateKey } from "../model/calendar";
 import {
 	createEmptyStreaksData,
+	DEMO_CLOCK_STORAGE_KEY,
+	DEMO_STREAKS_STORAGE_KEY,
+	loadDemoDate,
 	loadStreaksData,
 	saveStreaksData,
 	STREAKS_STORAGE_KEY,
@@ -60,5 +63,25 @@ describe("streak storage", () => {
 
 		expect(loadStreaksData(STREAKS_STORAGE_KEY, fallback)).toBe(fallback);
 		expect(() => saveStreaksData(STREAKS_STORAGE_KEY, fallback)).not.toThrow();
+	});
+
+	it("repairs a demo clock that is behind its persisted reviews", () => {
+		localStorage.setItem(DEMO_CLOCK_STORAGE_KEY, "2026-07-16");
+		saveStreaksData(DEMO_STREAKS_STORAGE_KEY, {
+			...createEmptyStreaksData("2026-07-24"),
+			lastReviewedOn: "2026-07-22",
+		});
+
+		expect(loadDemoDate("2026-07-19")).toBe("2026-07-23");
+	});
+
+	it("keeps a demo clock that is already ahead of its reviews", () => {
+		localStorage.setItem(DEMO_CLOCK_STORAGE_KEY, "2026-08-01");
+		saveStreaksData(DEMO_STREAKS_STORAGE_KEY, {
+			...createEmptyStreaksData("2026-07-24"),
+			lastReviewedOn: "2026-07-22",
+		});
+
+		expect(loadDemoDate("2026-07-19")).toBe("2026-08-01");
 	});
 });

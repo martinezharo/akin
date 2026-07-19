@@ -46,7 +46,9 @@ export function InstallApp() {
 
 	useEffect(() => {
 		if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
-			void navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+			void navigator.serviceWorker
+				.register("/sw.js", { updateViaCache: "none" })
+				.catch(() => undefined);
 		}
 
 		function rememberInstallPrompt(event: Event) {
