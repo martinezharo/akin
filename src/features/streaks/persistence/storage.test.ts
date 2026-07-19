@@ -48,6 +48,31 @@ describe("streak storage", () => {
 		expect(loadStreaksData(STREAKS_STORAGE_KEY, fallback)).toEqual(data);
 	});
 
+	it("keeps existing streaks when loading data saved before check-ins", () => {
+		const fallback = createEmptyStreaksData("2026-07-16");
+		localStorage.setItem(
+			STREAKS_STORAGE_KEY,
+			JSON.stringify({
+				streaks: [
+					{
+						id: "read",
+						name: "Read",
+						icon: "📚",
+						days: 3,
+						createdOn: "2026-07-10",
+					},
+				],
+				recentIcons: ["📚"],
+				lastReviewedOn: "2026-07-15",
+			}),
+		);
+
+		expect(loadStreaksData(STREAKS_STORAGE_KEY, fallback)).toMatchObject({
+			streaks: [{ id: "read", days: 3 }],
+			checkIns: [],
+		});
+	});
+
 	it("falls back when persisted data does not match the schema", () => {
 		const fallback = createEmptyStreaksData("2026-07-16");
 		localStorage.setItem(STREAKS_STORAGE_KEY, JSON.stringify({ streaks: "broken" }));

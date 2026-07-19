@@ -100,6 +100,9 @@ export function StreakList({
 	onRemove,
 	adjustHintStreakId,
 	onDismissAdjustHint,
+	completedTodayStreakIds = [],
+	celebratingStreakId = null,
+	onCompleteToday,
 }: {
 	streaks: Streak[];
 	iconOptions: readonly StreakIconOption[];
@@ -109,8 +112,12 @@ export function StreakList({
 	onRemove: (streakId: string) => void;
 	adjustHintStreakId: string | null;
 	onDismissAdjustHint: () => void;
+	completedTodayStreakIds?: readonly string[];
+	celebratingStreakId?: string | null;
+	onCompleteToday?: (streakId: string) => void;
 }) {
 	const isEmpty = streaks.length === 0;
+	const completedTodayIds = new Set(completedTodayStreakIds);
 
 	return (
 		<>
@@ -123,7 +130,10 @@ export function StreakList({
 				{isEmpty ? (
 					<EmptyStreakPreview />
 				) : (
-					streaks.map((streak) => (
+					streaks.map((streak) => {
+						const completedToday = completedTodayIds.has(streak.id);
+
+						return (
 						<li className={styles.row} key={streak.id}>
 							<StreakIconPicker
 								value={streak.icon}
@@ -135,6 +145,18 @@ export function StreakList({
 							<StreakBadge
 								days={streak.days}
 								ariaLabel={ui.streaks.currentCountLabel(streak.days)}
+								completed={completedToday}
+								celebrating={celebratingStreakId === streak.id}
+								completeLabel={ui.streaks.completeToday(streak.name, streak.days)}
+								completedLabel={ui.streaks.completedToday(
+									streak.name,
+									streak.days,
+								)}
+								onComplete={
+									onCompleteToday
+										? () => onCompleteToday(streak.id)
+										: undefined
+								}
 							/>
 							<StreakActions
 								streak={streak}
@@ -145,7 +167,8 @@ export function StreakList({
 								onDismissAdjustHint={onDismissAdjustHint}
 							/>
 						</li>
-					))
+						);
+					})
 				)}
 			</ul>
 		</>

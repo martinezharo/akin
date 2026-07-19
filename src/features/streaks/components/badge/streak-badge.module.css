@@ -17,6 +17,205 @@
 .value {
 	position: relative;
 	z-index: 2;
+	transition:
+		opacity 240ms ease,
+		transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.actionBadge {
+	appearance: none;
+	margin: 0;
+	font-family: inherit;
+	cursor: pointer;
+	transition:
+		background 260ms ease,
+		border-color 260ms ease,
+		box-shadow 260ms ease,
+		color 260ms ease,
+		filter 180ms ease,
+		transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+	-webkit-tap-highlight-color: transparent;
+}
+
+.actionBadge:disabled {
+	opacity: 1;
+	cursor: default;
+}
+
+.actionBadge:not(:disabled):hover {
+	filter: brightness(1.055) saturate(1.08);
+}
+
+.actionBadge:not(:disabled):active .value {
+	transform: translateY(0.06rem) scale(0.94);
+}
+
+.actionBadge:focus-visible {
+	outline: 3px solid color-mix(in srgb, #f7aa28 70%, white);
+	outline-offset: 0.26rem;
+}
+
+.actionBadge[data-completed="false"] {
+	animation-play-state: paused;
+}
+
+.actionBadge[data-completed="false"]::before,
+.actionBadge[data-completed="false"]::after {
+	animation-play-state: paused;
+}
+
+.actionBadge[data-completed="false"]:hover {
+	filter: brightness(1.035) saturate(1.04);
+	transform: translateY(-0.08rem);
+}
+
+.pendingVeil {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	border-radius: inherit;
+	background: color-mix(in srgb, var(--background) 46%, transparent);
+	backdrop-filter: saturate(0.46);
+	opacity: 0;
+	pointer-events: none;
+	transition:
+		opacity 240ms ease,
+		backdrop-filter 240ms ease;
+}
+
+.actionBadge[data-completed="false"] .pendingVeil {
+	opacity: 0.76;
+}
+
+.actionBadge[data-completed="false"] .value {
+	opacity: 0.78;
+}
+
+.actionBadge[data-completed="false"][data-tier="god"] .value {
+	opacity: 0.9;
+}
+
+.actionBadge[data-completed="false"]:hover .pendingVeil,
+.actionBadge[data-completed="false"]:focus-visible .pendingVeil {
+	opacity: 0.25;
+	backdrop-filter: saturate(0.9);
+}
+
+.actionBadge[data-completed="false"]:hover .value,
+.actionBadge[data-completed="false"]:focus-visible .value {
+	opacity: 0.96;
+}
+
+.completionSeal {
+	position: absolute;
+	top: -0.38rem;
+	right: -0.42rem;
+	z-index: 4;
+	display: grid;
+	width: 1.18rem;
+	height: 1.18rem;
+	place-items: center;
+	border: 2px solid var(--background);
+	border-radius: 999px;
+	transition:
+		border-color 180ms ease,
+		background-color 220ms ease,
+		box-shadow 220ms ease,
+		color 220ms ease,
+		transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.completionSeal svg {
+	width: 0.67rem;
+	height: 0.67rem;
+	fill: none;
+	stroke-width: 3.4;
+	transition:
+		opacity 160ms ease,
+		transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.actionBadge[data-completed="false"] .completionSeal {
+	border: 0.13rem dashed #d49a38;
+	background: color-mix(in srgb, var(--background) 92%, #fff6dc);
+	box-shadow: 0 3px 9px rgb(127 79 12 / 14%);
+	color: #9c6411;
+	animation: completion-cue 2.6s ease-in-out infinite;
+}
+
+.actionBadge[data-completed="false"] .completionSeal svg {
+	opacity: 0;
+	transform: scale(0.48) rotate(-12deg);
+}
+
+.actionBadge[data-completed="false"]:hover .completionSeal,
+.actionBadge[data-completed="false"]:focus-visible .completionSeal {
+	border-color: #c8841d;
+	border-style: solid;
+	background: linear-gradient(145deg, #fff4ce, #ffd77f 76%);
+	box-shadow: 0 5px 12px rgb(159 96 13 / 26%);
+	transform: rotate(-6deg) scale(1.1);
+	animation-play-state: paused;
+}
+
+.actionBadge[data-completed="false"]:hover .completionSeal svg,
+.actionBadge[data-completed="false"]:focus-visible .completionSeal svg {
+	opacity: 1;
+	transform: scale(1) rotate(0deg);
+}
+
+.actionBadge[data-completed="true"] .completionSeal {
+	background: linear-gradient(145deg, #93ed86, #40b95d 72%);
+	box-shadow:
+		0 4px 10px rgb(33 130 65 / 30%),
+		inset 0 1px 0 rgb(255 255 255 / 60%);
+	color: #092c17;
+	transform: rotate(-7deg);
+}
+
+.value[data-celebrating="true"] {
+	animation: completion-count-pop 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.actionBadge[data-celebrating="true"] .completionSeal {
+	animation: completion-seal-pop 720ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.completionBurst {
+	position: absolute;
+	top: -0.34rem;
+	right: -0.38rem;
+	z-index: 3;
+	width: 1.1rem;
+	height: 1.1rem;
+	pointer-events: none;
+}
+
+.completionBurst span {
+	--burst-angle: 0deg;
+
+	position: absolute;
+	top: 50%;
+	left: calc(50% - 1px);
+	width: 2px;
+	height: 0.38rem;
+	border-radius: 999px;
+	background: #f4b43f;
+	opacity: 0;
+	transform: rotate(var(--burst-angle)) translateY(-0.42rem) scaleY(0.25);
+	transform-origin: 50% 0.55rem;
+}
+
+.completionBurst span:nth-child(2) { --burst-angle: 45deg; }
+.completionBurst span:nth-child(3) { --burst-angle: 90deg; }
+.completionBurst span:nth-child(4) { --burst-angle: 135deg; }
+.completionBurst span:nth-child(5) { --burst-angle: 180deg; }
+.completionBurst span:nth-child(6) { --burst-angle: 225deg; }
+.completionBurst span:nth-child(7) { --burst-angle: 270deg; }
+.completionBurst span:nth-child(8) { --burst-angle: 315deg; }
+
+.actionBadge[data-celebrating="true"] .completionBurst span {
+	animation: completion-ray 680ms ease-out both;
 }
 
 .glass {
@@ -143,6 +342,62 @@
 	}
 }
 
+@keyframes completion-cue {
+	0%,
+	100% {
+		box-shadow:
+			0 3px 9px rgb(127 79 12 / 14%),
+			0 0 0 0 rgb(230 166 61 / 18%);
+	}
+	50% {
+		box-shadow:
+			0 4px 10px rgb(127 79 12 / 18%),
+			0 0 0 0.2rem rgb(230 166 61 / 0%);
+	}
+}
+
+@keyframes completion-count-pop {
+	0% {
+		opacity: 0.35;
+		transform: translateY(0.35rem) scale(0.72);
+	}
+	55% {
+		opacity: 1;
+		transform: translateY(-0.08rem) scale(1.18);
+	}
+	100% {
+		transform: none;
+	}
+}
+
+@keyframes completion-seal-pop {
+	0% {
+		opacity: 0;
+		transform: rotate(-35deg) scale(0.25);
+	}
+	58% {
+		opacity: 1;
+		transform: rotate(4deg) scale(1.34);
+	}
+	100% {
+		transform: rotate(-7deg) scale(1);
+	}
+}
+
+@keyframes completion-ray {
+	0% {
+		opacity: 0;
+		transform: rotate(var(--burst-angle)) translateY(-0.35rem) scaleY(0.2);
+	}
+	32% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		transform: rotate(var(--burst-angle)) translateY(-1.02rem) scaleY(1);
+	}
+}
+
 @media (prefers-color-scheme: dark) {
 	.glass {
 		border-color: rgb(255 255 255 / 20%);
@@ -154,6 +409,10 @@
 		color: #d9ddda;
 		text-shadow: 0 1px 0 rgb(0 0 0 / 45%);
 	}
+
+	.pendingVeil {
+		background: rgb(7 8 8 / 38%);
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -161,5 +420,19 @@
 	.god::before,
 	.god::after {
 		animation: none;
+	}
+
+	.actionBadge[data-completed="false"] .completionSeal,
+	.value[data-celebrating="true"],
+	.actionBadge[data-celebrating="true"] .completionSeal,
+	.actionBadge[data-celebrating="true"] .completionBurst span {
+		animation: none;
+	}
+
+	.pendingVeil,
+	.value,
+	.completionSeal,
+	.completionSeal svg {
+		transition: none;
 	}
 }

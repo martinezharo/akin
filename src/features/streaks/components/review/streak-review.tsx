@@ -15,6 +15,7 @@ type ReviewFlowProps = {
 	streaks: Streak[];
 	onResolveDay: (day: LocalDateKey, answers: ReviewAnswers) => void;
 	onResolveGap: (days: LocalDateKey[], answers: ReviewAnswers) => void;
+	isCompletedOn: (streakId: string, day: LocalDateKey) => boolean;
 };
 
 function useChecklistAnswers(streaks: Streak[]) {
@@ -179,6 +180,7 @@ export function StreakReviewFlow({
 	streaks,
 	onResolveDay,
 	onResolveGap,
+	isCompletedOn,
 }: ReviewFlowProps) {
 	const initialDayCount = useState(days.length)[0];
 	const titleId = useId();
@@ -187,7 +189,9 @@ export function StreakReviewFlow({
 	if (!day) return null;
 
 	const isGapReview = initialDayCount > 3;
-	const eligibleStreaks = streaks.filter((streak) => streak.createdOn <= day);
+	const eligibleStreaks = streaks.filter(
+		(streak) => streak.createdOn <= day && !isCompletedOn(streak.id, day),
+	);
 
 	return (
 		<ModalDialog className={styles.dialog} labelledBy={titleId}>

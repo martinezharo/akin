@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ui } from "@/i18n/en";
 import type { Streak } from "../../model/streak";
@@ -69,5 +69,47 @@ describe("streak list", () => {
 			/>,
 		);
 		expect(screen.getByText(ui.streaks.newStreakHint)).toBeTruthy();
+	});
+
+	it("keeps the streak count visible while completing today", () => {
+		const onCompleteToday = vi.fn();
+		const streak: Streak = {
+			id: "reading",
+			name: "Read every day",
+			icon: "📚",
+			days: 24,
+			createdOn: "2026-07-16",
+		};
+		const { rerender } = render(
+			<StreakList
+				streaks={[streak]}
+				iconOptions={options}
+				{...actions}
+				onCompleteToday={onCompleteToday}
+			/>,
+		);
+
+		const completeButton = screen.getByRole("button", {
+			name: ui.streaks.completeToday(streak.name, streak.days),
+		});
+		expect(completeButton.textContent).toContain("24");
+		fireEvent.click(completeButton);
+		expect(onCompleteToday).toHaveBeenCalledWith(streak.id);
+
+		rerender(
+			<StreakList
+				streaks={[{ ...streak, days: 25 }]}
+				iconOptions={options}
+				{...actions}
+				onCompleteToday={onCompleteToday}
+				completedTodayStreakIds={[streak.id]}
+			/>,
+		);
+
+		const completedButton = screen.getByRole("button", {
+			name: ui.streaks.completedToday(streak.name, 25),
+		});
+		expect(completedButton.textContent).toContain("25");
+		expect((completedButton as HTMLButtonElement).disabled).toBe(true);
 	});
 });

@@ -8,7 +8,13 @@ import {
 	type StreakIconValue,
 } from "../components/icon-picker/streak-icons";
 import { addLocalDays, getUnreviewedDays, type LocalDateKey } from "../model/calendar";
-import { resolveGap, resolveSingleDay, type ReviewAnswers } from "../model/progress";
+import { hasStreakCheckIn } from "../model/check-in";
+import {
+	completeStreakOn,
+	resolveGap,
+	resolveSingleDay,
+	type ReviewAnswers,
+} from "../model/progress";
 import {
 	adjustStreakDays,
 	createStreak,
@@ -29,8 +35,8 @@ type StreaksControllerOptions = {
 
 export type UndoToast = {
 	key: number;
-	kind: "review" | "delete";
-	/** Name of the deleted streak, when the toast was triggered by a deletion. */
+	kind: "review" | "delete" | "today";
+	/** Name of the affected streak, when the toast relates to a single streak. */
 	name: string | null;
 };
 
@@ -41,6 +47,7 @@ type UndoToastState = UndoToast & {
 export type StreaksController = {
 	today: LocalDateKey;
 	streaks: Streak[];
+	completedTodayStreakIds: string[];
 	iconOptions: StreakIconOption[];
 	unreviewedDays: LocalDateKey[];
 	hasPendingReview: boolean;
@@ -51,6 +58,8 @@ export type StreaksController = {
 	rename: (streakId: string, name: string) => void;
 	adjustDays: (streakId: string, days: number) => void;
 	remove: (streakId: string) => void;
+	completeToday: (streakId: string) => void;
+	isCompletedOn: (streakId: string, day: LocalDateKey) => boolean;
 	resolveDay: (day: LocalDateKey, answers: ReviewAnswers) => void;
 	resolveGap: (days: LocalDateKey[], answers: ReviewAnswers) => void;
 	undo: () => void;
@@ -88,8 +97,17 @@ export function useStreaksController({
 		saveStreaksData(storageKey, data);
 	}, [data, storageKey]);
 
-	const unreviewedDays = getUnreviewedDays(data.lastReviewedOn, today);
+	const unreviewedDays = getUnreviewedDays(data.lastReviewedOn, today).filter((day) =>
+		data.streaks.some(
+			(streak) =>
+				streak.createdOn <= day &&
+				!hasStreakCheckIn(data.checkIns, streak.id, day),
+		),
+	);
 	const hasPendingReview = data.streaks.length > 0 && unreviewedDays.length > 0;
+	const completedTodayStreakIds = data.streaks.flatMap((streak) =>
+		hasStreakCheckIn(data.checkIns, streak.id, today) ? [streak.id] : [],
+	);
 
 	const openUndoToast = useCallback(
 		(toast: Omit<UndoToast, "key">, snapshot: StreaksData) => {
@@ -167,6 +185,7 @@ export function useStreaksController({
 	return {
 		today,
 		streaks: data.streaks,
+		completedTodayStreakIds,
 		iconOptions: getStreakIconOptions(data.recentIcons),
 		unreviewedDays,
 		hasPendingReview,
@@ -194,8 +213,20 @@ export function useStreaksController({
 			setData((currentData) => ({
 				...currentData,
 				streaks: currentData.streaks.filter((streak) => streak.id !== streakId),
+				checkIns: currentData.checkIns.filter(
+					(checkIn) => checkIn.streakId !== streakId,
+				),
 			}));
 		},
+		completeToday: (streakId) => {
+			const streak = data.streaks.find((candidate) => candidate.id === streakId);
+			if (!streak || hasStreakCheckIn(data.checkIns, streakId, today)) return;
+
+			openUndoToast({ kind: "today", name: streak.name }, data);
+			setData((currentData) => completeStreakOn(currentData, streakId, today));
+		},
+		isCompletedOn: (streakId, day) =>
+			hasStreakCheckIn(data.checkIns, streakId, day),
 		resolveDay: (day, answers) => {
 			captureReviewSnapshot();
 			setData((currentData) => resolveSingleDay(currentData, day, answers));

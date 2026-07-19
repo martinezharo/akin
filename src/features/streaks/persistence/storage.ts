@@ -1,8 +1,10 @@
 import { addLocalDays, isLocalDateKey, type LocalDateKey } from "../model/calendar";
+import type { StreakCheckIn } from "../model/check-in";
 import type { Streak } from "../model/streak";
 
 export type StreaksData = {
 	streaks: Streak[];
+	checkIns: StreakCheckIn[];
 	recentIcons: string[];
 	lastReviewedOn: LocalDateKey;
 };
@@ -26,17 +28,37 @@ function isStreak(value: unknown): value is Streak {
 	);
 }
 
-function isStreaksData(value: unknown): value is StreaksData {
+function isStreakCheckIn(value: unknown): value is StreakCheckIn {
 	if (!value || typeof value !== "object") return false;
 
+	const checkIn = value as Partial<StreakCheckIn>;
+	return typeof checkIn.streakId === "string" && isLocalDateKey(checkIn.completedOn);
+}
+
+function parseStreaksData(value: unknown): StreaksData | null {
+	if (!value || typeof value !== "object") return null;
+
 	const data = value as Partial<StreaksData>;
-	return (
-		Array.isArray(data.streaks) &&
-		data.streaks.every(isStreak) &&
-		Array.isArray(data.recentIcons) &&
-		data.recentIcons.every((icon) => typeof icon === "string") &&
-		isLocalDateKey(data.lastReviewedOn)
-	);
+	if (
+		!Array.isArray(data.streaks) ||
+		!data.streaks.every(isStreak) ||
+		!Array.isArray(data.recentIcons) ||
+		!data.recentIcons.every((icon) => typeof icon === "string") ||
+		!isLocalDateKey(data.lastReviewedOn)
+	) {
+		return null;
+	}
+
+	const checkIns = data.checkIns ?? [];
+	if (!Array.isArray(checkIns) || !checkIns.every(isStreakCheckIn)) return null;
+
+	const streakIds = new Set(data.streaks.map((streak) => streak.id));
+	return {
+		streaks: data.streaks,
+		checkIns: checkIns.filter((checkIn) => streakIds.has(checkIn.streakId)),
+		recentIcons: data.recentIcons,
+		lastReviewedOn: data.lastReviewedOn,
+	};
 }
 
 function readStreaksData(storageKey: string): StreaksData | null {
@@ -44,12 +66,13 @@ function readStreaksData(storageKey: string): StreaksData | null {
 	if (!serializedData) return null;
 
 	const data: unknown = JSON.parse(serializedData);
-	return isStreaksData(data) ? data : null;
+	return parseStreaksData(data);
 }
 
 export function createEmptyStreaksData(today: LocalDateKey): StreaksData {
 	return {
 		streaks: [],
+		checkIns: [],
 		recentIcons: [],
 		lastReviewedOn: addLocalDays(today, -1),
 	};
@@ -64,6 +87,7 @@ export function createDemoStreaksData(today: LocalDateKey): StreaksData {
 			{ id: "demo-read", name: "Read ten pages", icon: "📚", days: 24, createdOn },
 			{ id: "demo-sleep", name: "Phone-free bedtime", icon: "🌙", days: 103, createdOn },
 		],
+		checkIns: [],
 		recentIcons: ["🏃", "📚", "🌙"],
 		lastReviewedOn: addLocalDays(today, -1),
 	};

@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import styles from "./streak-badge.module.css";
 import { APP_LOCALE } from "@/i18n/config";
 
@@ -15,6 +16,7 @@ const tierClassNames: Record<StreakBadgeTier, string> = {
 };
 
 const streakCountFormatter = new Intl.NumberFormat(APP_LOCALE);
+const COMPLETION_BURST_RAYS = Array.from({ length: 8 }, (_, index) => index);
 
 export function getStreakBadgeTier(days: number): StreakBadgeTier {
 	if (days >= GOD_STREAK_MIN_DAYS) return "god";
@@ -23,16 +25,58 @@ export function getStreakBadgeTier(days: number): StreakBadgeTier {
 	return "glass";
 }
 
-export function StreakBadge({ days, ariaLabel }: { days: number; ariaLabel: string }) {
+export function StreakBadge({
+	days,
+	ariaLabel,
+	completed = false,
+	celebrating = false,
+	completeLabel,
+	completedLabel,
+	onComplete,
+}: {
+	days: number;
+	ariaLabel: string;
+	completed?: boolean;
+	celebrating?: boolean;
+	completeLabel?: string;
+	completedLabel?: string;
+	onComplete?: () => void;
+}) {
 	const tier = getStreakBadgeTier(days);
+	const className = `${styles.badge} ${tierClassNames[tier]}`;
+
+	if (!onComplete) {
+		return (
+			<span className={className} data-tier={tier} aria-label={ariaLabel}>
+				<span className={styles.value}>{streakCountFormatter.format(days)}</span>
+			</span>
+		);
+	}
 
 	return (
-		<span
-			className={`${styles.badge} ${tierClassNames[tier]}`}
+		<button
+			className={`${className} ${styles.actionBadge}`}
+			type="button"
 			data-tier={tier}
-			aria-label={ariaLabel}
+			data-completed={completed}
+			data-celebrating={celebrating}
+			aria-label={completed ? completedLabel : completeLabel}
+			aria-pressed={completed}
+			disabled={completed}
+			onClick={onComplete}
 		>
-			<span className={styles.value}>{streakCountFormatter.format(days)}</span>
-		</span>
+			<span className={styles.pendingVeil} aria-hidden="true" />
+			<span className={styles.value} data-celebrating={celebrating}>
+				{streakCountFormatter.format(days)}
+			</span>
+			<span className={styles.completionSeal} aria-hidden="true">
+				<Check />
+			</span>
+			<span className={styles.completionBurst} aria-hidden="true">
+				{COMPLETION_BURST_RAYS.map((ray) => (
+					<span key={ray} />
+				))}
+			</span>
+		</button>
 	);
 }

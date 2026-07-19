@@ -10,6 +10,7 @@ const today: LocalDateKey = "2026-07-17";
 
 function createData(overrides: Partial<StreaksData> = {}): StreaksData {
 	return {
+		checkIns: [],
 		streaks: [
 			{
 				id: "read",
@@ -47,6 +48,44 @@ beforeEach(() => {
 });
 
 describe("streaks controller undo", () => {
+	it("completes today immediately and can undo it", () => {
+		const { result } = renderController();
+
+		act(() => result.current.completeToday("read"));
+		expect(result.current.completedTodayStreakIds).toContain("read");
+		expect(result.current.streaks.find((streak) => streak.id === "read")?.days).toBe(
+			25,
+		);
+		expect(result.current.undoToast).toMatchObject({
+			kind: "today",
+			name: "Read ten pages",
+		});
+
+		act(() => result.current.completeToday("read"));
+		expect(result.current.streaks.find((streak) => streak.id === "read")?.days).toBe(
+			25,
+		);
+
+		act(() => result.current.undo());
+		expect(result.current.completedTodayStreakIds).not.toContain("read");
+		expect(result.current.streaks.find((streak) => streak.id === "read")?.days).toBe(
+			24,
+		);
+	});
+
+	it("omits an already completed streak from the following review", () => {
+		const { result } = renderController(
+			createData({
+				lastReviewedOn: "2026-07-15",
+				checkIns: [{ streakId: "read", completedOn: "2026-07-16" }],
+			}),
+		);
+
+		expect(result.current.unreviewedDays).toEqual(["2026-07-16"]);
+		expect(result.current.isCompletedOn("read", "2026-07-16")).toBe(true);
+		expect(result.current.isCompletedOn("move", "2026-07-16")).toBe(false);
+	});
+
 	it("restores a deleted streak when undoing", () => {
 		const { result } = renderController();
 

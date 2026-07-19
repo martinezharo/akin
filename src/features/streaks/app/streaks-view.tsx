@@ -1,7 +1,7 @@
 "use client";
 
-import { Sparkles, Trash2 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { CircleCheckBig, Sparkles, Trash2 } from "lucide-react";
+import { type ReactNode, useEffect, useState } from "react";
 import { ui } from "@/i18n/en";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import { StreakComposer } from "../components/composer/streak-composer";
@@ -18,10 +18,23 @@ export function StreaksView({
 	children?: ReactNode;
 }) {
 	const [adjustHintStreakId, setAdjustHintStreakId] = useState<string | null>(null);
+	const [celebratingStreakId, setCelebratingStreakId] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!celebratingStreakId) return;
+
+		const timeout = setTimeout(() => setCelebratingStreakId(null), 900);
+		return () => clearTimeout(timeout);
+	}, [celebratingStreakId]);
 
 	function createStreak(...args: Parameters<StreaksController["create"]>) {
 		const streakId = controller.create(...args);
 		setAdjustHintStreakId(streakId);
+	}
+
+	function completeToday(streakId: string) {
+		setCelebratingStreakId(streakId);
+		controller.completeToday(streakId);
 	}
 
 	return (
@@ -44,6 +57,9 @@ export function StreaksView({
 					onRemove={controller.remove}
 					adjustHintStreakId={adjustHintStreakId}
 					onDismissAdjustHint={() => setAdjustHintStreakId(null)}
+					completedTodayStreakIds={controller.completedTodayStreakIds}
+					celebratingStreakId={celebratingStreakId}
+					onCompleteToday={completeToday}
 				/>
 			</section>
 
@@ -53,6 +69,7 @@ export function StreaksView({
 					streaks={controller.streaks}
 					onResolveDay={controller.resolveDay}
 					onResolveGap={controller.resolveGap}
+					isCompletedOn={controller.isCompletedOn}
 				/>
 			) : null}
 
@@ -62,6 +79,8 @@ export function StreaksView({
 					icon={
 						controller.undoToast.kind === "review" ? (
 							<Sparkles aria-hidden="true" />
+						) : controller.undoToast.kind === "today" ? (
+							<CircleCheckBig aria-hidden="true" />
 						) : (
 							<Trash2 aria-hidden="true" />
 						)
@@ -69,7 +88,9 @@ export function StreaksView({
 					message={
 						controller.undoToast.kind === "review"
 							? ui.undo.reviewDone
-							: ui.undo.deleted(controller.undoToast.name)
+							: controller.undoToast.kind === "today"
+								? ui.undo.completedToday(controller.undoToast.name)
+								: ui.undo.deleted(controller.undoToast.name)
 					}
 					actionLabel={ui.undo.action}
 					dismissLabel={ui.undo.dismiss}

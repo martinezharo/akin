@@ -39,6 +39,7 @@ describe("streak review", () => {
 				streaks={streaks}
 				onResolveDay={onResolveDay}
 				onResolveGap={vi.fn()}
+				isCompletedOn={() => false}
 			/>,
 		);
 
@@ -60,6 +61,7 @@ describe("streak review", () => {
 				streaks={streaks}
 				onResolveDay={onResolveDay}
 				onResolveGap={vi.fn()}
+				isCompletedOn={() => false}
 			/>,
 		);
 
@@ -77,6 +79,7 @@ describe("streak review", () => {
 				streaks={streaks}
 				onResolveDay={vi.fn()}
 				onResolveGap={onResolveGap}
+				isCompletedOn={() => false}
 			/>,
 		);
 
@@ -95,6 +98,7 @@ describe("streak review", () => {
 			streaks,
 			onResolveDay: vi.fn(),
 			onResolveGap: vi.fn(),
+			isCompletedOn: () => false,
 		};
 		const { rerender } = render(
 			<StreakReviewFlow
@@ -110,5 +114,21 @@ describe("streak review", () => {
 
 		rerender(<StreakReviewFlow {...props} days={["2026-07-15"]} />);
 		expect(screen.getByText(/One last look back/)).toBeTruthy();
+	});
+
+	it("hides streaks that were already completed on the reviewed day", () => {
+		render(
+			<StreakReviewFlow
+				days={["2026-07-15"]}
+				streaks={streaks}
+				onResolveDay={vi.fn()}
+				onResolveGap={vi.fn()}
+				isCompletedOn={(streakId, day) =>
+					streakId === "read" && day === "2026-07-15"
+				}
+			/>,
+		);
+
+		expect(screen.queryByRole("checkbox", { name: "Did you complete Read?" })).toBeNull();
 	});
 });

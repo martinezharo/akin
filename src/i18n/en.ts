@@ -19,6 +19,10 @@ export const ui = {
 			progress: "Make a little progress",
 		},
 		currentCountLabel: (days: number) => `Current streak: ${days}`,
+		completeToday: (name: string, days: number) =>
+			`Complete ${name} for today. Current streak: ${days}`,
+		completedToday: (name: string, days: number) =>
+			`${name} completed today. Current streak: ${days}`,
 		openActions: (name: string) => `Actions for ${name}`,
 		actionsLabel: (name: string) => `${name} actions`,
 		renameAction: "Rename",
@@ -70,6 +74,8 @@ export const ui = {
 	},
 	undo: {
 		reviewDone: "All caught up — nicely done",
+		completedToday: (name: string | null) =>
+			name ? `“${name}” counts today` : "Today counts",
 		deleted: (name: string | null) =>
 			name ? `“${name}” is gone` : "Streak deleted",
 		action: "Undo",
