@@ -20,8 +20,30 @@
 	color-scheme: light;
 }
 
+:root[data-theme="dark"] {
+	--background: #050505;
+	--foreground: #f7f8f3;
+	--muted: #8b8e87;
+	--line: #292b27;
+	--button-background: #f4f5f0;
+	--button-foreground: #0b0c0a;
+	--accent: #ff7540;
+	--selection: #9d341e;
+	--selection-foreground: #ffffff;
+	--icon-background: #171815;
+	--icon-hover: #252720;
+	--custom-icon-background: #241a12;
+	--popover-background: rgb(17 18 15 / 94%);
+	--popover-shadow: 0 22px 54px rgb(0 0 0 / 54%), 0 2px 8px rgb(0 0 0 / 36%);
+	color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+	color-scheme: light;
+}
+
 @media (prefers-color-scheme: dark) {
-	:root {
+	:root:not([data-theme]) {
 		--background: #050505;
 		--foreground: #f7f8f3;
 		--muted: #8b8e87;
@@ -62,6 +84,7 @@ body {
 
 button,
 input,
+select,
 dialog {
 	font: inherit;
 }

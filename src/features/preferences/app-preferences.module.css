@@ -1,0 +1,134 @@
+.trigger {
+	position: fixed;
+	z-index: 90;
+	top: max(0.85rem, env(safe-area-inset-top));
+	right: max(0.85rem, env(safe-area-inset-right));
+	display: grid;
+	width: 3.175rem;
+	height: 3.175rem;
+	place-items: center;
+	padding: 0;
+	border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+	border-radius: 1.15rem;
+	background: color-mix(in srgb, var(--background) 88%, transparent);
+	box-shadow: 0 0.65rem 1.8rem rgb(20 22 17 / 10%), inset 0 1px 0 rgb(255 255 255 / 40%);
+	color: var(--foreground);
+	backdrop-filter: blur(18px) saturate(140%);
+	cursor: pointer;
+	transition: border-radius var(--motion-standard), color var(--motion-standard), transform var(--motion-spring);
+}
+
+.trigger:hover { border-radius: 50%; color: var(--accent); transform: rotate(8deg) translateY(-1px); }
+.trigger:active { transform: rotate(4deg) scale(0.94); }
+.trigger svg { width: 1.1rem; height: 1.1rem; stroke-width: 2.7; }
+
+.dialog {
+	position: fixed;
+	z-index: 300;
+	inset: 0;
+	display: none;
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	max-height: none;
+	place-items: center;
+	margin: 0;
+	padding: max(0.75rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+	border: 0;
+	background: transparent;
+	color: var(--foreground);
+}
+
+.dialog[open] { display: grid; }
+.dialog::backdrop { background: rgb(9 10 8 / 58%); backdrop-filter: blur(11px) saturate(80%); }
+
+.card {
+	position: relative;
+	width: min(100%, 28rem);
+	overflow: hidden;
+	padding: clamp(1.35rem, 5vw, 2rem);
+	border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+	border-radius: 2rem 2rem 2rem 0.75rem;
+	background:
+		radial-gradient(circle at 100% 0, color-mix(in srgb, var(--selection) 34%, transparent), transparent 13rem),
+		var(--background);
+	box-shadow: 0 2rem 6rem rgb(0 0 0 / 30%);
+	isolation: isolate;
+	animation: preferencesArrive 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.card::after { position: absolute; inset: 0.5rem; z-index: -1; border: 1px dashed color-mix(in srgb, var(--foreground) 7%, transparent); border-radius: 1.55rem 1.55rem 1.55rem 0.55rem; content: ""; pointer-events: none; }
+
+.close { position: absolute; top: 1rem; right: 1rem; display: grid; width: 2.35rem; height: 2.35rem; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--icon-background); color: var(--muted); cursor: pointer; }
+.close svg { width: 1rem; }
+
+.mark,
+.installMark { display: grid; width: 3.45rem; height: 3.45rem; place-items: center; margin-bottom: 1.15rem; border-radius: 1.15rem 1.15rem 1.15rem 0.38rem; background: var(--button-background); box-shadow: 0.28rem 0.3rem 0 var(--selection); color: var(--button-foreground); transform: rotate(-4deg); }
+.installMark { background: var(--accent); color: #fff; }
+.mark svg, .installMark svg { width: 1.45rem; }
+.kicker { margin: 0 0 0.35rem; color: var(--accent); font-size: 0.68rem; font-weight: 950; letter-spacing: 0.11em; text-transform: uppercase; }
+.card h2 { margin: 0; font-size: clamp(2rem, 9vw, 2.8rem); letter-spacing: -0.06em; line-height: 0.95; }
+.intro { margin: 0.65rem 0 1.25rem; color: var(--muted); font-size: 0.85rem; font-weight: 700; line-height: 1.4; }
+
+.section { margin-top: 0.7rem; padding: 0.85rem; border: 1px solid var(--line); border-radius: 1.15rem; background: color-mix(in srgb, var(--background) 72%, var(--icon-background)); }
+.sectionHeading { display: block; margin: 0 0 0.7rem; }
+.sectionHeading strong, .sectionHeading small { display: block; }
+.sectionHeading strong { font-size: 0.84rem; font-weight: 950; }
+.sectionHeading small { margin-top: 0.06rem; color: var(--muted); font-size: 0.68rem; font-weight: 700; }
+
+.themePicker { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.45rem; }
+.themePicker button { position: relative; display: grid; grid-template-columns: auto 1fr auto; min-height: 2.8rem; align-items: center; gap: 0.5rem; padding: 0.4rem 0.55rem; border: 1px solid transparent; border-radius: 0.85rem; background: var(--icon-background); color: var(--muted); text-align: left; cursor: pointer; transition: transform var(--motion-spring), border-color var(--motion-standard), background var(--motion-standard); }
+.themePicker button[data-selected="true"] { border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 10%, var(--background)); color: var(--foreground); }
+.themePicker button:hover { transform: translateY(-1px); }
+.themePicker button > span { display: grid; width: 1.8rem; height: 1.8rem; place-items: center; border-radius: 0.6rem; background: var(--background); }
+.themePicker svg { width: 0.95rem; height: 0.95rem; }
+.themePicker button > svg { width: 0.8rem; color: var(--accent); }
+.themePicker strong { font-size: 0.76rem; }
+
+.languagePicker { position: relative; }
+.languageTrigger { display: grid; grid-template-columns: auto 1fr auto; width: 100%; min-height: 3.65rem; align-items: center; gap: 0.7rem; padding: 0.45rem 0.65rem 0.45rem 0.5rem; border: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent); border-radius: 1rem 1rem 1rem 0.38rem; background: var(--background); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--foreground) 5%, transparent); color: var(--foreground); text-align: left; cursor: pointer; transition: border-color var(--motion-standard), transform var(--motion-spring), box-shadow var(--motion-standard); }
+.languageTrigger:hover { border-color: color-mix(in srgb, var(--accent) 35%, transparent); transform: translateY(-1px); }
+.languageCode { display: grid; width: 2.65rem; height: 2.65rem; place-items: center; border-radius: 0.88rem 0.88rem 0.88rem 0.3rem; background: linear-gradient(145deg, var(--selection), color-mix(in srgb, var(--selection) 68%, var(--background))); box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--selection-foreground) 9%, transparent); color: var(--selection-foreground); font-size: 0.66rem; font-weight: 1000; letter-spacing: 0.09em; transform: rotate(-2deg); }
+.languageCopy, .languageMenu button > span:nth-child(2) { min-width: 0; }
+.languageCopy strong, .languageCopy small, .languageMenu strong, .languageMenu small { display: block; }
+.languageCopy strong, .languageMenu strong { font-size: 0.8rem; font-weight: 950; }
+.languageCopy small, .languageMenu small { margin-top: 0.06rem; color: var(--muted); font-size: 0.62rem; font-weight: 750; }
+.languageToggle { position: relative; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--icon-background); }
+.languageToggle span { position: absolute; top: 0.8rem; width: 0.48rem; height: 0.12rem; border-radius: 99px; background: var(--muted); transition: transform var(--motion-spring); }
+.languageToggle span:first-child { left: 0.43rem; transform: rotate(42deg); }
+.languageToggle span:last-child { right: 0.43rem; transform: rotate(-42deg); }
+.languageToggle[data-open="true"] span:first-child { transform: rotate(-42deg); }
+.languageToggle[data-open="true"] span:last-child { transform: rotate(42deg); }
+.languageMenu { position: absolute; z-index: 4; top: calc(100% + 0.4rem); right: 0; left: 0; padding: 0.38rem; border: 1px solid var(--line); border-radius: 1.15rem 1.15rem 1.15rem 0.45rem; background: var(--popover-background); box-shadow: var(--popover-shadow); backdrop-filter: blur(18px) saturate(140%); animation: languageMenuIn 180ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.languageMenu button { display: grid; grid-template-columns: auto 1fr auto; width: 100%; min-height: 3.35rem; align-items: center; gap: 0.7rem; padding: 0.35rem 0.55rem 0.35rem 0.35rem; border: 0; border-radius: 0.85rem; background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--foreground); text-align: left; cursor: pointer; }
+.languageMenu .languageCode { width: 2.45rem; height: 2.45rem; }
+.languageMenu button > svg { width: 1rem; color: var(--accent); }
+
+.install { display: grid; grid-template-columns: auto 1fr auto; width: 100%; align-items: center; gap: 0.75rem; margin-top: 0.7rem; padding: 0.7rem; border: 0; border-radius: 1.15rem 1.15rem 1.15rem 0.45rem; background: var(--button-background); color: var(--button-foreground); text-align: left; cursor: pointer; transition: transform var(--motion-spring), box-shadow var(--motion-standard); }
+.install:hover { box-shadow: 0 0.8rem 1.8rem rgb(20 22 17 / 18%); transform: translateY(-2px) rotate(-0.3deg); }
+.install > span:first-child { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: 0.8rem 0.8rem 0.8rem 0.3rem; background: var(--accent); color: #fff; }
+.install > span:nth-child(2) { min-width: 0; }
+.install strong, .install small { display: block; }
+.install strong { font-size: 0.82rem; font-weight: 950; }
+.install small { margin-top: 0.05rem; color: color-mix(in srgb, var(--button-foreground) 62%, transparent); font-size: 0.65rem; font-weight: 700; }
+.install svg { width: 1rem; }
+
+.steps { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 2.6rem 1fr; align-items: center; gap: 0.75rem; padding: 0.65rem; border: 1px solid var(--line); border-radius: 1rem; background: color-mix(in srgb, var(--background) 75%, var(--icon-background)); }
+.steps li > span { display: grid; width: 2.6rem; height: 2.6rem; place-items: center; border-radius: 0.8rem; background: var(--selection); color: var(--selection-foreground); }
+.steps svg { width: 1.2rem; }
+.steps strong { font-size: 0.8rem; }
+.done { margin: 0.9rem 0 0; color: var(--muted); font-size: 0.68rem; font-weight: 750; text-align: center; }
+.back { display: flex; align-items: center; gap: 0.4rem; margin: 1rem auto 0; padding: 0.5rem; border: 0; background: transparent; color: var(--muted); font-size: 0.72rem; font-weight: 850; cursor: pointer; }
+.back:hover { color: var(--accent); }
+.back svg { width: 0.9rem; }
+
+.trigger:focus-visible, .close:focus-visible, .themePicker button:focus-visible, .languageTrigger:focus-visible, .languageMenu button:focus-visible, .install:focus-visible, .back:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
+
+@keyframes preferencesArrive { from { opacity: 0; transform: translateY(1.4rem) scale(0.95) rotate(0.7deg); } }
+@keyframes languageMenuIn { from { opacity: 0; transform: translateY(-0.3rem) scale(0.97); } }
+
+@media (max-width: 24rem) {
+	.card { padding: 1.2rem; border-radius: 1.65rem 1.65rem 1.65rem 0.65rem; }
+	.section { padding: 0.7rem; }
+}

@@ -1,8 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
-import { InstallApp } from "@/features/pwa/components/install-app";
+import Script from "next/script";
+import { AppPreferences } from "@/features/preferences/app-preferences";
 import { APP_LANGUAGE } from "@/i18n/config";
+import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import "./globals.css";
+
+const preferencesBootScript = `
+try {
+	const stored = JSON.parse(localStorage.getItem("akin.preferences.v1") || "null");
+	const theme = stored?.theme === "dark" || stored?.theme === "light"
+		? stored.theme
+		: (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+	document.documentElement.dataset.theme = theme;
+	if (stored?.language === "en") document.documentElement.lang = stored.language;
+} catch {
+	document.documentElement.dataset.theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+`;
 
 const nunito = Nunito({
 	variable: "--font-nunito",
@@ -42,10 +57,17 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang={APP_LANGUAGE} className={nunito.variable}>
+		<html lang={APP_LANGUAGE} className={nunito.variable} suppressHydrationWarning>
+			<head>
+				<Script id="akin-preferences" strategy="beforeInteractive">
+					{preferencesBootScript}
+				</Script>
+			</head>
 			<body>
-				{children}
-				<InstallApp />
+				<ConvexClientProvider>
+					{children}
+					<AppPreferences />
+				</ConvexClientProvider>
 			</body>
 		</html>
 	);

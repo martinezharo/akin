@@ -456,8 +456,7 @@
 	}
 }
 
-@media (prefers-color-scheme: dark) {
-	.dialog {
+:global(:root[data-theme="dark"]) .dialog {
 		--review-ink: #f7f4e9;
 		--review-paper: #171711;
 		--review-coral: #ff815c;
@@ -466,51 +465,50 @@
 			radial-gradient(circle at 12% 8%, rgb(118 68 27 / 62%), transparent 24rem),
 			radial-gradient(circle at 90% 82%, rgb(35 86 58 / 60%), transparent 27rem),
 			linear-gradient(145deg, #211b11 0%, #13140f 52%, #0e1712 100%);
-	}
+}
 
-	.dialog::before {
+:global(:root[data-theme="dark"]) .dialog::before {
 		mix-blend-mode: screen;
 		opacity: 0.08;
-	}
+}
 
-	.card {
+:global(:root[data-theme="dark"]) .card {
 		border-color: rgb(255 255 255 / 10%);
 		background: rgb(20 20 15 / 78%);
 		box-shadow: 0 2rem 6rem rgb(0 0 0 / 38%), inset 0 1px 0 rgb(255 255 255 / 8%);
-	}
+}
 
-	.date,
-	.copy {
+:global(:root[data-theme="dark"]) .date,
+:global(:root[data-theme="dark"]) .copy {
 		color: rgb(247 244 233 / 68%);
-	}
+}
 
-	.progressDots span {
+:global(:root[data-theme="dark"]) .progressDots span {
 		background: rgb(255 255 255 / 14%);
-	}
+}
 
-	.progressDots span[data-done="true"] {
+:global(:root[data-theme="dark"]) .progressDots span[data-done="true"] {
 		background: rgb(255 255 255 / 38%);
-	}
+}
 
-	.checkbox {
+:global(:root[data-theme="dark"]) .checkbox {
 		color: rgb(247 244 233 / 28%);
-	}
+}
 
-	.checklistStreak:hover .checkbox {
+:global(:root[data-theme="dark"]) .checklistStreak:hover .checkbox {
 		color: var(--review-sticker);
-	}
+}
 
-	.checkboxInput:checked + .checkbox {
+:global(:root[data-theme="dark"]) .checkboxInput:checked + .checkbox {
 		color: var(--review-sticker-ink);
-	}
+}
 
-	.submit {
+:global(:root[data-theme="dark"]) .submit {
 		background: #f7f4e9;
 		color: #171711;
-	}
+}
 
-	.honestyNote {
+:global(:root[data-theme="dark"]) .honestyNote {
 		background: rgb(130 93 23 / 35%);
 		color: #edcf83;
-	}
 }

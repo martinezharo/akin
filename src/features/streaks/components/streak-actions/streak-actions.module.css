@@ -563,13 +563,11 @@
 	}
 }
 
-@media (prefers-color-scheme: dark) {
-	.menu .deleteItem,
-	.kicker {
+:global(:root[data-theme="dark"]) .menu .deleteItem,
+:global(:root[data-theme="dark"]) .kicker {
 		color: #ff795f;
-	}
+}
 
-	.deleteConfirm {
+:global(:root[data-theme="dark"]) .deleteConfirm {
 		background: #e14d33;
-	}
 }

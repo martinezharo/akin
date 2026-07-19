@@ -1,0 +1,220 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import {
+	createDemoAccountState,
+	DEMO_STARTING_COINS,
+	loadDemoAccountState,
+	saveDemoAccountState,
+	type DemoAccountState,
+} from "@/features/account/demo-account-storage";
+import type { AccountDashboardView } from "@/features/account/account-dock";
+import type { LocalDateKey } from "../model/calendar";
+import type { ReviewAnswers } from "../model/progress";
+import type { Streak } from "../model/streak";
+import type { StreaksController } from "./use-streaks-controller";
+
+const DEMO_USER = {
+	id: "demo-user",
+	name: "Mika Daydream",
+	email: "mika@demo.akin",
+};
+
+function coinsForDay(
+	controller: StreaksController,
+	eligibleIds: ReadonlySet<string>,
+	day: LocalDateKey,
+	answers: ReviewAnswers,
+) {
+	return controller.streaks.filter(
+		(streak) =>
+			eligibleIds.has(streak.id) &&
+			streak.createdOn <= day &&
+			answers[streak.id] === true &&
+			!controller.isCompletedOn(streak.id, day),
+	).length;
+}
+
+function coinsForGap(
+	controller: StreaksController,
+	eligibleIds: ReadonlySet<string>,
+	days: LocalDateKey[],
+	answers: ReviewAnswers,
+) {
+	const perStreakLimit = days.length > 3 ? 3 : days.length;
+	return controller.streaks.reduce((total, streak) => {
+		if (!eligibleIds.has(streak.id) || answers[streak.id] !== true) return total;
+		const unresolvedDays = days.filter(
+			(day) =>
+				streak.createdOn <= day &&
+				!controller.isCompletedOn(streak.id, day),
+		).length;
+		return total + Math.min(unresolvedDays, perStreakLimit);
+	}, 0);
+}
+
+function withCoins(account: DemoAccountState, amount: number): DemoAccountState {
+	if (amount === 0) return account;
+	return {
+		...account,
+		balance: account.balance + amount,
+		lifetimeEarned: account.lifetimeEarned + amount,
+	};
+}
+
+export function useDemoStreaksController(base: StreaksController) {
+	const [account, setAccount] = useState<DemoAccountState>(() =>
+		loadDemoAccountState(base.streaks.map((streak) => streak.id)),
+	);
+	const undoAccountRef = useRef<DemoAccountState | null>(null);
+	const reviewAccountRef = useRef<DemoAccountState | null>(null);
+
+	useEffect(() => {
+		saveDemoAccountState(account);
+	}, [account]);
+
+	function discardUndo() {
+		undoAccountRef.current = null;
+		reviewAccountRef.current = null;
+	}
+
+	function rememberUndo() {
+		undoAccountRef.current = account;
+	}
+
+	function rememberReviewUndo() {
+		if (!reviewAccountRef.current) reviewAccountRef.current = account;
+		undoAccountRef.current = reviewAccountRef.current;
+	}
+
+	function eligibleIds() {
+		return new Set(account.coinEligibleStreakIds);
+	}
+
+	const controller: StreaksController = {
+		...base,
+		create: (name, icon) => {
+			discardUndo();
+			const id = base.create(name, icon);
+			setAccount((current) =>
+				current.coinEligibleStreakIds.length >= 10
+					? current
+					: {
+							...current,
+							coinEligibleStreakIds: [id, ...current.coinEligibleStreakIds],
+						},
+			);
+			return id;
+		},
+		rememberIcon: (icon) => {
+			discardUndo();
+			base.rememberIcon(icon);
+		},
+		updateIcon: (streakId, icon) => {
+			discardUndo();
+			base.updateIcon(streakId, icon);
+		},
+		rename: (streakId, name) => {
+			discardUndo();
+			base.rename(streakId, name);
+		},
+		adjustDays: (streakId, days) => {
+			discardUndo();
+			base.adjustDays(streakId, days);
+		},
+		remove: (streakId) => {
+			rememberUndo();
+			base.remove(streakId);
+			setAccount((current) => ({
+				...current,
+				coinEligibleStreakIds: current.coinEligibleStreakIds.filter(
+					(id) => id !== streakId,
+				),
+			}));
+		},
+		completeToday: (streakId) => {
+			const streak = base.streaks.find((candidate) => candidate.id === streakId);
+			const canComplete = Boolean(
+				streak &&
+					streak.createdOn <= base.today &&
+					!base.isCompletedOn(streakId, base.today),
+			);
+			if (!canComplete) {
+				base.completeToday(streakId);
+				return;
+			}
+			rememberUndo();
+			base.completeToday(streakId);
+			if (
+				streak &&
+				streak.createdOn < base.today &&
+				account.coinEligibleStreakIds.includes(streakId)
+			) {
+				setAccount((current) => withCoins(current, 1));
+			}
+		},
+		resolveDay: (day, answers) => {
+			rememberReviewUndo();
+			const reward = coinsForDay(base, eligibleIds(), day, answers);
+			base.resolveDay(day, answers);
+			setAccount((current) => withCoins(current, reward));
+		},
+		resolveGap: (days, answers) => {
+			rememberReviewUndo();
+			const reward = coinsForGap(base, eligibleIds(), days, answers);
+			base.resolveGap(days, answers);
+			setAccount((current) => withCoins(current, reward));
+		},
+		undo: () => {
+			base.undo();
+			if (undoAccountRef.current) setAccount(undoAccountRef.current);
+			discardUndo();
+		},
+		dismissUndo: () => {
+			base.dismissUndo();
+			discardUndo();
+		},
+		replaceData: (data) => {
+			discardUndo();
+			base.replaceData(data);
+		},
+	};
+
+	const streaksWithCoins = base.streaks.map((streak: Streak) => ({
+		...streak,
+		coinEligible: account.coinEligibleStreakIds.includes(streak.id),
+	}));
+	const dashboard: AccountDashboardView = {
+		user: DEMO_USER,
+		wallet: { balance: account.balance, lifetimeEarned: account.lifetimeEarned },
+		streaks: streaksWithCoins,
+	};
+
+	return {
+		controller,
+		dashboard,
+		toggleCoinEligible: (streakId: string, coinEligible: boolean) => {
+			discardUndo();
+			base.dismissUndo();
+			setAccount((current) => {
+				const ids = current.coinEligibleStreakIds.filter((id) => id !== streakId);
+				if (!coinEligible) return { ...current, coinEligibleStreakIds: ids };
+				if (ids.length >= 10) return current;
+				return { ...current, coinEligibleStreakIds: [streakId, ...ids] };
+			});
+		},
+		resetWallet: () => {
+			discardUndo();
+			base.dismissUndo();
+			setAccount((current) => ({
+				...current,
+				balance: DEMO_STARTING_COINS,
+				lifetimeEarned: DEMO_STARTING_COINS,
+			}));
+		},
+		resetAccount: (streakIds: string[]) => {
+			discardUndo();
+			setAccount(createDemoAccountState(streakIds));
+		},
+	};
+}

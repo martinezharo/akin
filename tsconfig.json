@@ -19,7 +19,8 @@
 			}
 		],
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"@convex/*": ["./convex/*"]
 		},
 		"types": [
 			"./cloudflare-env.d.ts",
