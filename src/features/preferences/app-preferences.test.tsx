@@ -36,7 +36,8 @@ describe("AppPreferences", () => {
 		await user.click(screen.getByRole("button", { name: /open preferences/i }));
 		await user.click(screen.getByRole("button", { name: "Dark" }));
 		await user.click(screen.getByRole("button", { name: /language english/i }));
-		await user.click(screen.getByRole("menuitemradio", { name: /englishmore languages soon/i }));
+		expect(screen.getByText(/more languages on the way/i)).toBeTruthy();
+		await user.click(screen.getByRole("menuitemradio", { name: /english/i }));
 
 		expect(document.documentElement.dataset.theme).toBe("dark");
 		expect(JSON.parse(window.localStorage.getItem("akin.preferences.v1") ?? "null")).toEqual({

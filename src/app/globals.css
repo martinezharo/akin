@@ -118,6 +118,30 @@ svg {
 	border: 0;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 560ms;
+		animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+		mix-blend-mode: normal;
+	}
+
+	::view-transition-old(root) { animation-name: themeFadeOut; }
+	::view-transition-new(root) {
+		z-index: 1;
+		animation-name: themeReveal;
+	}
+
+	@keyframes themeFadeOut {
+		to { opacity: 0.32; }
+	}
+
+	@keyframes themeReveal {
+		from { clip-path: circle(0 at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh)); }
+		to { clip-path: circle(150vmax at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh)); }
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

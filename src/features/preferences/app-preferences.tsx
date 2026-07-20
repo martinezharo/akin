@@ -4,6 +4,7 @@ import {
 	ArrowLeft,
 	ArrowRight,
 	Check,
+	ChevronDown,
 	Download,
 	Ellipsis,
 	Moon,
@@ -11,11 +12,10 @@ import {
 	Share,
 	SquarePlus,
 	Sun,
-	Volume2,
-	VolumeX,
 	X,
 } from "lucide-react";
-import { type FocusEvent, type KeyboardEvent, type ReactNode, useId, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import { type FocusEvent, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useInstallApp } from "@/features/pwa/use-install-app";
 import { ui } from "@/i18n/en";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
@@ -30,6 +30,10 @@ type Language = "en";
 type StoredPreferences = {
 	theme: Theme;
 	language: Language;
+};
+
+type ViewTransitionDocument = Document & {
+	startViewTransition?: (updateCallback: () => void) => { finished: Promise<void> };
 };
 
 function readStoredPreferences(): StoredPreferences {
@@ -68,9 +72,13 @@ export function AppPreferences() {
 	const [theme, setTheme] = useState<Theme>("light");
 	const [language, setLanguage] = useState<Language>("en");
 	const [rewardSound, setRewardSound] = useState(true);
+	const [themeAnimation, setThemeAnimation] = useState<Theme | null>(null);
 	const { shouldOfferInstall, requestInstall } = useInstallApp();
 	const titleId = useId();
 	const descriptionId = useId();
+	const themeAnimationTimer = useRef<number | undefined>(undefined);
+
+	useEffect(() => () => window.clearTimeout(themeAnimationTimer.current), []);
 
 	function showPreferences() {
 		const stored = readStoredPreferences();
@@ -81,8 +89,31 @@ export function AppPreferences() {
 	}
 
 	function chooseTheme(nextTheme: Theme) {
-		setTheme(nextTheme);
-		savePreferences({ theme: nextTheme, language });
+		if (nextTheme === theme) return;
+
+		window.clearTimeout(themeAnimationTimer.current);
+		setThemeAnimation(nextTheme);
+		themeAnimationTimer.current = window.setTimeout(() => setThemeAnimation(null), 560);
+
+		const applyTheme = () => {
+			flushSync(() => setTheme(nextTheme));
+			savePreferences({ theme: nextTheme, language });
+		};
+		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const transitionDocument = document as ViewTransitionDocument;
+
+		if (prefersReducedMotion || !transitionDocument.startViewTransition) {
+			applyTheme();
+			return;
+		}
+
+		const origin = document.activeElement instanceof HTMLElement ? document.activeElement.getBoundingClientRect() : null;
+		if (origin) {
+			document.documentElement.style.setProperty("--theme-transition-x", `${origin.left + origin.width / 2}px`);
+			document.documentElement.style.setProperty("--theme-transition-y", `${origin.top + origin.height / 2}px`);
+		}
+
+		void transitionDocument.startViewTransition(applyTheme).finished.catch(() => undefined);
 	}
 
 	function chooseLanguage(nextLanguage: Language) {
@@ -130,38 +161,34 @@ export function AppPreferences() {
 							<InstallGuide kind={installGuide} titleId={titleId} descriptionId={descriptionId} onBack={() => setInstallGuide(null)} />
 						) : (
 							<>
-								<div className={styles.mark} aria-hidden="true"><Settings2 /></div>
-								<p className={styles.kicker}>{ui.preferences.kicker}</p>
-								<h2 id={titleId}>{ui.preferences.title}</h2>
-								<p className={styles.intro} id={descriptionId}>A few small choices, just the way you like them.</p>
+								<div className={styles.head}>
+									<div className={styles.mark} aria-hidden="true"><Settings2 /></div>
+									<p className={styles.kicker}>{ui.preferences.kicker}</p>
+									<h2 id={titleId}>{ui.preferences.title}</h2>
+									<p className={styles.intro} id={descriptionId}>A few small choices, just the way you like them.</p>
+								</div>
 
-								<section className={styles.section} aria-labelledby={`${titleId}-theme`}>
-									<div className={styles.sectionHeading}>
-										<div><strong id={`${titleId}-theme`}>{ui.preferences.theme}</strong><small>{ui.preferences.themeHint}</small></div>
-									</div>
-									<div className={styles.themePicker} role="group" aria-label={ui.preferences.theme}>
-										<ThemeButton icon={<Sun />} label={ui.preferences.light} selected={theme === "light"} onClick={() => chooseTheme("light")} />
-										<ThemeButton icon={<Moon />} label={ui.preferences.dark} selected={theme === "dark"} onClick={() => chooseTheme("dark")} />
-									</div>
-								</section>
+								<div className={styles.settingsList}>
+									<section className={styles.setting} aria-labelledby={`${titleId}-theme`}>
+										<div className={styles.settingCopy}><strong id={`${titleId}-theme`}>{ui.preferences.theme}</strong><small>{ui.preferences.themeHint}</small></div>
+										<div className={styles.themePicker} data-theme={theme} role="group" aria-label={ui.preferences.theme}>
+											<ThemeButton icon={<Sun />} label={ui.preferences.light} selected={theme === "light"} animating={themeAnimation === "light"} onClick={() => chooseTheme("light")} />
+											<ThemeButton icon={<Moon />} label={ui.preferences.dark} selected={theme === "dark"} animating={themeAnimation === "dark"} onClick={() => chooseTheme("dark")} />
+										</div>
+									</section>
 
-								<section className={styles.section}>
-									<div className={styles.sectionHeading}>
-										<span><strong id={`${titleId}-language-label`}>{ui.preferences.language}</strong><small>{ui.preferences.languageHint}</small></span>
-									</div>
-									<LanguagePicker id={`${titleId}-language`} value={language} onChange={chooseLanguage} />
-								</section>
+									<section className={styles.setting} aria-labelledby={`${titleId}-language-label`}>
+										<div className={styles.settingCopy}><strong id={`${titleId}-language-label`}>{ui.preferences.language}</strong><small>{ui.preferences.languageHint}</small></div>
+										<LanguagePicker id={`${titleId}-language`} labelledBy={`${titleId}-language-label`} value={language} onChange={chooseLanguage} />
+									</section>
 
-								<section className={styles.section} aria-labelledby={`${titleId}-sound`}>
-									<div className={styles.sectionHeading}>
-										<div><strong id={`${titleId}-sound`}>Reward sound</strong><small>A tiny chime when coins land.</small></div>
-									</div>
-									<button className={styles.soundToggle} type="button" aria-pressed={rewardSound} onClick={toggleRewardSound}>
-										<span aria-hidden="true">{rewardSound ? <Volume2 /> : <VolumeX />}</span>
-										<strong>{rewardSound ? "On" : "Off"}</strong>
-										<i aria-hidden="true" />
-									</button>
-								</section>
+									<section className={styles.setting} aria-labelledby={`${titleId}-sound`}>
+										<div className={styles.settingCopy}><strong id={`${titleId}-sound`}>Reward sound</strong><small>A tiny chime when coins land.</small></div>
+										<button className={styles.soundToggle} type="button" aria-pressed={rewardSound} onClick={toggleRewardSound}>
+											<i aria-hidden="true" />
+										</button>
+									</section>
+								</div>
 
 								{shouldOfferInstall ? (
 									<button className={styles.install} type="button" onClick={() => void install()}>
@@ -179,17 +206,16 @@ export function AppPreferences() {
 	);
 }
 
-function ThemeButton({ icon, label, selected, onClick }: { icon: ReactNode; label: string; selected: boolean; onClick: () => void }) {
+function ThemeButton({ icon, label, selected, animating, onClick }: { icon: ReactNode; label: string; selected: boolean; animating: boolean; onClick: () => void }) {
 	return (
-		<button type="button" data-selected={selected} aria-pressed={selected} onClick={onClick}>
-			<span aria-hidden="true">{icon}</span>
+		<button type="button" data-selected={selected} data-animating={animating} aria-pressed={selected} onClick={onClick}>
+			{icon}
 			<strong>{label}</strong>
-			{selected ? <Check aria-hidden="true" /> : null}
 		</button>
 	);
 }
 
-function LanguagePicker({ id, value, onChange }: { id: string; value: Language; onChange: (language: Language) => void }) {
+function LanguagePicker({ id, labelledBy, value, onChange }: { id: string; labelledBy: string; value: Language; onChange: (language: Language) => void }) {
 	const [open, setOpen] = useState(false);
 	const triggerRef = useRef<HTMLButtonElement>(null);
 	const optionRef = useRef<HTMLButtonElement>(null);
@@ -221,16 +247,19 @@ function LanguagePicker({ id, value, onChange }: { id: string; value: Language; 
 				ref={triggerRef}
 				className={styles.languageTrigger}
 				type="button"
+				data-open={open}
 				aria-haspopup="menu"
 				aria-expanded={open}
 				aria-controls={`${id}-menu`}
-				aria-labelledby={`${id}-label ${id}-value`}
+				aria-labelledby={`${labelledBy} ${id}-value`}
 				onClick={() => open ? closePicker() : openPicker()}
 				onKeyDown={handleTriggerKeyDown}
 			>
 				<span className={styles.languageCode} aria-hidden="true">EN</span>
-				<span className={styles.languageCopy}><strong id={`${id}-value`}>{ui.preferences.english}</strong><small>Selected language</small></span>
-				<span className={styles.languageToggle} aria-hidden="true" data-open={open}><span /><span /></span>
+				<strong id={`${id}-value`}>{ui.preferences.english}</strong>
+				<span className={styles.languageChevron} aria-hidden="true" data-open={open}>
+					<ChevronDown />
+				</span>
 			</button>
 
 			{open ? (
@@ -240,6 +269,7 @@ function LanguagePicker({ id, value, onChange }: { id: string; value: Language; 
 						type="button"
 						role="menuitemradio"
 						aria-checked={value === "en"}
+						data-selected={value === "en"}
 						onClick={() => { onChange("en"); closePicker({ restoreFocus: true }); }}
 						onKeyDown={(event) => {
 							if (event.key === "Escape") {
@@ -249,9 +279,10 @@ function LanguagePicker({ id, value, onChange }: { id: string; value: Language; 
 						}}
 					>
 						<span className={styles.languageCode} aria-hidden="true">EN</span>
-						<span><strong>{ui.preferences.english}</strong><small>More languages soon</small></span>
-						<Check aria-hidden="true" />
+						<strong>{ui.preferences.english}</strong>
+						{value === "en" ? <Check aria-hidden="true" /> : <span className={styles.languageCheckSlot} aria-hidden="true" />}
 					</button>
+					<p className={styles.languageSoon}>More languages on the way</p>
 				</div>
 			) : null}
 		</div>
