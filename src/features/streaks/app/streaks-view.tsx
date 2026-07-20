@@ -1,6 +1,5 @@
 "use client";
 
-import { CircleCheckBig, Sparkles, Trash2 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { ui } from "@/i18n/en";
 import { UndoToast } from "@/shared/ui/undo-toast";
@@ -76,15 +75,6 @@ export function StreaksView({
 			{controller.undoToast ? (
 				<UndoToast
 					key={controller.undoToast.key}
-					icon={
-						controller.undoToast.kind === "review" ? (
-							<Sparkles aria-hidden="true" />
-						) : controller.undoToast.kind === "today" ? (
-							<CircleCheckBig aria-hidden="true" />
-						) : (
-							<Trash2 aria-hidden="true" />
-						)
-					}
 					message={
 						controller.undoToast.kind === "review"
 							? ui.undo.reviewDone
@@ -93,7 +83,6 @@ export function StreaksView({
 								: ui.undo.deleted(controller.undoToast.name)
 					}
 					actionLabel={ui.undo.action}
-					dismissLabel={ui.undo.dismiss}
 					onUndo={controller.undo}
 					onDismiss={controller.dismissUndo}
 				/>
