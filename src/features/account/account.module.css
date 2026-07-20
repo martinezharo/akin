@@ -80,9 +80,16 @@
 	background: #fff2b5;
 	box-shadow: inset 0 -2px 0 rgb(155 106 15 / 12%);
 	color: #6c4603;
+	animation: walletCoinPop 520ms cubic-bezier(0.2, 1.5, 0.45, 1) both;
 }
 .coinPill svg { width: 1.02rem; height: 1.02rem; stroke-width: 2.7; }
 .coinPill strong { font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+
+@keyframes walletCoinPop {
+	0% { transform: scale(0.84) rotate(-3deg); }
+	48% { transform: scale(1.14) rotate(2deg); }
+	100% { transform: scale(1) rotate(0); }
+}
 
 .accountButton {
 	position: relative;
@@ -284,10 +291,11 @@
 }
 
 :global(:root[data-theme="dark"]) .coinPill { background: #3a2d08; color: #ffdf72; }
-:global(:root[data-theme="dark"]) .walletCard { border-color: #5d4c19; background: linear-gradient(135deg, #29230f, #3b2d08); color: #ffe991; }
-:global(:root[data-theme="dark"]) .coinArt { border-color: #a47b13; background: #755710; box-shadow: inset 0 -4px 0 rgb(0 0 0 / 15%), 0.2rem 0.2rem 0 #49380c; }
 
 @media (prefers-reduced-motion: reduce) {
+	.coinPill { animation: none; }
 	.coinList label[data-revealed="true"] { animation: none; }
 }
+:global(:root[data-theme="dark"]) .walletCard { border-color: #5d4c19; background: linear-gradient(135deg, #29230f, #3b2d08); color: #ffe991; }
+:global(:root[data-theme="dark"]) .coinArt { border-color: #a47b13; background: #755710; box-shadow: inset 0 -4px 0 rgb(0 0 0 / 15%), 0.2rem 0.2rem 0 #49380c; }
 :global(:root[data-theme="dark"]) .walletCard > p { border-color: rgb(255 232 145 / 14%); }

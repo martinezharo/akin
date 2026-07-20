@@ -11,12 +11,15 @@ import {
 	Share,
 	SquarePlus,
 	Sun,
+	Volume2,
+	VolumeX,
 	X,
 } from "lucide-react";
 import { type FocusEvent, type KeyboardEvent, type ReactNode, useId, useRef, useState } from "react";
 import { useInstallApp } from "@/features/pwa/use-install-app";
 import { ui } from "@/i18n/en";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
+import { isRewardSoundEnabled, setRewardSoundEnabled } from "@/features/rewards/reward-sound-preference";
 import styles from "./app-preferences.module.css";
 
 const PREFERENCES_KEY = "akin.preferences.v1";
@@ -64,6 +67,7 @@ export function AppPreferences() {
 	const [installGuide, setInstallGuide] = useState<"ios" | "browser" | null>(null);
 	const [theme, setTheme] = useState<Theme>("light");
 	const [language, setLanguage] = useState<Language>("en");
+	const [rewardSound, setRewardSound] = useState(true);
 	const { shouldOfferInstall, requestInstall } = useInstallApp();
 	const titleId = useId();
 	const descriptionId = useId();
@@ -72,6 +76,7 @@ export function AppPreferences() {
 		const stored = readStoredPreferences();
 		setTheme(stored.theme);
 		setLanguage(stored.language);
+		setRewardSound(isRewardSoundEnabled());
 		setOpen(true);
 	}
 
@@ -83,6 +88,13 @@ export function AppPreferences() {
 	function chooseLanguage(nextLanguage: Language) {
 		setLanguage(nextLanguage);
 		savePreferences({ theme, language: nextLanguage });
+	}
+
+	function toggleRewardSound() {
+		setRewardSound((current) => {
+			setRewardSoundEnabled(!current);
+			return !current;
+		});
 	}
 
 	function dismiss() {
@@ -138,6 +150,17 @@ export function AppPreferences() {
 										<span><strong id={`${titleId}-language-label`}>{ui.preferences.language}</strong><small>{ui.preferences.languageHint}</small></span>
 									</div>
 									<LanguagePicker id={`${titleId}-language`} value={language} onChange={chooseLanguage} />
+								</section>
+
+								<section className={styles.section} aria-labelledby={`${titleId}-sound`}>
+									<div className={styles.sectionHeading}>
+										<div><strong id={`${titleId}-sound`}>Reward sound</strong><small>A tiny chime when coins land.</small></div>
+									</div>
+									<button className={styles.soundToggle} type="button" aria-pressed={rewardSound} onClick={toggleRewardSound}>
+										<span aria-hidden="true">{rewardSound ? <Volume2 /> : <VolumeX />}</span>
+										<strong>{rewardSound ? "On" : "Off"}</strong>
+										<i aria-hidden="true" />
+									</button>
 								</section>
 
 								{shouldOfferInstall ? (

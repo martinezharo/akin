@@ -85,6 +85,16 @@
 .themePicker button > svg { width: 0.8rem; color: var(--accent); }
 .themePicker strong { font-size: 0.76rem; }
 
+.soundToggle { display: grid; grid-template-columns: auto 1fr auto; width: 100%; min-height: 3.2rem; align-items: center; gap: 0.65rem; padding: 0.38rem 0.48rem; border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent); border-radius: 0.95rem 0.95rem 0.95rem 0.35rem; background: var(--background); color: var(--foreground); cursor: pointer; text-align: left; transition: transform var(--motion-spring), border-color var(--motion-standard); }
+.soundToggle:hover { border-color: color-mix(in srgb, var(--accent) 40%, transparent); transform: translateY(-1px); }
+.soundToggle > span { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 0.7rem; background: color-mix(in srgb, var(--selection) 45%, var(--background)); color: var(--selection-foreground); }
+.soundToggle svg { width: 1rem; }
+.soundToggle strong { font-size: 0.78rem; font-weight: 950; }
+.soundToggle i { position: relative; width: 2.25rem; height: 1.3rem; border-radius: 99px; background: var(--line); transition: background var(--motion-standard); }
+.soundToggle i::after { position: absolute; top: 0.17rem; left: 0.17rem; width: 0.96rem; height: 0.96rem; border-radius: 50%; background: var(--background); box-shadow: 0 1px 4px rgb(0 0 0 / 20%); content: ""; transition: transform var(--motion-spring); }
+.soundToggle[aria-pressed="true"] i { background: var(--accent); }
+.soundToggle[aria-pressed="true"] i::after { transform: translateX(0.95rem); }
+
 .languagePicker { position: relative; }
 .languageTrigger { display: grid; grid-template-columns: auto 1fr auto; width: 100%; min-height: 3.65rem; align-items: center; gap: 0.7rem; padding: 0.45rem 0.65rem 0.45rem 0.5rem; border: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent); border-radius: 1rem 1rem 1rem 0.38rem; background: var(--background); box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--foreground) 5%, transparent); color: var(--foreground); text-align: left; cursor: pointer; transition: border-color var(--motion-standard), transform var(--motion-spring), box-shadow var(--motion-standard); }
 .languageTrigger:hover { border-color: color-mix(in srgb, var(--accent) 35%, transparent); transform: translateY(-1px); }
@@ -123,7 +133,7 @@
 .back:hover { color: var(--accent); }
 .back svg { width: 0.9rem; }
 
-.trigger:focus-visible, .close:focus-visible, .themePicker button:focus-visible, .languageTrigger:focus-visible, .languageMenu button:focus-visible, .install:focus-visible, .back:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
+.trigger:focus-visible, .close:focus-visible, .themePicker button:focus-visible, .soundToggle:focus-visible, .languageTrigger:focus-visible, .languageMenu button:focus-visible, .install:focus-visible, .back:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
 
 @keyframes preferencesArrive { from { opacity: 0; transform: translateY(1.4rem) scale(0.95) rotate(0.7deg); } }
 @keyframes languageMenuIn { from { opacity: 0; transform: translateY(-0.3rem) scale(0.97); } }

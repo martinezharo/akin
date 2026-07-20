@@ -77,7 +77,7 @@ function AccountDockView({
 	return (
 		<>
 			<div className={styles.accountDock}>
-				<span className={styles.coinPill} aria-label={`${dashboard.wallet.balance} coins`}>
+				<span className={styles.coinPill} data-coin-wallet key={dashboard.wallet.balance} aria-label={`${dashboard.wallet.balance} coins`}>
 					<Coins aria-hidden="true" />
 					<strong>{dashboard.wallet.balance.toLocaleString()}</strong>
 				</span>
