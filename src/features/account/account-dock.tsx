@@ -14,6 +14,7 @@ import { type ReactNode, useId, useState } from "react";
 import { api } from "@convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
+import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
 import styles from "./account.module.css";
 
 type AccountDashboard = NonNullable<FunctionReturnType<typeof api.dashboard.get>>;
@@ -108,7 +109,9 @@ function AccountDockView({
 									const disabled = savingId === streak.id || (!streak.coinEligible && eligibleCount >= 10);
 									return (
 										<label key={streak.id} data-disabled={disabled}>
-											<span className={styles.miniIcon}>{streak.icon}</span>
+											<span className={styles.miniIcon}>
+												<StreakIcon value={streak.icon} />
+											</span>
 											<span>{streak.name}</span>
 											<input type="checkbox" checked={streak.coinEligible} disabled={disabled} onChange={(event) => void toggle(streak.id, event.currentTarget.checked)} />
 											<i aria-hidden="true" />

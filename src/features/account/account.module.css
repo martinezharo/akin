@@ -230,6 +230,7 @@
 .coinList label { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.65rem; min-height: 3rem; padding: 0.45rem 0.55rem; border: 1px solid var(--line); border-radius: 0.95rem; cursor: pointer; }
 .coinList label[data-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .miniIcon { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 0.65rem; background: var(--icon-background); font-size: 1.05rem; }
+.miniIcon svg { width: 1.2rem; height: 1.2rem; }
 .coinList label > span:nth-child(2) { min-width: 0; overflow: hidden; font-size: 0.83rem; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
 .coinList input { position: absolute; opacity: 0; pointer-events: none; }
 .coinList i { position: relative; width: 2.3rem; height: 1.35rem; border-radius: 999px; background: var(--line); transition: background var(--motion-standard); }
