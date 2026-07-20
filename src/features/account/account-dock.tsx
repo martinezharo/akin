@@ -2,6 +2,7 @@
 
 import {
 	Coins,
+	ChevronDown,
 	FlaskConical,
 	LogOut,
 	SlidersHorizontal,
@@ -14,6 +15,7 @@ import { type ReactNode, useId, useState } from "react";
 import { api } from "@convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
+import { UndoToast } from "@/shared/ui/undo-toast";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
 import styles from "./account.module.css";
 
@@ -46,13 +48,21 @@ function AccountDockView({
 	footer,
 }: AccountDockViewProps) {
 	const [open, setOpen] = useState(false);
+	const [showAllCoinStreaks, setShowAllCoinStreaks] = useState(false);
+	const [showCoinLimitNotice, setShowCoinLimitNotice] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [savingId, setSavingId] = useState<string | null>(null);
 	const titleId = useId();
 	const eligibleCount = dashboard.streaks.filter((streak) => streak.coinEligible).length;
 	const initial = dashboard.user.name.trim().charAt(0).toUpperCase() || "A";
+	const coinStreakPreviewCount = 10;
+	const hasHiddenCoinStreaks = dashboard.streaks.length > coinStreakPreviewCount;
+	const visibleCoinStreaks = showAllCoinStreaks
+		? dashboard.streaks
+		: dashboard.streaks.slice(0, coinStreakPreviewCount);
 
 	async function toggle(streakId: string, coinEligible: boolean) {
+		setShowCoinLimitNotice(false);
 		setSavingId(streakId);
 		setError(null);
 		try {
@@ -71,7 +81,7 @@ function AccountDockView({
 					<Coins aria-hidden="true" />
 					<strong>{dashboard.wallet.balance.toLocaleString()}</strong>
 				</span>
-				<button className={styles.accountButton} type="button" onClick={() => setOpen(true)} aria-label="Open account and coin settings">
+				<button className={styles.accountButton} type="button" onClick={() => { setShowAllCoinStreaks(false); setShowCoinLimitNotice(false); setOpen(true); }} aria-label="Open account and coin settings">
 					<span>{initial}</span>
 					{avatarBadge ? <small>{avatarBadge}</small> : null}
 				</button>
@@ -104,25 +114,61 @@ function AccountDockView({
 						</div>
 						<p className={styles.coinCopy}>Choose up to ten streaks that earn one coin whenever you keep them.</p>
 						{dashboard.streaks.length ? (
-							<div className={styles.coinList}>
-								{dashboard.streaks.map((streak) => {
-									const disabled = savingId === streak.id || (!streak.coinEligible && eligibleCount >= 10);
-									return (
-										<label key={streak.id} data-disabled={disabled}>
-											<span className={styles.miniIcon}>
-												<StreakIcon value={streak.icon} />
-											</span>
-											<span>{streak.name}</span>
-											<input type="checkbox" checked={streak.coinEligible} disabled={disabled} onChange={(event) => void toggle(streak.id, event.currentTarget.checked)} />
-											<i aria-hidden="true" />
-										</label>
-									);
-								})}
-							</div>
+							<>
+								<div className={styles.coinList}>
+									{visibleCoinStreaks.map((streak, index) => {
+										const isAtCoinStreakLimit = !streak.coinEligible && eligibleCount >= 10;
+										const disabled = savingId === streak.id;
+										return (
+											<label key={streak.id} data-disabled={disabled || isAtCoinStreakLimit} data-revealed={(showAllCoinStreaks && index >= coinStreakPreviewCount) || undefined}>
+												<span className={styles.miniIcon}>
+													<StreakIcon value={streak.icon} />
+												</span>
+												<span>{streak.name}</span>
+												<input
+													type="checkbox"
+													checked={streak.coinEligible}
+													disabled={disabled}
+													onChange={(event) => {
+														if (event.currentTarget.checked && isAtCoinStreakLimit) {
+															setShowCoinLimitNotice(true);
+															return;
+														}
+														void toggle(streak.id, event.currentTarget.checked);
+													}}
+												/>
+												<i aria-hidden="true" />
+											</label>
+										);
+									})}
+								</div>
+								{hasHiddenCoinStreaks ? (
+									<button
+										className={styles.showAllCoinStreaks}
+										type="button"
+										onClick={() => setShowAllCoinStreaks((shown) => !shown)}
+										aria-expanded={showAllCoinStreaks}
+									>
+										<ChevronDown aria-hidden="true" />
+										<span>{showAllCoinStreaks ? "Show less" : `Show all ${dashboard.streaks.length} streaks`}</span>
+									</button>
+								) : null}
+							</>
 						) : <p className={styles.emptyCoins}>Your first streak will automatically earn coins.</p>}
 						{error ? <p className={styles.settingsError} role="alert">{error}</p> : null}
 						{footer}
 					</div>
+					{showCoinLimitNotice && eligibleCount >= 10 ? (
+						<UndoToast
+							message="Coin crew full — swap one out first."
+							actionLabel="Got it"
+							durationMs={4200}
+							statusIcon={<Coins />}
+							variant="warning"
+							onUndo={() => setShowCoinLimitNotice(false)}
+							onDismiss={() => setShowCoinLimitNotice(false)}
+						/>
+					) : null}
 				</ModalDialog>
 			) : null}
 		</>

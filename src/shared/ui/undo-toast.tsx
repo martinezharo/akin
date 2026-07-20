@@ -14,12 +14,16 @@ export function UndoToast({
 	durationMs = UNDO_TOAST_DURATION_MS,
 	onUndo,
 	onDismiss,
+	statusIcon,
+	variant = "success",
 }: {
 	message: ReactNode;
 	actionLabel: string;
 	durationMs?: number;
 	onUndo: () => void;
 	onDismiss: () => void;
+	statusIcon?: ReactNode;
+	variant?: "success" | "warning";
 }) {
 	const [isPaused, setIsPaused] = useState(false);
 	const [isExiting, setIsExiting] = useState(false);
@@ -52,8 +56,8 @@ export function UndoToast({
 				if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
 			}}
 		>
-			<span className={styles.status} aria-hidden="true">
-				<Check />
+			<span className={styles.status} data-variant={variant} aria-hidden="true">
+				{statusIcon ?? <Check />}
 			</span>
 			<p className={styles.message}>{message}</p>
 			<span className={styles.divider} aria-hidden="true" />

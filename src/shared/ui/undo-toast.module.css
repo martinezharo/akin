@@ -37,6 +37,11 @@
 	color: #18310d;
 }
 
+.status[data-variant="warning"] {
+	background: #ffd95c;
+	color: #674300;
+}
+
 .status svg {
 	width: 0.9rem;
 	height: 0.9rem;
