@@ -114,14 +114,14 @@
 .languageMenu .languageCode { width: 2.45rem; height: 2.45rem; }
 .languageMenu button > svg { width: 1rem; color: var(--accent); }
 
-.install { display: grid; grid-template-columns: auto 1fr auto; width: 100%; align-items: center; gap: 0.75rem; margin-top: 0.7rem; padding: 0.7rem; border: 0; border-radius: 1.15rem 1.15rem 1.15rem 0.45rem; background: var(--button-background); color: var(--button-foreground); text-align: left; cursor: pointer; transition: transform var(--motion-spring), box-shadow var(--motion-standard); }
-.install:hover { box-shadow: 0 0.8rem 1.8rem rgb(20 22 17 / 18%); transform: translateY(-2px) rotate(-0.3deg); }
-.install > span:first-child { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: 0.8rem 0.8rem 0.8rem 0.3rem; background: var(--accent); color: #fff; }
+.install { display: grid; grid-template-columns: auto 1fr auto; width: 100%; align-items: center; gap: 0.7rem; margin-top: 1.2rem; padding: 0.6rem; border: 1px dashed color-mix(in srgb, var(--accent) 52%, var(--line)); border-radius: 1rem 1rem 1rem 0.42rem; background: color-mix(in srgb, var(--accent) 8%, var(--background)); color: var(--foreground); text-align: left; cursor: pointer; transition: background var(--motion-standard), border-color var(--motion-standard), transform var(--motion-spring); }
+.install:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--background)); transform: translateY(-1px) rotate(-0.2deg); }
+.install > span:first-child { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border-radius: 0.75rem 0.75rem 0.75rem 0.28rem; background: var(--accent); box-shadow: 0.16rem 0.16rem 0 color-mix(in srgb, var(--accent) 34%, transparent); color: #fff; }
 .install > span:nth-child(2) { min-width: 0; }
 .install strong, .install small { display: block; }
 .install strong { font-size: 0.82rem; font-weight: 950; }
-.install small { margin-top: 0.05rem; color: color-mix(in srgb, var(--button-foreground) 62%, transparent); font-size: 0.65rem; font-weight: 700; }
-.install svg { width: 1rem; }
+.install small { margin-top: 0.05rem; color: var(--muted); font-size: 0.65rem; font-weight: 700; }
+.install > svg { width: 1rem; color: var(--accent); }
 
 .steps { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
 .steps li { display: grid; grid-template-columns: 2.6rem 1fr; align-items: center; gap: 0.75rem; padding: 0.65rem; border: 1px solid var(--line); border-radius: 1rem; background: color-mix(in srgb, var(--background) 75%, var(--icon-background)); }
