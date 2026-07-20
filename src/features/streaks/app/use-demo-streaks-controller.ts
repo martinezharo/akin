@@ -12,7 +12,7 @@ import type { AccountDashboardView } from "@/features/account/account-dock";
 import type { LocalDateKey } from "../model/calendar";
 import type { ReviewAnswers } from "../model/progress";
 import type { Streak } from "../model/streak";
-import type { StreaksController } from "./use-streaks-controller";
+import type { CoinReward, StreaksController } from "./use-streaks-controller";
 
 const DEMO_USER = {
 	id: "demo-user",
@@ -68,6 +68,9 @@ export function useDemoStreaksController(base: StreaksController) {
 	);
 	const undoAccountRef = useRef<DemoAccountState | null>(null);
 	const reviewAccountRef = useRef<DemoAccountState | null>(null);
+	const reviewCoinRewardRef = useRef(0);
+	const rewardIdRef = useRef(0);
+	const [coinReward, setCoinReward] = useState<CoinReward | null>(null);
 
 	useEffect(() => {
 		saveDemoAccountState(account);
@@ -89,6 +92,22 @@ export function useDemoStreaksController(base: StreaksController) {
 
 	function eligibleIds() {
 		return new Set(account.coinEligibleStreakIds);
+	}
+
+	function addCoinsToWallet(amount: number) {
+		if (amount === 0) return;
+		setAccount((current) => withCoins(current, amount));
+	}
+
+	function showCoinReward(amount: number, streakId: string | null = null) {
+		if (amount === 0) return;
+		rewardIdRef.current += 1;
+		setCoinReward({ id: rewardIdRef.current, amount, streakId });
+	}
+
+	function awardCoins(amount: number, streakId: string | null = null) {
+		addCoinsToWallet(amount);
+		showCoinReward(amount, streakId);
 	}
 
 	const controller: StreaksController = {
@@ -150,25 +169,34 @@ export function useDemoStreaksController(base: StreaksController) {
 				streak.createdOn < base.today &&
 				account.coinEligibleStreakIds.includes(streakId)
 			) {
-				setAccount((current) => withCoins(current, 1));
+				awardCoins(1, streakId);
 			}
 		},
 		resolveDay: (day, answers) => {
 			rememberReviewUndo();
 			const reward = coinsForDay(base, eligibleIds(), day, answers);
 			base.resolveDay(day, answers);
-			setAccount((current) => withCoins(current, reward));
+			addCoinsToWallet(reward);
+			if (base.unreviewedDays.length > 1) {
+				reviewCoinRewardRef.current += reward;
+			} else {
+				showCoinReward(reviewCoinRewardRef.current + reward);
+				reviewCoinRewardRef.current = 0;
+			}
 		},
 		resolveGap: (days, answers) => {
 			rememberReviewUndo();
 			const reward = coinsForGap(base, eligibleIds(), days, answers);
 			base.resolveGap(days, answers);
-			setAccount((current) => withCoins(current, reward));
+			addCoinsToWallet(reward);
+			showCoinReward(reviewCoinRewardRef.current + reward);
+			reviewCoinRewardRef.current = 0;
 		},
 		undo: () => {
 			base.undo();
 			if (undoAccountRef.current) setAccount(undoAccountRef.current);
 			discardUndo();
+			reviewCoinRewardRef.current = 0;
 		},
 		dismissUndo: () => {
 			base.dismissUndo();
@@ -176,8 +204,10 @@ export function useDemoStreaksController(base: StreaksController) {
 		},
 		replaceData: (data) => {
 			discardUndo();
+			reviewCoinRewardRef.current = 0;
 			base.replaceData(data);
 		},
+		coinReward,
 	};
 
 	const streaksWithCoins = base.streaks.map((streak: Streak) => ({

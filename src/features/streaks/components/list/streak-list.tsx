@@ -134,7 +134,7 @@ export function StreakList({
 						const completedToday = completedTodayIds.has(streak.id);
 
 						return (
-						<li className={styles.row} key={streak.id}>
+						<li className={styles.row} data-streak-id={streak.id} key={streak.id}>
 							<StreakIconPicker
 								value={streak.icon}
 								onChange={(icon) => onUpdateIcon(streak.id, icon)}

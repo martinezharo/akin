@@ -1,43 +1,52 @@
 "use client";
 
-import { Undo2, X } from "lucide-react";
-import { type CSSProperties, type ReactNode, useState } from "react";
+import { Check } from "lucide-react";
+import { type ReactNode, useEffect, useState } from "react";
 import { usePausableTimeout } from "../hooks/use-pausable-timeout";
 import styles from "./undo-toast.module.css";
 
 export const UNDO_TOAST_DURATION_MS = 7000;
-
-type FuseStyle = CSSProperties & {
-	"--undo-toast-duration": string;
-};
+const EXIT_DURATION_MS = 180;
 
 export function UndoToast({
 	message,
-	icon,
 	actionLabel,
-	dismissLabel,
 	durationMs = UNDO_TOAST_DURATION_MS,
 	onUndo,
 	onDismiss,
+	statusIcon,
+	variant = "success",
 }: {
 	message: ReactNode;
-	icon: ReactNode;
 	actionLabel: string;
-	dismissLabel: string;
 	durationMs?: number;
 	onUndo: () => void;
 	onDismiss: () => void;
+	statusIcon?: ReactNode;
+	variant?: "success" | "warning";
 }) {
 	const [isPaused, setIsPaused] = useState(false);
-	usePausableTimeout({ durationMs, paused: isPaused, onTimeout: onDismiss });
+	const [isExiting, setIsExiting] = useState(false);
+	usePausableTimeout({
+		durationMs,
+		paused: isPaused,
+		onTimeout: () => setIsExiting(true),
+	});
 
-	const fuseStyle: FuseStyle = {
-		"--undo-toast-duration": `${durationMs}ms`,
-	};
+	useEffect(() => {
+		if (!isExiting) return;
+
+		const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+			? 0
+			: EXIT_DURATION_MS;
+		const timeout = window.setTimeout(onDismiss, delay);
+		return () => window.clearTimeout(timeout);
+	}, [isExiting, onDismiss]);
 
 	return (
 		<div
 			className={styles.toast}
+			data-exiting={isExiting}
 			data-paused={isPaused}
 			role="status"
 			onMouseEnter={() => setIsPaused(true)}
@@ -47,25 +56,14 @@ export function UndoToast({
 				if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
 			}}
 		>
-			<span className={styles.sticker} aria-hidden="true">
-				{icon}
+			<span className={styles.status} data-variant={variant} aria-hidden="true">
+				{statusIcon ?? <Check />}
 			</span>
 			<p className={styles.message}>{message}</p>
+			<span className={styles.divider} aria-hidden="true" />
 			<button className={styles.undo} type="button" onClick={onUndo}>
-				<Undo2 aria-hidden="true" />
 				<span>{actionLabel}</span>
 			</button>
-			<button
-				className={styles.dismiss}
-				type="button"
-				aria-label={dismissLabel}
-				onClick={onDismiss}
-			>
-				<X aria-hidden="true" />
-			</button>
-			<span className={styles.fuse} aria-hidden="true">
-				<span className={styles.fuseProgress} style={fuseStyle} />
-			</span>
 		</div>
 	);
 }

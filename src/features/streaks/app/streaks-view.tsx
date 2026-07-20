@@ -1,9 +1,10 @@
 "use client";
 
-import { CircleCheckBig, Sparkles, Trash2 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { ui } from "@/i18n/en";
 import { UndoToast } from "@/shared/ui/undo-toast";
+import { CoinRewardFeedback } from "@/features/rewards/coin-reward-feedback";
+import { primeRewardSound } from "@/features/rewards/reward-sound-preference";
 import { StreakComposer } from "../components/composer/streak-composer";
 import { StreakList } from "../components/list/streak-list";
 import { StreakReviewFlow } from "../components/review/streak-review";
@@ -33,12 +34,24 @@ export function StreaksView({
 	}
 
 	function completeToday(streakId: string) {
+		primeRewardSound();
 		setCelebratingStreakId(streakId);
 		controller.completeToday(streakId);
 	}
 
+	function resolveDay(...args: Parameters<StreaksController["resolveDay"]>) {
+		primeRewardSound();
+		controller.resolveDay(...args);
+	}
+
+	function resolveGap(...args: Parameters<StreaksController["resolveGap"]>) {
+		primeRewardSound();
+		controller.resolveGap(...args);
+	}
+
 	return (
 		<>
+			<CoinRewardFeedback reward={controller.coinReward} />
 			<section className={styles.shell} aria-labelledby="streaks-title">
 				<h1 id="streaks-title" className="sr-only">
 					{ui.streaks.title}
@@ -67,8 +80,8 @@ export function StreaksView({
 				<StreakReviewFlow
 					days={controller.unreviewedDays}
 					streaks={controller.streaks}
-					onResolveDay={controller.resolveDay}
-					onResolveGap={controller.resolveGap}
+					onResolveDay={resolveDay}
+					onResolveGap={resolveGap}
 					isCompletedOn={controller.isCompletedOn}
 				/>
 			) : null}
@@ -76,15 +89,6 @@ export function StreaksView({
 			{controller.undoToast ? (
 				<UndoToast
 					key={controller.undoToast.key}
-					icon={
-						controller.undoToast.kind === "review" ? (
-							<Sparkles aria-hidden="true" />
-						) : controller.undoToast.kind === "today" ? (
-							<CircleCheckBig aria-hidden="true" />
-						) : (
-							<Trash2 aria-hidden="true" />
-						)
-					}
 					message={
 						controller.undoToast.kind === "review"
 							? ui.undo.reviewDone
@@ -93,7 +97,6 @@ export function StreaksView({
 								: ui.undo.deleted(controller.undoToast.name)
 					}
 					actionLabel={ui.undo.action}
-					dismissLabel={ui.undo.dismiss}
 					onUndo={controller.undo}
 					onDismiss={controller.dismissUndo}
 				/>

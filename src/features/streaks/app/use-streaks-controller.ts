@@ -40,6 +40,14 @@ export type UndoToast = {
 	name: string | null;
 };
 
+export type CoinReward = {
+	/** Changes for every reward, including equal-sized consecutive rewards. */
+	id: number;
+	amount: number;
+	/** The streak that produced the reward, when there is a single clear origin. */
+	streakId: string | null;
+};
+
 type UndoToastState = UndoToast & {
 	snapshot: StreaksData;
 };
@@ -52,6 +60,7 @@ export type StreaksController = {
 	unreviewedDays: LocalDateKey[];
 	hasPendingReview: boolean;
 	undoToast: UndoToast | null;
+	coinReward: CoinReward | null;
 	create: (name: string, icon: StreakIconValue) => string;
 	rememberIcon: (icon: StreakIconValue) => void;
 	updateIcon: (streakId: string, icon: StreakIconValue) => void;
@@ -194,6 +203,7 @@ export function useStreaksController({
 			kind: undoToast.kind,
 			name: undoToast.name,
 		},
+		coinReward: null,
 		create,
 		rememberIcon,
 		updateIcon,
