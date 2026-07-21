@@ -4,6 +4,7 @@ import Script from "next/script";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { APP_LANGUAGE } from "@/i18n/config";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
+import { AkinMascot } from "@/shared/ui/akin-mascot";
 import "./globals.css";
 
 const preferencesBootScript = `
@@ -66,6 +67,7 @@ export default function RootLayout({
 			<body>
 				<ConvexClientProvider>
 					{children}
+					<AkinMascot />
 					<AppPreferences />
 				</ConvexClientProvider>
 			</body>
