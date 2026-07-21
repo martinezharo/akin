@@ -2,6 +2,9 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 
+const INSTALL_NUDGE_SEEN_KEY = "akin.install-nudge-seen.v1";
+const INSTALL_NUDGE_CHANGE_EVENT = "akin:install-nudge-change";
+
 interface BeforeInstallPromptEvent extends Event {
 	prompt: () => Promise<void>;
 	userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
@@ -25,6 +28,13 @@ function isIosDevice() {
 	);
 }
 
+function isMobileDevice() {
+	return (
+		/Android|iPad|iPhone|iPod|IEMobile|Opera Mini|Mobile/i.test(window.navigator.userAgent) ||
+		(window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1)
+	);
+}
+
 function subscribeToStandaloneState(onStoreChange: () => void) {
 	const media = window.matchMedia("(display-mode: standalone)");
 	media.addEventListener?.("change", onStoreChange);
@@ -39,11 +49,30 @@ function subscribeToDeviceState() {
 	return () => undefined;
 }
 
+function hasSeenInstallNudge() {
+	try {
+		return window.localStorage.getItem(INSTALL_NUDGE_SEEN_KEY) === "true";
+	} catch {
+		return false;
+	}
+}
+
+function subscribeToInstallNudge(onStoreChange: () => void) {
+	window.addEventListener("storage", onStoreChange);
+	window.addEventListener(INSTALL_NUDGE_CHANGE_EVENT, onStoreChange);
+	return () => {
+		window.removeEventListener("storage", onStoreChange);
+		window.removeEventListener(INSTALL_NUDGE_CHANGE_EVENT, onStoreChange);
+	};
+}
+
 export function useInstallApp() {
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 	const [hasInstalled, setHasInstalled] = useState(false);
 	const isStandalone = useSyncExternalStore(subscribeToStandaloneState, isRunningStandalone, () => false);
 	const isIos = useSyncExternalStore(subscribeToDeviceState, isIosDevice, () => false);
+	const isMobile = useSyncExternalStore(subscribeToDeviceState, isMobileDevice, () => false);
+	const hasSeenNudge = useSyncExternalStore(subscribeToInstallNudge, hasSeenInstallNudge, () => true);
 
 	useEffect(() => {
 		if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
@@ -77,8 +106,19 @@ export function useInstallApp() {
 		return "prompted" as const;
 	}
 
+	function dismissInstallHighlight() {
+		try {
+			window.localStorage.setItem(INSTALL_NUDGE_SEEN_KEY, "true");
+		} catch {
+			// Keep installation usable even when browser storage is unavailable.
+		}
+		window.dispatchEvent(new Event(INSTALL_NUDGE_CHANGE_EVENT));
+	}
+
 	return {
 		shouldOfferInstall: !hasInstalled && !isStandalone,
+		shouldHighlightInstall: isMobile && !hasSeenNudge && !hasInstalled && !isStandalone,
+		dismissInstallHighlight,
 		requestInstall,
 	};
 }

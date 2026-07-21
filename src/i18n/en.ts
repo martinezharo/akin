@@ -115,6 +115,7 @@ export const ui = {
 	},
 	preferences: {
 		open: "Open preferences",
+		installNotice: "New: install Akin",
 		close: "Close preferences",
 		kicker: "Make Akin yours",
 		title: "Preferences",
@@ -126,6 +127,7 @@ export const ui = {
 		languageHint: "More languages are on their way.",
 		english: "English",
 		installTitle: "Install Akin",
+		newInstall: "New",
 		installCopy: "Keep your streaks one tap away.",
 		back: "Back to preferences",
 	},

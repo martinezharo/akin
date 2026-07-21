@@ -69,11 +69,12 @@ function savePreferences(preferences: StoredPreferences) {
 export function AppPreferences() {
 	const [open, setOpen] = useState(false);
 	const [installGuide, setInstallGuide] = useState<"ios" | "browser" | null>(null);
+	const [showInstallNotice, setShowInstallNotice] = useState(false);
 	const [theme, setTheme] = useState<Theme>("light");
 	const [language, setLanguage] = useState<Language>("en");
 	const [rewardSound, setRewardSound] = useState(true);
 	const [themeAnimation, setThemeAnimation] = useState<Theme | null>(null);
-	const { shouldOfferInstall, requestInstall } = useInstallApp();
+	const { shouldOfferInstall, shouldHighlightInstall, dismissInstallHighlight, requestInstall } = useInstallApp();
 	const titleId = useId();
 	const descriptionId = useId();
 	const themeAnimationTimer = useRef<number | undefined>(undefined);
@@ -85,7 +86,9 @@ export function AppPreferences() {
 		setTheme(stored.theme);
 		setLanguage(stored.language);
 		setRewardSound(isRewardSoundEnabled());
+		setShowInstallNotice(shouldHighlightInstall);
 		setOpen(true);
+		if (shouldHighlightInstall) dismissInstallHighlight();
 	}
 
 	function chooseTheme(nextTheme: Theme) {
@@ -131,9 +134,11 @@ export function AppPreferences() {
 	function dismiss() {
 		setOpen(false);
 		setInstallGuide(null);
+		setShowInstallNotice(false);
 	}
 
 	async function install() {
+		setShowInstallNotice(false);
 		const result = await requestInstall();
 		if (result === "ios-guide") setInstallGuide("ios");
 		if (result === "browser-guide") setInstallGuide("browser");
@@ -141,8 +146,14 @@ export function AppPreferences() {
 
 	return (
 		<>
-			<button className={styles.trigger} type="button" onClick={showPreferences} aria-label={ui.preferences.open}>
+			<button
+				className={styles.trigger}
+				type="button"
+				onClick={showPreferences}
+				aria-label={shouldHighlightInstall ? `${ui.preferences.open}. ${ui.preferences.installNotice}` : ui.preferences.open}
+			>
 				<Settings2 aria-hidden="true" />
+				{shouldHighlightInstall ? <span className={styles.noticeBadge} aria-hidden="true">!</span> : null}
 			</button>
 
 			{open ? (
@@ -191,9 +202,13 @@ export function AppPreferences() {
 								</div>
 
 								{shouldOfferInstall ? (
-									<button className={styles.install} type="button" onClick={() => void install()}>
+									<button className={styles.install} type="button" data-notice={showInstallNotice || undefined} onClick={() => void install()}>
 										<span><Download aria-hidden="true" /></span>
-										<span><strong>{ui.preferences.installTitle}</strong><small>{ui.preferences.installCopy}</small></span>
+										<span>
+											<strong>{ui.preferences.installTitle}</strong>
+											{showInstallNotice ? <em className={styles.installNotice}>{ui.preferences.newInstall}</em> : null}
+											<small>{ui.preferences.installCopy}</small>
+										</span>
 										<ArrowRight aria-hidden="true" />
 									</button>
 								) : null}

@@ -7,6 +7,10 @@ import { AppPreferences } from "./app-preferences";
 
 beforeEach(() => {
 	window.localStorage.clear();
+	Object.defineProperty(window.navigator, "userAgent", {
+		configurable: true,
+		value: "Mozilla/5.0 (X11; Linux x86_64)",
+	});
 	Object.defineProperty(window, "matchMedia", {
 		configurable: true,
 		value: vi.fn().mockReturnValue({
@@ -29,6 +33,34 @@ afterEach(() => {
 });
 
 describe("AppPreferences", () => {
+	it("shows the install notice once on a mobile device", async () => {
+		const user = userEvent.setup();
+		Object.defineProperty(window.navigator, "userAgent", {
+			configurable: true,
+			value: "Mozilla/5.0 (Linux; Android 15; Mobile)",
+		});
+
+		const firstVisit = render(<AppPreferences />);
+		const trigger = await screen.findByRole("button", { name: /new: install akin/i });
+		expect(trigger.querySelector("span")?.textContent).toBe("!");
+
+		await user.click(trigger);
+		expect(window.localStorage.getItem("akin.install-nudge-seen.v1")).toBe("true");
+		const installButton = screen.getByRole("button", { name: /install akin/i });
+		expect(installButton.textContent).toMatch(/install akin.*new/i);
+		firstVisit.unmount();
+
+		render(<AppPreferences />);
+		expect(screen.getByRole("button", { name: /^open preferences$/i }).querySelector("span")).toBeNull();
+	});
+
+	it("does not show the first-visit install notice on desktop", () => {
+		render(<AppPreferences />);
+
+		expect(screen.getByRole("button", { name: /^open preferences$/i }).querySelector("span")).toBeNull();
+		expect(window.localStorage.getItem("akin.install-nudge-seen.v1")).toBeNull();
+	});
+
 	it("saves and applies the selected theme and language", async () => {
 		const user = userEvent.setup();
 		render(<AppPreferences />);
