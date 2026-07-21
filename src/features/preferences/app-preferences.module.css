@@ -86,9 +86,9 @@
 	place-items: center;
 	margin-bottom: 0.85rem;
 	border-radius: 1rem 1rem 1rem 0.32rem;
-	background: var(--button-background);
+	background: var(--accent);
 	box-shadow: 0.24rem 0.25rem 0 var(--selection);
-	color: var(--button-foreground);
+	color: #fff;
 	transform: rotate(-4deg);
 }
 
