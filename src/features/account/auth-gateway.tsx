@@ -39,9 +39,9 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 			</div> : null}
 			<AppNavigation
 				accountControl={(
-					<button className={styles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open profile">
+					<button className={styles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open your account">
 						<UserRound aria-hidden="true" />
-						<span>Profile</span>
+						<span>Me</span>
 					</button>
 				)}
 				preferencesControl={<AppPreferences placement="navigation" />}

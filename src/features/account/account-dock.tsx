@@ -79,7 +79,7 @@ function AccountDockView({
 		<>
 			<button className={styles.accountButton} type="button" onClick={() => { setShowAllCoinStreaks(false); setShowCoinLimitNotice(false); setOpen(true); }} aria-label="Open account and coin settings">
 				<UserRound aria-hidden="true" />
-				<span>Profile</span>
+				<span>Me</span>
 				{avatarBadge ? <small>{avatarBadge}</small> : null}
 			</button>
 

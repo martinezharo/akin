@@ -40,9 +40,9 @@ export function AppNavigation({ accountControl, preferencesControl }: AppNavigat
 
 			<div className={styles.control}>
 				{accountControl ?? (
-					<Link className={styles.item} href={homeHref} aria-label="Profile">
+					<Link className={styles.item} href={homeHref} aria-label="Me">
 						<UserRound aria-hidden="true" />
-						<span>Profile</span>
+						<span>Me</span>
 					</Link>
 				)}
 			</div>
