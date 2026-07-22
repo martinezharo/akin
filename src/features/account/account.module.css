@@ -131,6 +131,8 @@
 }
 .accountButton:hover { color: var(--foreground); transform: translateY(-1px); }
 .accountButton:active { transform: scale(0.91); }
+.accountButton[aria-current="page"] { color: var(--foreground); }
+.accountButton[aria-current="page"]::after { position: absolute; bottom: 0.32rem; width: 0.28rem; height: 0.28rem; border-radius: 50%; background: var(--accent); content: ""; }
 .accountButton > svg { width: 1.35rem; height: 1.35rem; stroke-width: 2.35; }
 .accountButton small {
 	position: absolute;

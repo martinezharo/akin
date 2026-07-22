@@ -8,7 +8,7 @@ import {
 	saveDemoAccountState,
 	type DemoAccountState,
 } from "@/features/account/demo-account-storage";
-import type { AccountDashboardView } from "@/features/account/account-dock";
+import type { AccountDashboardView } from "@/features/account/account-types";
 import type { LocalDateKey } from "../model/calendar";
 import type { ReviewAnswers } from "../model/progress";
 import type { Streak } from "../model/streak";

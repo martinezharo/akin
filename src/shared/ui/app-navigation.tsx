@@ -18,6 +18,7 @@ export function AppNavigation({ accountControl, preferencesControl }: AppNavigat
 	const pathname = usePathname();
 	const homeHref = getExperiencePath(pathname, "/");
 	const petHref = getExperiencePath(pathname, "/pet");
+	const meHref = getExperiencePath(pathname, "/me");
 
 	return (
 		<nav className={styles.navigation} aria-label="Main navigation">
@@ -40,7 +41,7 @@ export function AppNavigation({ accountControl, preferencesControl }: AppNavigat
 
 			<div className={styles.control}>
 				{accountControl ?? (
-					<Link className={styles.item} href={homeHref} aria-label="Me">
+					<Link className={styles.item} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label="Me">
 						<UserRound aria-hidden="true" />
 						<span>Me</span>
 					</Link>
