@@ -115,6 +115,28 @@
 .akinItem[aria-current="page"] { background: transparent; color: var(--accent); }
 .akinItem[aria-current="page"]::after { display: none; }
 .akinItem[aria-current="page"] .akinIcon { border-color: var(--accent); }
+.akinLocked .akinIcon {
+	background: color-mix(in srgb, #f4d4af 38%, var(--icon-background));
+	box-shadow: 0 0.45rem 1rem rgb(32 34 29 / 13%);
+	filter: grayscale(0.88) saturate(0.28);
+}
+.akinLocked .akinArtwork { opacity: 0.48; }
+.akinLocked:hover .akinIcon { box-shadow: 0 0.55rem 1.25rem rgb(32 34 29 / 17%); transform: translateY(-0.08rem); }
+.akinLock {
+	position: absolute;
+	right: 0.25rem;
+	bottom: 0.2rem;
+	display: grid;
+	width: 1.45rem;
+	height: 1.45rem;
+	place-items: center;
+	border: 0.16rem solid var(--background);
+	border-radius: 50%;
+	background: var(--button-background);
+	box-shadow: 0 0.18rem 0.45rem rgb(0 0 0 / 24%);
+	color: var(--button-foreground);
+}
+.akinLock svg { width: 0.7rem; height: 0.7rem; stroke-width: 3; }
 
 .control { position: relative; min-width: 0; height: 100%; }
 .control > :global(button), .control > :global(a) { width: 100%; }

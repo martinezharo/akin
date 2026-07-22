@@ -1,7 +1,7 @@
 "use client";
 
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { RefreshCw, UserRound, WifiOff, X } from "lucide-react";
+import { RefreshCw, WifiOff, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
@@ -12,7 +12,7 @@ import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { AccountDock } from "./account-dock";
 import { AccountRewardsBalance } from "./account-rewards-balance";
-import { AuthModal } from "./auth-modal";
+import { GuestAccountControls } from "./guest-account-controls";
 import styles from "./account.module.css";
 
 function AkinLoadingMark() {
@@ -24,7 +24,6 @@ function AkinLoadingMark() {
 }
 
 function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: boolean }) {
-	const [authOpen, setAuthOpen] = useState(false);
 	return (
 		<>
 			<StreaksApp />
@@ -38,16 +37,7 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 					</>
 				) : null}
 			</div> : null}
-			<AppNavigation
-				accountControl={(
-					<button className={styles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open your account">
-						<UserRound aria-hidden="true" />
-						<span>Me</span>
-					</button>
-				)}
-				preferencesControl={<AppPreferences placement="navigation" />}
-			/>
-			{authOpen && !backendUnavailable ? <AuthModal onDismiss={() => setAuthOpen(false)} /> : null}
+			<GuestAccountControls showRewards={!backendUnavailable} />
 		</>
 	);
 }

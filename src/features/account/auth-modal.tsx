@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Sparkles, X } from "lucide-react";
+import { ArrowRight, Cloud, Coins, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useId, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
@@ -59,8 +59,14 @@ export function AuthModal({ onDismiss }: { onDismiss: () => void }) {
 					Keep every little win.
 				</h2>
 				<p className={styles.authCopy} id={descriptionId}>
-					Sign in or create your Akin account with GitHub. Your streaks, check-ins and coins will be waiting on every device.
+					Sign in or create your Akin account with GitHub and turn every promise into something you can keep.
 				</p>
+				<ul className={styles.authBenefits} aria-label="Account benefits">
+					<li><span><Cloud aria-hidden="true" /></span>Keep streaks and check-ins synced on every device</li>
+					<li><span><Coins aria-hidden="true" /></span>Earn coins and XP whenever you keep a reward streak</li>
+					<li><span><Sparkles aria-hidden="true" /></span>Unlock, customise and care for your Akin companion</li>
+					<li><span><ShieldCheck aria-hidden="true" /></span>Keep your progress safely tied to your account</li>
+				</ul>
 
 				{error ? <p className={styles.authError} role="alert">{error}</p> : null}
 				<button className={styles.githubSubmit} type="button" disabled={pending} onClick={() => void continueWithGitHub()}>

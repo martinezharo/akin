@@ -1,7 +1,7 @@
 "use client";
 
 import { Authenticated, AuthLoading, Unauthenticated, useQuery, useMutation } from "convex/react";
-import { Coins, FlaskConical, LogOut, SlidersHorizontal, Sparkles, UserRound } from "lucide-react";
+import { Coins, FlaskConical, LogOut, SlidersHorizontal, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useId, useState } from "react";
@@ -13,7 +13,7 @@ import { AppPreferences } from "@/features/preferences/app-preferences";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
 import type { AccountDashboardView } from "./account-types";
-import { AuthModal } from "./auth-modal";
+import { GuestAccountControls } from "./guest-account-controls";
 import styles from "./account-page.module.css";
 
 type AccountPageViewProps = {
@@ -130,7 +130,6 @@ function AccountLoading() {
 }
 
 function GuestAccountPage() {
-	const [authOpen, setAuthOpen] = useState(true);
 	const router = useRouter();
 
 	function dismissAuth() {
@@ -144,16 +143,7 @@ function GuestAccountPage() {
 	return (
 		<>
 			<StreaksApp />
-			<AppNavigation
-				accountControl={(
-					<button className={styles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open your account">
-						<UserRound aria-hidden="true" />
-						<span>Me</span>
-					</button>
-				)}
-				preferencesControl={<AppPreferences placement="navigation" />}
-			/>
-			{authOpen ? <AuthModal onDismiss={dismissAuth} /> : null}
+			<GuestAccountControls initialAuthOpen onAuthDismiss={dismissAuth} />
 		</>
 	);
 }

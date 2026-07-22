@@ -1,6 +1,6 @@
 "use client";
 
-import { House, UserRound, UsersRound } from "lucide-react";
+import { House, LockKeyhole, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -11,10 +11,11 @@ import styles from "./app-navigation.module.css";
 
 type AppNavigationProps = {
 	accountControl?: ReactNode;
+	onLockedPetClick?: () => void;
 	preferencesControl: ReactNode;
 };
 
-export function AppNavigation({ accountControl, preferencesControl }: AppNavigationProps) {
+export function AppNavigation({ accountControl, onLockedPetClick, preferencesControl }: AppNavigationProps) {
 	const pathname = usePathname();
 	const homeHref = getExperiencePath(pathname, "/");
 	const petHref = getExperiencePath(pathname, "/pet");
@@ -33,11 +34,25 @@ export function AppNavigation({ accountControl, preferencesControl }: AppNavigat
 				<small aria-hidden="true">Soon</small>
 			</button>
 
-			<Link className={`${styles.item} ${styles.akinItem}`} href={petHref} aria-current={pathname === petHref ? "page" : undefined}>
-				<span className={`${styles.akinIcon} ${motionStyles.interactive}`} aria-hidden="true">
-					<AkinMascotArtwork className={`${styles.akinArtwork} ${motionStyles.animated}`} viewBox="400 900 4216 3216" />
-				</span>
-			</Link>
+			{onLockedPetClick ? (
+				<button
+					className={`${styles.item} ${styles.akinItem} ${styles.akinLocked}`}
+					type="button"
+					onClick={onLockedPetClick}
+					aria-label="Sign in to unlock your Akin companion"
+				>
+					<span className={styles.akinIcon} aria-hidden="true">
+						<AkinMascotArtwork className={styles.akinArtwork} viewBox="400 900 4216 3216" />
+						<span className={styles.akinLock}><LockKeyhole /></span>
+					</span>
+				</button>
+			) : (
+				<Link className={`${styles.item} ${styles.akinItem}`} href={petHref} aria-current={pathname === petHref ? "page" : undefined}>
+					<span className={`${styles.akinIcon} ${motionStyles.interactive}`} aria-hidden="true">
+						<AkinMascotArtwork className={`${styles.akinArtwork} ${motionStyles.animated}`} viewBox="400 900 4216 3216" />
+					</span>
+				</Link>
+			)}
 
 			<div className={styles.control}>
 				{accountControl ?? (

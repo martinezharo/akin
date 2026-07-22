@@ -15,3 +15,18 @@ export function AccountRewardsBalance({ balance, xp }: { balance: number; xp: nu
 		</div>
 	);
 }
+
+export function GuestRewardsBalance({ onRequestAccess }: { onRequestAccess: () => void }) {
+	return (
+		<div className={`${styles.walletPills} ${styles.guestWallet}`} aria-label="Account rewards, sign in to reveal">
+			<button className={styles.coinPill} type="button" onClick={onRequestAccess} aria-label="Sign in to reveal your coins">
+				<Coins aria-hidden="true" />
+				<strong aria-hidden="true">128</strong>
+			</button>
+			<button className={styles.xpPill} type="button" onClick={onRequestAccess} aria-label="Sign in to reveal your XP">
+				<Sparkles aria-hidden="true" />
+				<strong aria-hidden="true">840</strong>
+			</button>
+		</div>
+	);
+}

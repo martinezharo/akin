@@ -1,11 +1,14 @@
 "use client";
 
 import { Check, Coins, RotateCcw, Sparkles, UserRound } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { type CSSProperties, type PointerEvent, useRef, useState } from "react";
 import { AccountDock } from "@/features/account/account-dock";
 import { AccountRewardsBalance } from "@/features/account/account-rewards-balance";
 import { AuthModal } from "@/features/account/auth-modal";
+import { GuestAccountControls } from "@/features/account/guest-account-controls";
 import { AppPreferences } from "@/features/preferences/app-preferences";
+import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import {
 	getPetHair,
 	getPetSkin,
@@ -30,9 +33,26 @@ type StudioProps = ReturnType<typeof usePetCustomization>;
 
 export function PetPage() {
 	const pet = usePetCustomization();
+	const pathname = usePathname();
 	const equippedKey = `${pet.customization.skinId}:${pet.customization.hairId}`;
+	const isDemo = pathname === "/demo" || pathname.startsWith("/demo/");
+
+	if (!isDemo && !pet.isAuthenticated) return <GuestPetGate isLoading={pet.isLoading} />;
 
 	return <PetStudio {...pet} key={equippedKey} />;
+}
+
+function GuestPetGate({ isLoading }: { isLoading: boolean }) {
+	const router = useRouter();
+
+	if (isLoading) return <div className={styles.loading} role="status">Checking your companion’s guest list…</div>;
+
+	return (
+		<>
+			<StreaksApp />
+			<GuestAccountControls initialAuthOpen onAuthDismiss={() => router.replace("/")} />
+		</>
+	);
 }
 
 function PetStudio({

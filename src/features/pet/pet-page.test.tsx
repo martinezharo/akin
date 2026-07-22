@@ -8,16 +8,24 @@ import { PetPage } from "./pet-page";
 const mocks = vi.hoisted(() => ({
 	purchaseSkin: vi.fn().mockResolvedValue({ ok: true }),
 	chooseHair: vi.fn().mockResolvedValue(undefined),
+	pathname: "/demo/pet",
+	isAuthenticated: false,
 }));
 
-vi.mock("next/navigation", () => ({ usePathname: () => "/demo/pet" }));
+vi.mock("next/navigation", () => ({
+	usePathname: () => mocks.pathname,
+	useRouter: () => ({ replace: vi.fn() }),
+}));
 vi.mock("@/features/preferences/app-preferences", () => ({ AppPreferences: () => null }));
 vi.mock("@/shared/ui/app-navigation", () => ({ AppNavigation: () => <nav aria-label="App navigation" /> }));
+vi.mock("@/features/streaks/app/streaks-app", () => ({ StreaksApp: () => <main>Local streaks</main> }));
+vi.mock("@/features/account/auth-modal", () => ({ AuthModal: () => <div role="dialog">Sign in to Akin</div> }));
 vi.mock("@/shared/ui/akin-mascot-artwork", () => ({
 	AkinMascotArtwork: ({ className }: { className?: string }) => <svg className={className} data-testid="companion-artwork" />,
 }));
 vi.mock("./pet-customization-provider", () => ({
 	usePetCustomization: () => ({
+		isAuthenticated: mocks.isAuthenticated,
 		customization: { skinId: "ember", hairId: "honey" },
 		ownedSkinIds: ["ember"],
 		skinColor: "#E84B1B",
@@ -33,11 +41,21 @@ vi.mock("./pet-customization-provider", () => ({
 
 afterEach(() => {
 	cleanup();
+	mocks.pathname = "/demo/pet";
+	mocks.isAuthenticated = false;
 	vi.clearAllMocks();
 	vi.restoreAllMocks();
 });
 
 describe("pet studio", () => {
+	it("blocks direct access for signed-out users", () => {
+		mocks.pathname = "/pet";
+		render(<PetPage />);
+
+		expect(screen.getByRole("dialog").textContent).toContain("Sign in");
+		expect(screen.queryByRole("button", { name: "Pet your companion" })).toBeNull();
+	});
+
 	it("previews a paid skin without purchasing until confirmation", async () => {
 		const user = userEvent.setup();
 		render(<PetPage />);
