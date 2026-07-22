@@ -2,6 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { ui } from "@/i18n/en";
+import { AkinMascot } from "@/shared/ui/akin-mascot";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import { CoinRewardFeedback } from "@/features/rewards/coin-reward-feedback";
 import { primeRewardSound } from "@/features/rewards/reward-sound-preference";
@@ -51,6 +52,7 @@ export function StreaksView({
 
 	return (
 		<>
+			<AkinMascot />
 			<CoinRewardFeedback reward={controller.coinReward} />
 			<section className={styles.shell} aria-labelledby="streaks-title">
 				<h1 id="streaks-title" className="sr-only">
