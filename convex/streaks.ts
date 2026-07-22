@@ -4,9 +4,10 @@ import { assertCurrentLocalDate } from "./lib/dates";
 import {
 	findOwnedStreak,
 	listActiveStreaks,
-	MAX_COIN_STREAKS,
+	MAX_REWARD_STREAKS,
 	normalizeIcon,
 	normalizeStreakName,
+	isRewardEligible,
 } from "./lib/streaks";
 import { createUndoRecord } from "./lib/undo";
 import { getProfile, requireAuthUser } from "./lib/users";
@@ -29,10 +30,10 @@ export const create = mutation({
 				queryBuilder.eq("userId", user._id).eq("clientId", args.clientId),
 			)
 			.unique();
-		if (existing) return { coinEligible: existing.coinEligible };
+		if (existing) return { rewardEligible: isRewardEligible(existing) };
 
 		const streaks = await listActiveStreaks(ctx, user._id);
-		const coinEligible = streaks.filter((streak) => streak.coinEligible).length < MAX_COIN_STREAKS;
+		const rewardEligible = streaks.filter(isRewardEligible).length < MAX_REWARD_STREAKS;
 		await ctx.db.insert("streaks", {
 			userId: user._id,
 			clientId: args.clientId,
@@ -40,12 +41,12 @@ export const create = mutation({
 			icon: normalizeIcon(args.icon),
 			days: 0,
 			createdOn: args.createdOn,
-			coinEligible,
+			rewardEligible,
 			sortOrder: streaks.length,
 			createdAt: Date.now(),
 			updatedAt: Date.now(),
 		});
-		return { coinEligible };
+		return { rewardEligible };
 	},
 });
 
@@ -105,21 +106,21 @@ export const remove = mutation({
 	},
 });
 
-export const setCoinEligible = mutation({
-	args: { streakId: v.string(), coinEligible: v.boolean() },
+export const setRewardEligible = mutation({
+	args: { streakId: v.string(), rewardEligible: v.boolean() },
 	handler: async (ctx, args) => {
 		const user = await requireAuthUser(ctx);
 		const streak = await findOwnedStreak(ctx, user._id, args.streakId);
-		if (streak.coinEligible === args.coinEligible) return;
-		if (args.coinEligible) {
+		if (isRewardEligible(streak) === args.rewardEligible) return;
+		if (args.rewardEligible) {
 			const active = await listActiveStreaks(ctx, user._id);
-			if (active.filter((candidate) => candidate.coinEligible).length >= MAX_COIN_STREAKS) {
+			if (active.filter(isRewardEligible).length >= MAX_REWARD_STREAKS) {
 				throw new ConvexError({
-					code: "COIN_STREAK_LIMIT",
-					message: "Only ten streaks can earn coins",
+					code: "REWARD_STREAK_LIMIT",
+					message: "Only ten streaks can earn rewards",
 				});
 			}
 		}
-		await ctx.db.patch(streak._id, { coinEligible: args.coinEligible, updatedAt: Date.now() });
+		await ctx.db.patch(streak._id, { rewardEligible: args.rewardEligible, updatedAt: Date.now() });
 	},
 });

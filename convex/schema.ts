@@ -21,7 +21,10 @@ export default defineSchema({
 		icon: v.string(),
 		days: v.number(),
 		createdOn: v.string(),
-		coinEligible: v.boolean(),
+		// Keep the legacy field optional while existing documents adopt the
+		// generic reward-streak vocabulary.
+		coinEligible: v.optional(v.boolean()),
+		rewardEligible: v.optional(v.boolean()),
 		sortOrder: v.number(),
 		deletedAt: v.optional(v.number()),
 		createdAt: v.number(),
@@ -45,6 +48,7 @@ export default defineSchema({
 		userId: v.string(),
 		balance: v.number(),
 		lifetimeEarned: v.number(),
+		xp: v.optional(v.number()),
 		updatedAt: v.number(),
 	}).index("by_user", ["userId"]),
 

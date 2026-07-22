@@ -4,21 +4,26 @@ export const DEMO_STARTING_COINS = 999;
 export type DemoAccountState = {
 	balance: number;
 	lifetimeEarned: number;
-	coinEligibleStreakIds: string[];
+	xp: number;
+	rewardEligibleStreakIds: string[];
 };
 
 export function createDemoAccountState(streakIds: string[]): DemoAccountState {
 	return {
 		balance: DEMO_STARTING_COINS,
 		lifetimeEarned: DEMO_STARTING_COINS,
-		coinEligibleStreakIds: streakIds.slice(0, 10),
+		xp: 0,
+		rewardEligibleStreakIds: streakIds.slice(0, 10),
 	};
 }
 
 function isDemoAccountState(value: unknown): value is DemoAccountState {
 	if (!value || typeof value !== "object") return false;
 
-	const account = value as Partial<DemoAccountState>;
+	const account = value as Partial<DemoAccountState> & {
+		coinEligibleStreakIds?: unknown;
+	};
+	const eligibleStreakIds = account.rewardEligibleStreakIds ?? account.coinEligibleStreakIds;
 	return (
 		typeof account.balance === "number" &&
 		Number.isSafeInteger(account.balance) &&
@@ -26,8 +31,8 @@ function isDemoAccountState(value: unknown): value is DemoAccountState {
 		typeof account.lifetimeEarned === "number" &&
 		Number.isSafeInteger(account.lifetimeEarned) &&
 		account.lifetimeEarned >= 0 &&
-		Array.isArray(account.coinEligibleStreakIds) &&
-		account.coinEligibleStreakIds.every((id) => typeof id === "string")
+		Array.isArray(eligibleStreakIds) &&
+		eligibleStreakIds.every((id) => typeof id === "string")
 	);
 }
 
@@ -39,11 +44,15 @@ export function loadDemoAccountState(streakIds: string[]): DemoAccountState {
 		const account: unknown = JSON.parse(serialized);
 		if (!isDemoAccountState(account)) return fallback;
 
+		const persisted = account as DemoAccountState & { coinEligibleStreakIds?: string[] };
+		const eligibleStreakIds = persisted.rewardEligibleStreakIds ?? persisted.coinEligibleStreakIds ?? [];
 		const activeIds = new Set(streakIds);
 		return {
-			...account,
-			coinEligibleStreakIds: [
-				...new Set(account.coinEligibleStreakIds.filter((id) => activeIds.has(id))),
+			balance: persisted.balance,
+			lifetimeEarned: persisted.lifetimeEarned,
+			xp: typeof persisted.xp === "number" && Number.isSafeInteger(persisted.xp) && persisted.xp >= 0 ? persisted.xp : 0,
+			rewardEligibleStreakIds: [
+				...new Set(eligibleStreakIds.filter((id) => activeIds.has(id))),
 			].slice(0, 10),
 		};
 	} catch {

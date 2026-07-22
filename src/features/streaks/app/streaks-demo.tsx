@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AccountCoinBalance, DemoAccountDock } from "@/features/account/account-dock";
+import { AccountRewardsBalance, DemoAccountDock } from "@/features/account/account-dock";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { clearDemoAccountStorage } from "@/features/account/demo-account-storage";
@@ -30,7 +30,7 @@ function HydratedStreaksDemo() {
 	const {
 		controller,
 		dashboard,
-		toggleCoinEligible,
+		toggleRewardEligible,
 		resetWallet,
 		resetAccount,
 	} = useDemoStreaksController(localController);
@@ -51,12 +51,12 @@ function HydratedStreaksDemo() {
 
 	return (
 		<StreaksView controller={controller}>
-			<AccountCoinBalance balance={dashboard.wallet.balance} />
+			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
 			<AppNavigation
 				accountControl={(
 					<DemoAccountDock
 						dashboard={dashboard}
-						onToggleCoinEligible={toggleCoinEligible}
+						onToggleRewardEligible={toggleRewardEligible}
 						onResetWallet={resetWallet}
 					/>
 				)}

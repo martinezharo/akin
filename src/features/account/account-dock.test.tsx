@@ -11,22 +11,22 @@ vi.mock("@/shared/ui/modal-dialog", () => ({
 
 afterEach(cleanup);
 
-describe("coin streak settings", () => {
+describe("reward streak settings", () => {
 	it("shows the generic streak icon when a streak has no emoji", async () => {
 		const user = userEvent.setup();
 		const { container } = render(
 			<DemoAccountDock
 				dashboard={{
 					user: { id: "user-1", name: "Ada", email: "ada@example.com" },
-					wallet: { balance: 12, lifetimeEarned: 12 },
-					streaks: [{ id: "streak-1", name: "Read", icon: null, coinEligible: true }],
+					wallet: { balance: 12, lifetimeEarned: 12, xp: 4 },
+					streaks: [{ id: "streak-1", name: "Read", icon: null, rewardEligible: true }],
 				}}
-				onToggleCoinEligible={vi.fn()}
+				onToggleRewardEligible={vi.fn()}
 				onResetWallet={vi.fn()}
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: "Open account and coin settings" }));
+		await user.click(screen.getByRole("button", { name: "Open account and reward settings" }));
 
 		expect(screen.getByText("Read")).toBeTruthy();
 		expect(container.querySelector("svg.lucide-goal")).toBeTruthy();
@@ -38,21 +38,21 @@ describe("coin streak settings", () => {
 			id: `streak-${index + 1}`,
 			name: `Streak ${index + 1}`,
 			icon: "🎯",
-			coinEligible: false,
+			rewardEligible: false,
 		}));
 		render(
 			<DemoAccountDock
 				dashboard={{
 					user: { id: "user-1", name: "Ada", email: "ada@example.com" },
-					wallet: { balance: 12, lifetimeEarned: 12 },
+					wallet: { balance: 12, lifetimeEarned: 12, xp: 4 },
 					streaks,
 				}}
-				onToggleCoinEligible={vi.fn()}
+				onToggleRewardEligible={vi.fn()}
 				onResetWallet={vi.fn()}
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: "Open account and coin settings" }));
+		await user.click(screen.getByRole("button", { name: "Open account and reward settings" }));
 
 		expect(screen.getByText("Streak 10")).toBeTruthy();
 		expect(screen.queryByText("Streak 11")).toBeNull();
@@ -63,32 +63,32 @@ describe("coin streak settings", () => {
 		expect(screen.getByRole("button", { name: "Show less" }).getAttribute("aria-expanded")).toBe("true");
 	});
 
-	it("explains why an eleventh coin streak cannot be enabled", async () => {
+	it("explains why an eleventh reward streak cannot be enabled", async () => {
 		const user = userEvent.setup();
-		const onToggleCoinEligible = vi.fn();
+		const onToggleRewardEligible = vi.fn();
 		const streaks = Array.from({ length: 11 }, (_, index) => ({
 			id: `streak-${index + 1}`,
 			name: `Streak ${index + 1}`,
 			icon: "🎯",
-			coinEligible: index < 10,
+			rewardEligible: index < 10,
 		}));
 		render(
 			<DemoAccountDock
 				dashboard={{
 					user: { id: "user-1", name: "Ada", email: "ada@example.com" },
-					wallet: { balance: 12, lifetimeEarned: 12 },
+					wallet: { balance: 12, lifetimeEarned: 12, xp: 4 },
 					streaks,
 				}}
-				onToggleCoinEligible={onToggleCoinEligible}
+				onToggleRewardEligible={onToggleRewardEligible}
 				onResetWallet={vi.fn()}
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: "Open account and coin settings" }));
+		await user.click(screen.getByRole("button", { name: "Open account and reward settings" }));
 		await user.click(screen.getByRole("button", { name: "Show all 11 streaks" }));
 		await user.click(screen.getByText("Streak 11"));
 
-		expect(screen.getByText("Coin crew full — swap one out first.")).toBeTruthy();
-		expect(onToggleCoinEligible).not.toHaveBeenCalled();
+		expect(screen.getByText("Reward crew full — swap one out first.")).toBeTruthy();
+		expect(onToggleRewardEligible).not.toHaveBeenCalled();
 	});
 });

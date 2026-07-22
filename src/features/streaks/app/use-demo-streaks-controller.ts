@@ -53,12 +53,13 @@ function coinsForGap(
 	}, 0);
 }
 
-function withCoins(account: DemoAccountState, amount: number): DemoAccountState {
+function withRewards(account: DemoAccountState, amount: number): DemoAccountState {
 	if (amount === 0) return account;
 	return {
 		...account,
 		balance: account.balance + amount,
 		lifetimeEarned: account.lifetimeEarned + amount,
+		xp: account.xp + amount,
 	};
 }
 
@@ -91,12 +92,12 @@ export function useDemoStreaksController(base: StreaksController) {
 	}
 
 	function eligibleIds() {
-		return new Set(account.coinEligibleStreakIds);
+		return new Set(account.rewardEligibleStreakIds);
 	}
 
-	function addCoinsToWallet(amount: number) {
+	function addRewardsToWallet(amount: number) {
 		if (amount === 0) return;
-		setAccount((current) => withCoins(current, amount));
+		setAccount((current) => withRewards(current, amount));
 	}
 
 	function showCoinReward(amount: number, streakId: string | null = null) {
@@ -106,7 +107,7 @@ export function useDemoStreaksController(base: StreaksController) {
 	}
 
 	function awardCoins(amount: number, streakId: string | null = null) {
-		addCoinsToWallet(amount);
+		addRewardsToWallet(amount);
 		showCoinReward(amount, streakId);
 	}
 
@@ -116,11 +117,11 @@ export function useDemoStreaksController(base: StreaksController) {
 			discardUndo();
 			const id = base.create(name, icon);
 			setAccount((current) =>
-				current.coinEligibleStreakIds.length >= 10
+				current.rewardEligibleStreakIds.length >= 10
 					? current
 					: {
 							...current,
-							coinEligibleStreakIds: [id, ...current.coinEligibleStreakIds],
+							rewardEligibleStreakIds: [id, ...current.rewardEligibleStreakIds],
 						},
 			);
 			return id;
@@ -146,7 +147,7 @@ export function useDemoStreaksController(base: StreaksController) {
 			base.remove(streakId);
 			setAccount((current) => ({
 				...current,
-				coinEligibleStreakIds: current.coinEligibleStreakIds.filter(
+				rewardEligibleStreakIds: current.rewardEligibleStreakIds.filter(
 					(id) => id !== streakId,
 				),
 			}));
@@ -167,7 +168,7 @@ export function useDemoStreaksController(base: StreaksController) {
 			if (
 				streak &&
 				streak.createdOn < base.today &&
-				account.coinEligibleStreakIds.includes(streakId)
+				account.rewardEligibleStreakIds.includes(streakId)
 			) {
 				awardCoins(1, streakId);
 			}
@@ -176,7 +177,7 @@ export function useDemoStreaksController(base: StreaksController) {
 			rememberReviewUndo();
 			const reward = coinsForDay(base, eligibleIds(), day, answers);
 			base.resolveDay(day, answers);
-			addCoinsToWallet(reward);
+			addRewardsToWallet(reward);
 			if (base.unreviewedDays.length > 1) {
 				reviewCoinRewardRef.current += reward;
 			} else {
@@ -188,7 +189,7 @@ export function useDemoStreaksController(base: StreaksController) {
 			rememberReviewUndo();
 			const reward = coinsForGap(base, eligibleIds(), days, answers);
 			base.resolveGap(days, answers);
-			addCoinsToWallet(reward);
+			addRewardsToWallet(reward);
 			showCoinReward(reviewCoinRewardRef.current + reward);
 			reviewCoinRewardRef.current = 0;
 		},
@@ -210,27 +211,27 @@ export function useDemoStreaksController(base: StreaksController) {
 		coinReward,
 	};
 
-	const streaksWithCoins = base.streaks.map((streak: Streak) => ({
+	const streaksWithRewards = base.streaks.map((streak: Streak) => ({
 		...streak,
-		coinEligible: account.coinEligibleStreakIds.includes(streak.id),
+		rewardEligible: account.rewardEligibleStreakIds.includes(streak.id),
 	}));
 	const dashboard: AccountDashboardView = {
 		user: DEMO_USER,
-		wallet: { balance: account.balance, lifetimeEarned: account.lifetimeEarned },
-		streaks: streaksWithCoins,
+		wallet: { balance: account.balance, lifetimeEarned: account.lifetimeEarned, xp: account.xp },
+		streaks: streaksWithRewards,
 	};
 
 	return {
 		controller,
-		dashboard,
-		toggleCoinEligible: (streakId: string, coinEligible: boolean) => {
+			dashboard,
+			toggleRewardEligible: (streakId: string, rewardEligible: boolean) => {
 			discardUndo();
 			base.dismissUndo();
 			setAccount((current) => {
-				const ids = current.coinEligibleStreakIds.filter((id) => id !== streakId);
-				if (!coinEligible) return { ...current, coinEligibleStreakIds: ids };
+				const ids = current.rewardEligibleStreakIds.filter((id) => id !== streakId);
+				if (!rewardEligible) return { ...current, rewardEligibleStreakIds: ids };
 				if (ids.length >= 10) return current;
-				return { ...current, coinEligibleStreakIds: [streakId, ...ids] };
+				return { ...current, rewardEligibleStreakIds: [streakId, ...ids] };
 			});
 		},
 		resetWallet: () => {
@@ -240,6 +241,7 @@ export function useDemoStreaksController(base: StreaksController) {
 				...current,
 				balance: DEMO_STARTING_COINS,
 				lifetimeEarned: DEMO_STARTING_COINS,
+				xp: 0,
 			}));
 		},
 		resetAccount: (streakIds: string[]) => {

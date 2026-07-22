@@ -87,7 +87,7 @@ export const importLocalData = mutation({
 				icon: normalizeIcon(streak.icon),
 				days: Math.max(0, Math.floor(streak.days)),
 				createdOn: streak.createdOn,
-				coinEligible: index < 10,
+				rewardEligible: index < 10,
 				sortOrder: index,
 				createdAt: now,
 				updatedAt: now,

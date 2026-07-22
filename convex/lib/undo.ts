@@ -8,7 +8,7 @@ export type ProgressUndoSnapshot = {
 	streakDays: Array<{ streakId: Id<"streaks">; days: number }>;
 	checkInIds: Array<Id<"checkIns">>;
 	ledgerIds: Array<Id<"coinLedger">>;
-	wallet: { walletId: Id<"wallets">; balance: number; lifetimeEarned: number };
+	wallet: { walletId: Id<"wallets">; balance: number; lifetimeEarned: number; xp: number };
 	profile?: { profileId: Id<"profiles">; lastReviewedOn: string };
 };
 

@@ -1,5 +1,5 @@
 import { query } from "./_generated/server";
-import { listActiveStreaks } from "./lib/streaks";
+import { isRewardEligible, listActiveStreaks } from "./lib/streaks";
 import { getProfile, getWallet, requireAuthUser } from "./lib/users";
 
 export const get = query({
@@ -28,7 +28,7 @@ export const get = query({
 				icon: streak.icon,
 				days: streak.days,
 				createdOn: streak.createdOn,
-				coinEligible: streak.coinEligible,
+				rewardEligible: isRewardEligible(streak),
 			})),
 			checkIns: checkIns.flatMap((checkIn) => {
 				const streakId = clientIds.get(checkIn.streakId);
@@ -39,6 +39,7 @@ export const get = query({
 			wallet: {
 				balance: wallet.balance,
 				lifetimeEarned: wallet.lifetimeEarned,
+				xp: wallet.xp ?? 0,
 			},
 		};
 	},

@@ -10,7 +10,7 @@ import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useRegisteredStreaksController } from "@/features/streaks/app/use-registered-streaks-controller";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
-import { AccountCoinBalance, AccountDock } from "./account-dock";
+import { AccountDock, AccountRewardsBalance } from "./account-dock";
 import { AuthModal } from "./auth-modal";
 import styles from "./account.module.css";
 
@@ -85,7 +85,7 @@ function RegisteredExperience() {
 
 	return (
 		<StreaksView controller={controller} showMascot>
-			<AccountCoinBalance balance={dashboard.wallet.balance} />
+			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
 			<AppNavigation
 				accountControl={<AccountDock dashboard={dashboard} />}
 				preferencesControl={<AppPreferences placement="navigation" />}

@@ -44,8 +44,9 @@ describe("demo account", () => {
 		expect(result.current.dashboard.wallet).toEqual({
 			balance: 999,
 			lifetimeEarned: 999,
+			xp: 0,
 		});
-		expect(result.current.dashboard.streaks.every((streak) => streak.coinEligible)).toBe(true);
+		expect(result.current.dashboard.streaks.every((streak) => streak.rewardEligible)).toBe(true);
 	});
 
 	it("awards a coin for today and restores the wallet on undo", () => {
@@ -53,9 +54,11 @@ describe("demo account", () => {
 
 		act(() => result.current.controller.completeToday("read"));
 		expect(result.current.dashboard.wallet.balance).toBe(1_000);
+		expect(result.current.dashboard.wallet.xp).toBe(1);
 
 		act(() => result.current.controller.undo());
 		expect(result.current.dashboard.wallet.balance).toBe(999);
+		expect(result.current.dashboard.wallet.xp).toBe(0);
 		expect(result.current.controller.completedTodayStreakIds).not.toContain("read");
 	});
 
@@ -70,6 +73,7 @@ describe("demo account", () => {
 
 		expect(result.current.controller.completedTodayStreakIds).toContain(streakId);
 		expect(result.current.dashboard.wallet.balance).toBe(999);
+		expect(result.current.dashboard.wallet.xp).toBe(0);
 	});
 
 	it("caps a long-gap reward at three coins per eligible streak", () => {
@@ -81,5 +85,6 @@ describe("demo account", () => {
 		act(() => result.current.controller.resolveGap(days, { read: true, move: true }));
 
 		expect(result.current.dashboard.wallet.balance).toBe(1_005);
+		expect(result.current.dashboard.wallet.xp).toBe(6);
 	});
 });

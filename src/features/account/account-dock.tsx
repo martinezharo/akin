@@ -24,18 +24,18 @@ type AccountDashboard = NonNullable<FunctionReturnType<typeof api.dashboard.get>
 
 export type AccountDashboardView = {
 	user: { id: string; name: string; email: string };
-	wallet: { balance: number; lifetimeEarned: number };
+	wallet: { balance: number; lifetimeEarned: number; xp: number };
 	streaks: Array<{
 		id: string;
 		name: string;
 		icon: string | null;
-		coinEligible: boolean;
+		rewardEligible: boolean;
 	}>;
 };
 
 type AccountDockViewProps = {
 	dashboard: AccountDashboardView;
-	onToggleCoinEligible: (streakId: string, coinEligible: boolean) => void | Promise<void>;
+	onToggleRewardEligible: (streakId: string, rewardEligible: boolean) => void | Promise<void>;
 	eyebrow?: string;
 	avatarBadge?: string;
 	footer: ReactNode;
@@ -43,31 +43,31 @@ type AccountDockViewProps = {
 
 function AccountDockView({
 	dashboard,
-	onToggleCoinEligible,
+	onToggleRewardEligible,
 	eyebrow = "Your Akin",
 	avatarBadge,
 	footer,
 }: AccountDockViewProps) {
 	const [open, setOpen] = useState(false);
-	const [showAllCoinStreaks, setShowAllCoinStreaks] = useState(false);
-	const [showCoinLimitNotice, setShowCoinLimitNotice] = useState(false);
+	const [showAllRewardStreaks, setShowAllRewardStreaks] = useState(false);
+	const [showRewardLimitNotice, setShowRewardLimitNotice] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [savingId, setSavingId] = useState<string | null>(null);
 	const titleId = useId();
-	const eligibleCount = dashboard.streaks.filter((streak) => streak.coinEligible).length;
+	const eligibleCount = dashboard.streaks.filter((streak) => streak.rewardEligible).length;
 	const initial = dashboard.user.name.trim().charAt(0).toUpperCase() || "A";
-	const coinStreakPreviewCount = 10;
-	const hasHiddenCoinStreaks = dashboard.streaks.length > coinStreakPreviewCount;
-	const visibleCoinStreaks = showAllCoinStreaks
+	const rewardStreakPreviewCount = 10;
+	const hasHiddenRewardStreaks = dashboard.streaks.length > rewardStreakPreviewCount;
+	const visibleRewardStreaks = showAllRewardStreaks
 		? dashboard.streaks
-		: dashboard.streaks.slice(0, coinStreakPreviewCount);
+		: dashboard.streaks.slice(0, rewardStreakPreviewCount);
 
-	async function toggle(streakId: string, coinEligible: boolean) {
-		setShowCoinLimitNotice(false);
+	async function toggle(streakId: string, rewardEligible: boolean) {
+		setShowRewardLimitNotice(false);
 		setSavingId(streakId);
 		setError(null);
 		try {
-			await onToggleCoinEligible(streakId, coinEligible);
+			await onToggleRewardEligible(streakId, rewardEligible);
 		} catch {
 			setError("Ten is the limit. Switch one streak off before choosing another.");
 		} finally {
@@ -77,7 +77,7 @@ function AccountDockView({
 
 	return (
 		<>
-			<button className={styles.accountButton} type="button" onClick={() => { setShowAllCoinStreaks(false); setShowCoinLimitNotice(false); setOpen(true); }} aria-label="Open account and coin settings">
+			<button className={styles.accountButton} type="button" onClick={() => { setShowAllRewardStreaks(false); setShowRewardLimitNotice(false); setOpen(true); }} aria-label="Open account and reward settings">
 				<UserRound aria-hidden="true" />
 				<span>Me</span>
 				{avatarBadge ? <small>{avatarBadge}</small> : null}
@@ -104,30 +104,30 @@ function AccountDockView({
 							<p><Sparkles aria-hidden="true" /> {dashboard.wallet.lifetimeEarned.toLocaleString()} earned all time</p>
 						</div>
 
-						<div className={styles.coinHeader}>
-							<div><SlidersHorizontal aria-hidden="true" /><h3>Coin streaks</h3></div>
+						<div className={styles.rewardHeader}>
+							<div><SlidersHorizontal aria-hidden="true" /><h3>Reward streaks</h3></div>
 							<span>{eligibleCount}/10</span>
 						</div>
-						<p className={styles.coinCopy}>Choose up to ten streaks that earn one coin whenever you keep them.</p>
+						<p className={styles.rewardCopy}>Choose up to ten streaks that earn one coin and one XP whenever you keep them.</p>
 						{dashboard.streaks.length ? (
 							<>
-								<div className={styles.coinList}>
-									{visibleCoinStreaks.map((streak, index) => {
-										const isAtCoinStreakLimit = !streak.coinEligible && eligibleCount >= 10;
+								<div className={styles.rewardList}>
+									{visibleRewardStreaks.map((streak, index) => {
+										const isAtRewardStreakLimit = !streak.rewardEligible && eligibleCount >= 10;
 										const disabled = savingId === streak.id;
 										return (
-											<label key={streak.id} data-disabled={disabled || isAtCoinStreakLimit} data-revealed={(showAllCoinStreaks && index >= coinStreakPreviewCount) || undefined}>
+											<label key={streak.id} data-disabled={disabled || isAtRewardStreakLimit} data-revealed={(showAllRewardStreaks && index >= rewardStreakPreviewCount) || undefined}>
 												<span className={styles.miniIcon}>
 													<StreakIcon value={streak.icon} />
 												</span>
 												<span>{streak.name}</span>
 												<input
 													type="checkbox"
-													checked={streak.coinEligible}
+													checked={streak.rewardEligible}
 													disabled={disabled}
 													onChange={(event) => {
-														if (event.currentTarget.checked && isAtCoinStreakLimit) {
-															setShowCoinLimitNotice(true);
+														if (event.currentTarget.checked && isAtRewardStreakLimit) {
+															setShowRewardLimitNotice(true);
 															return;
 														}
 														void toggle(streak.id, event.currentTarget.checked);
@@ -138,31 +138,31 @@ function AccountDockView({
 										);
 									})}
 								</div>
-								{hasHiddenCoinStreaks ? (
+								{hasHiddenRewardStreaks ? (
 									<button
-										className={styles.showAllCoinStreaks}
+										className={styles.showAllRewardStreaks}
 										type="button"
-										onClick={() => setShowAllCoinStreaks((shown) => !shown)}
-										aria-expanded={showAllCoinStreaks}
+										onClick={() => setShowAllRewardStreaks((shown) => !shown)}
+										aria-expanded={showAllRewardStreaks}
 									>
 										<ChevronDown aria-hidden="true" />
-										<span>{showAllCoinStreaks ? "Show less" : `Show all ${dashboard.streaks.length} streaks`}</span>
+										<span>{showAllRewardStreaks ? "Show less" : `Show all ${dashboard.streaks.length} streaks`}</span>
 									</button>
 								) : null}
 							</>
-						) : <p className={styles.emptyCoins}>Your first streak will automatically earn coins.</p>}
+						) : <p className={styles.emptyRewards}>Your first streak will automatically earn rewards.</p>}
 						{error ? <p className={styles.settingsError} role="alert">{error}</p> : null}
 						{footer}
 					</div>
-					{showCoinLimitNotice && eligibleCount >= 10 ? (
+					{showRewardLimitNotice && eligibleCount >= 10 ? (
 						<UndoToast
-							message="Coin crew full — swap one out first."
+							message="Reward crew full — swap one out first."
 							actionLabel="Got it"
 							durationMs={4200}
 							statusIcon={<Coins />}
 							variant="warning"
-							onUndo={() => setShowCoinLimitNotice(false)}
-							onDismiss={() => setShowCoinLimitNotice(false)}
+							onUndo={() => setShowRewardLimitNotice(false)}
+							onDismiss={() => setShowRewardLimitNotice(false)}
 						/>
 					) : null}
 				</ModalDialog>
@@ -171,23 +171,29 @@ function AccountDockView({
 	);
 }
 
-export function AccountCoinBalance({ balance }: { balance: number }) {
+export function AccountRewardsBalance({ balance, xp }: { balance: number; xp: number }) {
 	return (
-		<span className={styles.coinPill} data-coin-wallet key={balance} aria-label={`${balance} coins`}>
-			<Coins aria-hidden="true" />
-			<strong>{balance.toLocaleString()}</strong>
-		</span>
+		<div className={styles.walletPills} aria-label={`${balance} coins, ${xp} XP`}>
+			<span className={styles.coinPill} data-coin-wallet key={balance} aria-label={`${balance} coins`}>
+				<Coins aria-hidden="true" />
+				<strong>{balance.toLocaleString()}</strong>
+			</span>
+			<span className={styles.xpPill} data-xp-wallet key={xp} aria-label={`${xp} XP`}>
+				<Sparkles aria-hidden="true" />
+				<strong>{xp.toLocaleString()}</strong>
+			</span>
+		</div>
 	);
 }
 
 export function AccountDock({ dashboard }: { dashboard: AccountDashboard }) {
-	const setCoinEligible = useMutation(api.streaks.setCoinEligible);
+	const setRewardEligible = useMutation(api.streaks.setRewardEligible);
 
 	return (
 		<AccountDockView
 			dashboard={dashboard}
-			onToggleCoinEligible={async (streakId, coinEligible) => {
-				await setCoinEligible({ streakId, coinEligible });
+			onToggleRewardEligible={async (streakId, rewardEligible) => {
+				await setRewardEligible({ streakId, rewardEligible });
 			}}
 			footer={(
 				<button className={styles.signOut} type="button" onClick={() => void authClient.signOut()}>
@@ -200,18 +206,18 @@ export function AccountDock({ dashboard }: { dashboard: AccountDashboard }) {
 
 export function DemoAccountDock({
 	dashboard,
-	onToggleCoinEligible,
+	onToggleRewardEligible,
 	onResetWallet,
 }: {
 	dashboard: AccountDashboardView;
-	onToggleCoinEligible: (streakId: string, coinEligible: boolean) => void;
+	onToggleRewardEligible: (streakId: string, rewardEligible: boolean) => void;
 	onResetWallet: () => void;
 }) {
 	return (
 		<AccountDockView
 			dashboard={dashboard}
 			eyebrow="Demo Akin"
-			onToggleCoinEligible={onToggleCoinEligible}
+			onToggleRewardEligible={onToggleRewardEligible}
 			footer={(
 				<button className={styles.demoReset} type="button" onClick={onResetWallet}>
 					<FlaskConical aria-hidden="true" /> Reset wallet to 999

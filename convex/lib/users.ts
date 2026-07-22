@@ -52,6 +52,7 @@ export async function ensureUserState(
 			userId: user._id,
 			balance: 0,
 			lifetimeEarned: 0,
+			xp: 0,
 			updatedAt: now,
 		});
 		wallet = (await ctx.db.get(walletId))!;

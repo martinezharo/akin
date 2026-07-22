@@ -154,8 +154,8 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 				createdOn: today,
 			})
 				.then((result) => {
-					if (!result.coinEligible) {
-						setNotice("This streak is saved, but only ten streaks can earn coins. Choose them from your coin settings.");
+					if (!result.rewardEligible) {
+						setNotice("This streak is saved, but only ten streaks can earn rewards. Choose them from your reward settings.");
 					}
 				})
 				.catch(report);

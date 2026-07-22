@@ -2,7 +2,16 @@ import { ConvexError } from "convex/values";
 import type { Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 
-export const MAX_COIN_STREAKS = 10;
+export const MAX_REWARD_STREAKS = 10;
+
+type RewardEligibleStreak = {
+	rewardEligible?: boolean;
+	coinEligible?: boolean;
+};
+
+export function isRewardEligible(streak: RewardEligibleStreak): boolean {
+	return streak.rewardEligible ?? streak.coinEligible ?? false;
+}
 
 export function normalizeStreakName(name: string): string {
 	const normalized = name.trim().replace(/\s+/g, " ");

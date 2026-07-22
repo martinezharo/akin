@@ -13,7 +13,7 @@ export function canRewardCompletion(
 	return streakCreatedOn < completionDay;
 }
 
-export async function awardCompletionCoin(
+export async function awardCompletionReward(
 	ctx: MutationCtx,
 	args: {
 		userId: string;
@@ -40,6 +40,7 @@ export async function awardCompletionCoin(
 	await ctx.db.patch(wallet._id, {
 		balance: wallet.balance + 1,
 		lifetimeEarned: wallet.lifetimeEarned + 1,
+		xp: (wallet.xp ?? 0) + 1,
 		updatedAt: Date.now(),
 	});
 	return ledgerId;

@@ -2,7 +2,7 @@ import { ConvexError, v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { mutation, type MutationCtx } from "./_generated/server";
 import {
-	awardCompletionCoin,
+	awardCompletionReward,
 	canRewardCompletion,
 	rewardedDayLimit,
 } from "./lib/coins";
@@ -13,7 +13,7 @@ import {
 	assertLocalDates,
 	datesAfterThrough,
 } from "./lib/dates";
-import { findOwnedStreak, hasCheckIn, listActiveStreaks } from "./lib/streaks";
+import { findOwnedStreak, hasCheckIn, isRewardEligible, listActiveStreaks } from "./lib/streaks";
 import {
 	createUndoRecord,
 	type ProgressUndoSnapshot,
@@ -42,7 +42,7 @@ async function createCheckIn(
 		source: args.source,
 	});
 	const ledgerId = args.awardCoin
-		? await awardCompletionCoin(ctx, {
+		? await awardCompletionReward(ctx, {
 				userId: args.userId,
 				checkInId,
 				streakId: args.streakId,
@@ -67,6 +67,7 @@ async function baseUndoSnapshot(
 			walletId: wallet._id,
 			balance: wallet.balance,
 			lifetimeEarned: wallet.lifetimeEarned,
+			xp: wallet.xp ?? 0,
 		},
 	};
 }
@@ -94,7 +95,7 @@ export const completeToday = mutation({
 			localDate: args.today,
 			source: "today",
 			awardCoin:
-				streak.coinEligible && canRewardCompletion(streak.createdOn, args.today),
+				isRewardEligible(streak) && canRewardCompletion(streak.createdOn, args.today),
 		});
 		snapshot.checkInIds.push(created.checkInId);
 		if (created.ledgerId) snapshot.ledgerIds.push(created.ledgerId);
@@ -137,7 +138,7 @@ export const resolveDay = mutation({
 					streakId: streak._id,
 					localDate: args.day,
 					source: "review",
-					awardCoin: streak.coinEligible,
+					awardCoin: isRewardEligible(streak),
 				});
 				snapshot.checkInIds.push(created.checkInId);
 				if (created.ledgerId) {
@@ -198,7 +199,7 @@ export const resolveGap = mutation({
 			if (answers.get(streak.clientId) === true) {
 				let streakCoins = 0;
 				for (const day of unresolvedDays) {
-					const canAward = streak.coinEligible && streakCoins < rewardedDayLimit(args.days.length);
+					const canAward = isRewardEligible(streak) && streakCoins < rewardedDayLimit(args.days.length);
 					const created = await createCheckIn(ctx, {
 						userId: user._id,
 						streakId: streak._id,
@@ -261,6 +262,7 @@ export const undo = mutation({
 			await ctx.db.patch(snapshot.wallet.walletId, {
 				balance: snapshot.wallet.balance,
 				lifetimeEarned: snapshot.wallet.lifetimeEarned,
+				xp: snapshot.wallet.xp,
 				updatedAt: Date.now(),
 			});
 			if (snapshot.profile) {
