@@ -10,7 +10,8 @@ import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useRegisteredStreaksController } from "@/features/streaks/app/use-registered-streaks-controller";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
-import { AccountDock, AccountRewardsBalance } from "./account-dock";
+import { AccountDock } from "./account-dock";
+import { AccountRewardsBalance } from "./account-rewards-balance";
 import { AuthModal } from "./auth-modal";
 import styles from "./account.module.css";
 

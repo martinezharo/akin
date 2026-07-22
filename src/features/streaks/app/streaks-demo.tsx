@@ -1,7 +1,8 @@
 "use client";
 
 import { addLocalDays } from "../model/calendar";
-import { AccountRewardsBalance, DemoAccountDock } from "@/features/account/account-dock";
+import { DemoAccountDock } from "@/features/account/account-dock";
+import { AccountRewardsBalance } from "@/features/account/account-rewards-balance";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { DemoTimeControls } from "../components/demo-time-controls/demo-time-controls";

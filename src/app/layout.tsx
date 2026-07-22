@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import Script from "next/script";
 import { APP_LANGUAGE } from "@/i18n/config";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
+import { PetCustomizationProvider } from "@/features/pet/pet-customization-provider";
 import "./globals.css";
 
 const preferencesBootScript = `
@@ -64,7 +65,7 @@ export default function RootLayout({
 			</head>
 			<body>
 				<ConvexClientProvider>
-					{children}
+					<PetCustomizationProvider>{children}</PetCustomizationProvider>
 				</ConvexClientProvider>
 			</body>
 		</html>

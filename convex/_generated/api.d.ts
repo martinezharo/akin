@@ -16,6 +16,7 @@ import type * as lib_dates from "../lib/dates.js";
 import type * as lib_streaks from "../lib/streaks.js";
 import type * as lib_undo from "../lib/undo.js";
 import type * as lib_users from "../lib/users.js";
+import type * as pet from "../pet.js";
 import type * as progress from "../progress.js";
 import type * as streaks from "../streaks.js";
 import type * as users from "../users.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   "lib/streaks": typeof lib_streaks;
   "lib/undo": typeof lib_undo;
   "lib/users": typeof lib_users;
+  pet: typeof pet;
   progress: typeof progress;
   streaks: typeof streaks;
   users: typeof users;

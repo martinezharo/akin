@@ -1,6 +1,6 @@
 "use client";
 
-import { Coins, Sparkles, UserRound } from "lucide-react";
+import { UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
@@ -22,21 +22,6 @@ function AccountDockView({
 			<span>Me</span>
 			{avatarBadge ? <small>{avatarBadge}</small> : null}
 		</Link>
-	);
-}
-
-export function AccountRewardsBalance({ balance, xp }: { balance: number; xp: number }) {
-	return (
-		<div className={styles.walletPills} aria-label={`${balance} coins, ${xp} XP`}>
-			<span className={styles.coinPill} data-coin-wallet key={balance} aria-label={`${balance} coins`}>
-				<Coins aria-hidden="true" />
-				<strong>{balance.toLocaleString()}</strong>
-			</span>
-			<span className={styles.xpPill} data-xp-wallet key={xp} aria-label={`${xp} XP`}>
-				<Sparkles aria-hidden="true" />
-				<strong>{xp.toLocaleString()}</strong>
-			</span>
-		</div>
 	);
 }
 

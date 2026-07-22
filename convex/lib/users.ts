@@ -3,6 +3,8 @@ import { authComponent } from "../auth";
 import { addLocalDays } from "./dates";
 import { listActiveStreaks } from "./streaks";
 
+export const STARTING_COINS = 20;
+
 export async function requireAuthUser(ctx: QueryCtx | MutationCtx) {
 	return await authComponent.getAuthUser(ctx);
 }
@@ -34,6 +36,9 @@ export async function ensureUserState(
 			userId: user._id,
 			displayName: user.name,
 			email: user.email,
+			petSkin: "ember",
+			petHair: "honey",
+			ownedPetSkins: ["ember"],
 			timeZone,
 			lastReviewedOn: today,
 			recentIcons: [],
@@ -50,8 +55,8 @@ export async function ensureUserState(
 	if (!wallet) {
 		const walletId = await ctx.db.insert("wallets", {
 			userId: user._id,
-			balance: 0,
-			lifetimeEarned: 0,
+			balance: STARTING_COINS,
+			lifetimeEarned: STARTING_COINS,
 			xp: 0,
 			updatedAt: now,
 		});
