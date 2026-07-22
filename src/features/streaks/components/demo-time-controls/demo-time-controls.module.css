@@ -1,7 +1,8 @@
 .clock {
+	--mascot-clearance: clamp(7.1rem, calc(9vw + 1.35rem), 8.85rem);
 	position: fixed;
 	z-index: 200;
-	right: max(1rem, env(safe-area-inset-right));
+	right: max(var(--mascot-clearance), calc(env(safe-area-inset-right) + var(--mascot-clearance)));
 	bottom: max(1rem, env(safe-area-inset-bottom));
 	width: min(calc(100vw - 2rem), 18.5rem);
 	padding: 0.45rem;
@@ -15,6 +16,13 @@
 	transition: width 340ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 260ms ease,
 		padding 260ms ease, background-color 180ms ease, border-color 180ms ease,
 		box-shadow 180ms ease;
+}
+
+@media (max-width: 40rem) {
+	.clock {
+		right: max(1rem, env(safe-area-inset-right));
+		bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 5.85rem);
+	}
 }
 
 .clock[data-collapsed="true"] {
