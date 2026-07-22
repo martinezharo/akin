@@ -2,7 +2,7 @@
 	position: fixed;
 	/* Above the review overlay (100) and the demo clock (200), below modal dialogs (300). */
 	z-index: 250;
-	bottom: max(1.1rem, env(safe-area-inset-bottom));
+	bottom: calc(max(0.65rem, env(safe-area-inset-bottom)) + 4.65rem + 0.65rem);
 	left: 50%;
 	display: flex;
 	align-items: center;
@@ -118,5 +118,11 @@
 
 	.message {
 		max-width: 10rem;
+	}
+}
+
+@media (min-width: 48rem) {
+	.toast {
+		bottom: max(1.1rem, env(safe-area-inset-bottom));
 	}
 }
