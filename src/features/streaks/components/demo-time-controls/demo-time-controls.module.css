@@ -379,6 +379,12 @@
 	}
 }
 
+@media (min-width: 48rem) {
+	.clock {
+		bottom: max(1rem, env(safe-area-inset-bottom));
+	}
+}
+
 @media (hover: hover) and (pointer: fine) {
 	.clock[data-collapsed="true"]:hover {
 		border-color: rgb(255 217 120 / 30%);
