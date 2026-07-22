@@ -14,9 +14,11 @@ import type { StreaksController } from "./use-streaks-controller";
 
 export function StreaksView({
 	controller,
+	showMascot = false,
 	children,
 }: {
 	controller: StreaksController;
+	showMascot?: boolean;
 	children?: ReactNode;
 }) {
 	const [adjustHintStreakId, setAdjustHintStreakId] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export function StreaksView({
 
 	return (
 		<>
-			<AkinMascot />
+			{showMascot ? <AkinMascot /> : null}
 			<CoinRewardFeedback reward={controller.coinReward} />
 			<section className={styles.shell} aria-labelledby="streaks-title">
 				<h1 id="streaks-title" className="sr-only">

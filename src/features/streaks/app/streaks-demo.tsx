@@ -48,7 +48,7 @@ function HydratedStreaksDemo() {
 	}
 
 	return (
-		<StreaksView controller={controller}>
+		<StreaksView controller={controller} showMascot>
 			<DemoAccountDock
 				dashboard={dashboard}
 				onToggleCoinEligible={toggleCoinEligible}

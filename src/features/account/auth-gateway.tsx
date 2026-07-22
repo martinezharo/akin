@@ -77,7 +77,7 @@ function RegisteredExperience() {
 	}
 
 	return (
-		<StreaksView controller={controller}>
+		<StreaksView controller={controller} showMascot>
 			<AccountDock dashboard={dashboard} />
 			{notice ? (
 				<div className={styles.notice} role="status">
