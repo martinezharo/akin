@@ -1,16 +1,19 @@
 "use client";
 
 import { Authenticated, AuthLoading, Unauthenticated, useQuery, useMutation } from "convex/react";
-import { ArrowRight, Coins, FlaskConical, LogOut, SlidersHorizontal, Sparkles } from "lucide-react";
+import { Coins, FlaskConical, LogOut, SlidersHorizontal, Sparkles, UserRound } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { type ReactNode, useId, useState } from "react";
 import { api } from "@convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import { AppPreferences } from "@/features/preferences/app-preferences";
+import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
 import type { AccountDashboardView } from "./account-types";
+import { AuthModal } from "./auth-modal";
 import styles from "./account-page.module.css";
 
 type AccountPageViewProps = {
@@ -122,47 +125,36 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 	);
 }
 
-function GitHubMark() {
-	return <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.11.79-.25.79-.56v-2.02c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.96.1-.75.4-1.26.74-1.55-2.57-.29-5.28-1.28-5.28-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.96 10.96 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.71 5.39-5.29 5.68.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z" /></svg>;
-}
-
 function AccountLoading() {
 	return <div className={styles.loading} role="status"><span className={styles.loadingLogo}><Image src="/brand/akin-app-icon.svg" alt="" width={56} height={56} priority /></span><p>Gathering your little wins…</p></div>;
 }
 
 function GuestAccountPage() {
-	const [pending, setPending] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [authOpen, setAuthOpen] = useState(true);
+	const router = useRouter();
 
-	async function continueWithGitHub() {
-		setPending(true);
-		setError(null);
-		try {
-			const result = await authClient.signIn.social({ provider: "github", callbackURL: "/" });
-			if (result.error) setError(result.error.message || "GitHub couldn’t open the door. Try again.");
-		} catch {
-			setError("GitHub couldn’t open the door. Try again.");
-		} finally {
-			setPending(false);
+	function dismissAuth() {
+		if (window.history.length > 1) {
+			router.back();
+			return;
 		}
+		router.replace("/");
 	}
 
 	return (
-		<main className={styles.page}>
-			<div className={styles.ambient} aria-hidden="true" />
-			<div className={styles.content}>
-				<section className={styles.authCard} aria-labelledby="auth-title">
-					<div className={styles.authMark} aria-hidden="true"><Sparkles /></div>
-					<p className={styles.eyebrow}>Make it yours</p>
-					<h1 id="auth-title">Keep every little win.</h1>
-					<p className={styles.authCopy}>Sign in or create your Akin account with GitHub. Your streaks, check-ins and coins will be waiting on every device.</p>
-					{error ? <p className={styles.authError} role="alert">{error}</p> : null}
-					<button className={styles.githubSubmit} type="button" disabled={pending} onClick={() => void continueWithGitHub()}><span className={styles.githubBadge}><GitHubMark /></span><strong>{pending ? "Heading to GitHub…" : "Continue with GitHub"}</strong><ArrowRight aria-hidden="true" /></button>
-					<p className={styles.authFootnote}>One click. No new password to remember.</p>
-				</section>
-			</div>
-			<AppNavigation preferencesControl={<AppPreferences placement="navigation" />} />
-		</main>
+		<>
+			<StreaksApp />
+			<AppNavigation
+				accountControl={(
+					<button className={styles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open your account">
+						<UserRound aria-hidden="true" />
+						<span>Me</span>
+					</button>
+				)}
+				preferencesControl={<AppPreferences placement="navigation" />}
+			/>
+			{authOpen ? <AuthModal onDismiss={dismissAuth} /> : null}
+		</>
 	);
 }
 
