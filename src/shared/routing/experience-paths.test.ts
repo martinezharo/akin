@@ -3,12 +3,12 @@ import { getExperiencePath } from "./experience-paths";
 
 describe("experience paths", () => {
 	it("keeps navigation inside the demo experience", () => {
-		expect(getExperiencePath("/demo", "/akin")).toBe("/demo/akin");
-		expect(getExperiencePath("/demo/akin", "/")).toBe("/demo");
+		expect(getExperiencePath("/demo", "/pet")).toBe("/demo/pet");
+		expect(getExperiencePath("/demo/pet", "/")).toBe("/demo");
 	});
 
 	it("uses the regular routes outside demo", () => {
-		expect(getExperiencePath("/", "/akin")).toBe("/akin");
-		expect(getExperiencePath("/akin", "/")).toBe("/");
+		expect(getExperiencePath("/", "/pet")).toBe("/pet");
+		expect(getExperiencePath("/pet", "/")).toBe("/");
 	});
 });

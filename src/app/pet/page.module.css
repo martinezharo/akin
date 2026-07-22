@@ -6,6 +6,7 @@
 }
 
 .preview { width: min(100%, 29rem); text-align: center; }
+
 .mascot { width: min(72vw, 17rem); height: auto; margin-inline: auto; filter: drop-shadow(0 1.2rem 1.4rem rgb(61 35 15 / 17%)); }
 .preview p { margin: 1rem 0 0.4rem; color: var(--accent); font-size: 0.75rem; font-weight: 950; letter-spacing: 0.12em; text-transform: uppercase; }
 .preview h1 { margin: 0; font-size: clamp(2rem, 8vw, 3.7rem); letter-spacing: -0.055em; line-height: 0.98; text-wrap: balance; }

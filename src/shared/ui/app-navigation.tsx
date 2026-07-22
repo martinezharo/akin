@@ -17,7 +17,7 @@ type AppNavigationProps = {
 export function AppNavigation({ accountControl, preferencesControl }: AppNavigationProps) {
 	const pathname = usePathname();
 	const homeHref = getExperiencePath(pathname, "/");
-	const akinHref = getExperiencePath(pathname, "/akin");
+	const petHref = getExperiencePath(pathname, "/pet");
 
 	return (
 		<nav className={styles.navigation} aria-label="Main navigation">
@@ -32,7 +32,7 @@ export function AppNavigation({ accountControl, preferencesControl }: AppNavigat
 				<small aria-hidden="true">Soon</small>
 			</button>
 
-			<Link className={`${styles.item} ${styles.akinItem}`} href={akinHref} aria-current={pathname === akinHref ? "page" : undefined}>
+			<Link className={`${styles.item} ${styles.akinItem}`} href={petHref} aria-current={pathname === petHref ? "page" : undefined}>
 				<span className={`${styles.akinIcon} ${motionStyles.interactive}`} aria-hidden="true">
 					<AkinMascotArtwork className={`${styles.akinArtwork} ${motionStyles.animated}`} viewBox="400 900 4216 3216" />
 				</span>

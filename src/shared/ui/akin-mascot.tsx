@@ -13,8 +13,8 @@ export function AkinMascot() {
 	return (
 		<Link
 			className={styles.mascot}
-			href={getExperiencePath(pathname, "/akin")}
-			aria-label="Visit Akin"
+			href={getExperiencePath(pathname, "/pet")}
+			aria-label="Visit your pet"
 		>
 			<AkinMascotArtwork className={`${styles.artwork} ${motionStyles.animated}`} />
 		</Link>
