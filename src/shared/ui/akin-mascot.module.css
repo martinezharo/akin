@@ -2,7 +2,7 @@
 	position: fixed;
 	z-index: 20;
 	right: max(0.6rem, env(safe-area-inset-right));
-	bottom: max(-0.7rem, calc(env(safe-area-inset-bottom) - 0.7rem));
+	bottom: max(5.25rem, calc(env(safe-area-inset-bottom) + 4.6rem));
 	width: clamp(5.75rem, 9vw, 7.5rem);
 	padding: 0;
 	border: 0;
@@ -22,31 +22,6 @@
 	pointer-events: none;
 }
 
-.artwork :global(.akin-eye) {
-	transform-box: fill-box;
-	transform-origin: center;
-	animation: akinBlink 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.artwork :global(.akin-ear) {
-	transform-box: fill-box;
-	animation: akinEarFlick 10s cubic-bezier(0.36, 0, 0.2, 1) infinite;
-}
-
-.artwork :global(.akin-ear-left) {
-	--akin-ear-out: -16deg;
-	--akin-ear-back: 6deg;
-	--akin-ear-settle: -10deg;
-	transform-origin: right bottom;
-}
-
-.artwork :global(.akin-ear-right) {
-	--akin-ear-out: 16deg;
-	--akin-ear-back: -6deg;
-	--akin-ear-settle: 10deg;
-	transform-origin: left bottom;
-}
-
 .mascot:focus-visible {
 	border-radius: 50%;
 	outline: var(--focus-ring);
@@ -60,27 +35,12 @@
 	}
 }
 
+@media (min-width: 48rem) {
+	.mascot {
+		bottom: max(-0.7rem, calc(env(safe-area-inset-bottom) - 0.7rem));
+	}
+}
+
 :global(:root[data-theme="dark"]) .artwork {
 	filter: drop-shadow(0 0.8rem 1rem rgb(0 0 0 / 42%));
-}
-
-@keyframes akinBlink {
-	0%, 92%, 100% { transform: scaleY(1); }
-	96% { transform: scaleY(0.06); }
-}
-
-@keyframes akinEarFlick {
-	0%, 92%, 97.4%, 100% { transform: rotate(0); }
-	92.7% { transform: rotate(var(--akin-ear-out)); }
-	93.5% { transform: rotate(var(--akin-ear-back)); }
-	94.3% { transform: rotate(var(--akin-ear-out)); }
-	95.1% { transform: rotate(var(--akin-ear-back)); }
-	96% { transform: rotate(var(--akin-ear-settle)); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.artwork :global(.akin-eye),
-	.artwork :global(.akin-ear) {
-		animation: none;
-	}
 }

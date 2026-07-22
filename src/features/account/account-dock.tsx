@@ -7,6 +7,7 @@ import {
 	LogOut,
 	SlidersHorizontal,
 	Sparkles,
+	UserRound,
 	X,
 } from "lucide-react";
 import { useMutation } from "convex/react";
@@ -76,16 +77,11 @@ function AccountDockView({
 
 	return (
 		<>
-			<div className={styles.accountDock}>
-				<span className={styles.coinPill} data-coin-wallet key={dashboard.wallet.balance} aria-label={`${dashboard.wallet.balance} coins`}>
-					<Coins aria-hidden="true" />
-					<strong>{dashboard.wallet.balance.toLocaleString()}</strong>
-				</span>
-				<button className={styles.accountButton} type="button" onClick={() => { setShowAllCoinStreaks(false); setShowCoinLimitNotice(false); setOpen(true); }} aria-label="Open account and coin settings">
-					<span>{initial}</span>
-					{avatarBadge ? <small>{avatarBadge}</small> : null}
-				</button>
-			</div>
+			<button className={styles.accountButton} type="button" onClick={() => { setShowAllCoinStreaks(false); setShowCoinLimitNotice(false); setOpen(true); }} aria-label="Open account and coin settings">
+				<UserRound aria-hidden="true" />
+				<span>Profile</span>
+				{avatarBadge ? <small>{avatarBadge}</small> : null}
+			</button>
 
 			{open ? (
 				<ModalDialog className={styles.settingsDialog} labelledBy={titleId} onDismiss={() => setOpen(false)}>
@@ -175,6 +171,15 @@ function AccountDockView({
 	);
 }
 
+export function AccountCoinBalance({ balance }: { balance: number }) {
+	return (
+		<span className={styles.coinPill} data-coin-wallet key={balance} aria-label={`${balance} coins`}>
+			<Coins aria-hidden="true" />
+			<strong>{balance.toLocaleString()}</strong>
+		</span>
+	);
+}
+
 export function AccountDock({ dashboard }: { dashboard: AccountDashboard }) {
 	const setCoinEligible = useMutation(api.streaks.setCoinEligible);
 
@@ -206,7 +211,6 @@ export function DemoAccountDock({
 		<AccountDockView
 			dashboard={dashboard}
 			eyebrow="Demo Akin"
-			avatarBadge="LAB"
 			onToggleCoinEligible={onToggleCoinEligible}
 			footer={(
 				<button className={styles.demoReset} type="button" onClick={onResetWallet}>

@@ -16,6 +16,10 @@ vi.mock("@/features/streaks/app/streaks-app", () => ({
 	StreaksApp: () => <div>Local streaks are ready</div>,
 }));
 
+vi.mock("@/features/preferences/app-preferences", () => ({
+	AppPreferences: () => <button type="button">Settings</button>,
+}));
+
 afterEach(() => {
 	cleanup();
 	vi.useRealTimers();

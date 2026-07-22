@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DemoAccountDock } from "@/features/account/account-dock";
+import { AccountCoinBalance, DemoAccountDock } from "@/features/account/account-dock";
+import { AppPreferences } from "@/features/preferences/app-preferences";
+import { AppNavigation } from "@/shared/ui/app-navigation";
 import { clearDemoAccountStorage } from "@/features/account/demo-account-storage";
 import { DemoTimeControls } from "../components/demo-time-controls/demo-time-controls";
 import { addLocalDays, getLocalDateKey } from "../model/calendar";
@@ -48,11 +50,17 @@ function HydratedStreaksDemo() {
 	}
 
 	return (
-		<StreaksView controller={controller} showMascot>
-			<DemoAccountDock
-				dashboard={dashboard}
-				onToggleCoinEligible={toggleCoinEligible}
-				onResetWallet={resetWallet}
+		<StreaksView controller={controller}>
+			<AccountCoinBalance balance={dashboard.wallet.balance} />
+			<AppNavigation
+				accountControl={(
+					<DemoAccountDock
+						dashboard={dashboard}
+						onToggleCoinEligible={toggleCoinEligible}
+						onResetWallet={resetWallet}
+					/>
+				)}
+				preferencesControl={<AppPreferences placement="navigation" />}
 			/>
 			<DemoTimeControls
 				today={today}

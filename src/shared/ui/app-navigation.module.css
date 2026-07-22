@@ -1,0 +1,141 @@
+.navigation {
+	position: fixed;
+	z-index: 80;
+	left: 50%;
+	bottom: max(0.65rem, env(safe-area-inset-bottom));
+	display: grid;
+	grid-template-columns: repeat(5, minmax(3.25rem, 1fr));
+	width: min(calc(100% - 1.15rem), 27rem);
+	height: 4.65rem;
+	align-items: stretch;
+	padding: 0.38rem 0.34rem;
+	border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+	border-radius: 1.65rem;
+	background: color-mix(in srgb, var(--background) 89%, transparent);
+	box-shadow: 0 1rem 2.8rem rgb(25 26 21 / 17%), inset 0 1px 0 rgb(255 255 255 / 45%);
+	backdrop-filter: blur(22px) saturate(145%);
+	transform: translateX(-50%);
+}
+
+.item,
+.control > :global(button),
+.control > :global(a) {
+	position: relative;
+	display: flex;
+	min-width: 0;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.22rem;
+	padding: 0.35rem 0.15rem 0.25rem;
+	border: 0;
+	border-radius: 1.15rem;
+	background: transparent;
+	color: var(--muted);
+	font-size: 0.63rem;
+	font-weight: 900;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color var(--motion-standard), transform var(--motion-spring), background var(--motion-standard);
+}
+
+.item > svg,
+.control > :global(button) > svg,
+.control > :global(a) > svg {
+	width: 1.35rem;
+	height: 1.35rem;
+	stroke-width: 2.35;
+}
+
+.item[aria-current="page"] {
+	color: var(--foreground);
+	font-weight: 1000;
+}
+
+.item[aria-current="page"] > svg { color: var(--accent); }
+
+.item[aria-current="page"]::after {
+	position: absolute;
+	bottom: 0.32rem;
+	width: 0.28rem;
+	height: 0.28rem;
+	border-radius: 50%;
+	background: var(--accent);
+	content: "";
+}
+
+.item:active:not(:disabled),
+.control > :global(button):active,
+.control > :global(a):active { transform: scale(0.91); }
+
+.item:focus-visible,
+.control > :global(button):focus-visible,
+.control > :global(a):focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: -0.2rem;
+}
+
+.item:disabled { cursor: default; opacity: 0.54; }
+.item small {
+	position: absolute;
+	top: 0.15rem;
+	right: 0.12rem;
+	padding: 0.15rem 0.24rem;
+	border-radius: 999px;
+	background: var(--selection);
+	color: var(--selection-foreground);
+	font-size: 0.42rem;
+	font-weight: 1000;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	transform: rotate(5deg);
+}
+
+.akinItem { overflow: visible; padding: 0; }
+.akinIcon {
+	position: relative;
+	top: 0;
+	display: grid;
+	width: 4.9rem;
+	height: 4.15rem;
+	place-items: center;
+	overflow: hidden;
+	border: 0.22rem solid var(--background);
+	border-radius: 52% / 58%;
+	background: #f4d4af;
+	box-shadow: 0 0.65rem 1.4rem rgb(77 45 20 / 20%);
+	transition: transform var(--motion-spring), box-shadow var(--motion-standard);
+}
+.akinArtwork { display: block; width: 86%; height: 86%; }
+.akinItem:hover .akinIcon { box-shadow: 0 0.75rem 1.7rem rgb(77 45 20 / 26%); transform: translateY(-0.12rem) rotate(-2deg); }
+.akinItem[aria-current="page"] { background: transparent; color: var(--accent); }
+.akinItem[aria-current="page"]::after { display: none; }
+.akinItem[aria-current="page"] .akinIcon { border-color: var(--accent); }
+
+.control { position: relative; min-width: 0; height: 100%; }
+.control > :global(button), .control > :global(a) { width: 100%; }
+@media (min-width: 48rem) {
+	.navigation {
+		left: max(1rem, env(safe-area-inset-left));
+		top: 50%;
+		bottom: auto;
+		grid-template-columns: 1fr;
+		grid-template-rows: repeat(5, 4.6rem);
+		width: 6.25rem;
+		height: auto;
+		padding: 0.48rem;
+		border-radius: 1.9rem;
+		transform: translateY(-50%);
+	}
+
+	.akinIcon { width: 5rem; height: 4.2rem; }
+	.item:hover:not(:disabled),
+	.control > :global(button):hover,
+	.control > :global(a):hover { color: var(--foreground); transform: translateY(-1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.item, .akinIcon, .control > :global(button), .control > :global(a) { transition: none; }
+}

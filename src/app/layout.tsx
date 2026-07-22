@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
 import Script from "next/script";
-import { AppPreferences } from "@/features/preferences/app-preferences";
 import { APP_LANGUAGE } from "@/i18n/config";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import "./globals.css";
@@ -66,7 +65,6 @@ export default function RootLayout({
 			<body>
 				<ConvexClientProvider>
 					{children}
-					<AppPreferences />
 				</ConvexClientProvider>
 			</body>
 		</html>

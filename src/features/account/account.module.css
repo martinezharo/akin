@@ -1,5 +1,4 @@
-.guestDock,
-.accountDock {
+.guestDock {
 	position: fixed;
 	z-index: 40;
 	top: max(0.85rem, env(safe-area-inset-top));
@@ -70,6 +69,10 @@
 }
 
 .coinPill {
+	position: fixed;
+	z-index: 40;
+	top: max(0.85rem, env(safe-area-inset-top));
+	right: max(0.85rem, env(safe-area-inset-right));
 	display: flex;
 	min-width: 4.4rem;
 	align-items: center;
@@ -93,20 +96,27 @@
 
 .accountButton {
 	position: relative;
-	display: grid;
-	width: 2.35rem;
-	height: 2.35rem;
-	place-items: center;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 0.22rem;
 	padding: 0;
 	border: 0;
-	border-radius: 0.92rem;
-	background: var(--button-background);
-	color: var(--button-foreground);
-	font-weight: 950;
+	border-radius: 1.15rem;
+	background: transparent;
+	color: var(--muted);
+	font-size: 0.63rem;
+	font-weight: 900;
+	line-height: 1;
 	cursor: pointer;
 	transition: transform var(--motion-spring), border-radius var(--motion-standard);
 }
-.accountButton:hover { border-radius: 50%; transform: rotate(5deg); }
+.accountButton:hover { color: var(--foreground); transform: translateY(-1px); }
+.accountButton:active { transform: scale(0.91); }
+.accountButton > svg { width: 1.35rem; height: 1.35rem; stroke-width: 2.35; }
 .accountButton small {
 	position: absolute;
 	right: -0.38rem;

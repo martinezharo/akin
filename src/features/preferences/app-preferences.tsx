@@ -66,7 +66,7 @@ function savePreferences(preferences: StoredPreferences) {
 	document.documentElement.lang = preferences.language;
 }
 
-export function AppPreferences() {
+export function AppPreferences({ placement = "floating" }: { placement?: "floating" | "navigation" }) {
 	const [open, setOpen] = useState(false);
 	const [installGuide, setInstallGuide] = useState<"ios" | "browser" | null>(null);
 	const [showInstallNotice, setShowInstallNotice] = useState(false);
@@ -148,11 +148,13 @@ export function AppPreferences() {
 		<>
 			<button
 				className={styles.trigger}
+				data-placement={placement}
 				type="button"
 				onClick={showPreferences}
 				aria-label={shouldHighlightInstall ? `${ui.preferences.open}. ${ui.preferences.installNotice}` : ui.preferences.open}
 			>
 				<Settings2 aria-hidden="true" />
+				{placement === "navigation" ? <span>Settings</span> : null}
 				{shouldHighlightInstall ? <span className={styles.noticeBadge} aria-hidden="true">!</span> : null}
 			</button>
 

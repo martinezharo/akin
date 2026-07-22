@@ -1,0 +1,68 @@
+.animated :global(.akin-eye) {
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: akinBlink 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animated :global(.akin-ear) {
+	transform-box: fill-box;
+	animation: akinEarFlick 10s cubic-bezier(0.36, 0, 0.2, 1) infinite;
+}
+
+.animated :global(.akin-ear-left) {
+	--akin-ear-out: -16deg;
+	--akin-ear-back: 6deg;
+	--akin-ear-settle: -10deg;
+	transform-origin: right bottom;
+}
+
+.animated :global(.akin-ear-right) {
+	--akin-ear-out: 16deg;
+	--akin-ear-back: -6deg;
+	--akin-ear-settle: 10deg;
+	transform-origin: left bottom;
+}
+
+.interactive:hover .animated :global(.akin-eye) {
+	animation: akinHoverEyes 1.35s cubic-bezier(0.36, 0, 0.2, 1) both;
+}
+
+.interactive:hover .animated :global(.akin-ear) {
+	animation: akinHoverEar 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes akinBlink {
+	0%, 92%, 100% { transform: scaleY(1); }
+	96% { transform: scaleY(0.06); }
+}
+
+@keyframes akinEarFlick {
+	0%, 92%, 97.4%, 100% { transform: rotate(0); }
+	92.7% { transform: rotate(var(--akin-ear-out)); }
+	93.5% { transform: rotate(var(--akin-ear-back)); }
+	94.3% { transform: rotate(var(--akin-ear-out)); }
+	95.1% { transform: rotate(var(--akin-ear-back)); }
+	96% { transform: rotate(var(--akin-ear-settle)); }
+}
+
+@keyframes akinHoverEyes {
+	0%, 100% { transform: scaleY(1); }
+	18%, 72% { transform: scaleY(0.06); }
+}
+
+@keyframes akinHoverEar {
+	0%, 100% { transform: rotate(0); }
+	18% { transform: rotate(var(--akin-ear-out)); }
+	38% { transform: rotate(var(--akin-ear-back)); }
+	58% { transform: rotate(var(--akin-ear-out)); }
+	78% { transform: rotate(var(--akin-ear-settle)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.animated :global(.akin-eye),
+	.animated :global(.akin-ear),
+	.interactive:hover .animated :global(.akin-eye),
+	.interactive:hover .animated :global(.akin-ear) {
+		animation: none;
+	}
+}

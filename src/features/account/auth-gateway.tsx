@@ -1,14 +1,16 @@
 "use client";
 
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { RefreshCw, WifiOff, X } from "lucide-react";
+import { RefreshCw, UserRound, WifiOff, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreaksView } from "@/features/streaks/app/streaks-view";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useRegisteredStreaksController } from "@/features/streaks/app/use-registered-streaks-controller";
-import { AccountDock } from "./account-dock";
+import { AppPreferences } from "@/features/preferences/app-preferences";
+import { AppNavigation } from "@/shared/ui/app-navigation";
+import { AccountCoinBalance, AccountDock } from "./account-dock";
 import { AuthModal } from "./auth-modal";
 import styles from "./account.module.css";
 
@@ -25,7 +27,7 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 	return (
 		<>
 			<StreaksApp />
-			<div className={styles.guestDock} data-offline={backendUnavailable}>
+			{backendUnavailable ? <div className={styles.guestDock} data-offline>
 				{backendUnavailable ? (
 					<>
 						<span><WifiOff aria-hidden="true" /> Convex is taking a nap</span>
@@ -33,12 +35,17 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 							<RefreshCw aria-hidden="true" /> Try again
 						</button>
 					</>
-				) : (
-					<button className={styles.signIn} type="button" onClick={() => setAuthOpen(true)}>
-						Sign in
+				) : null}
+			</div> : null}
+			<AppNavigation
+				accountControl={(
+					<button className={styles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open profile">
+						<UserRound aria-hidden="true" />
+						<span>Profile</span>
 					</button>
 				)}
-			</div>
+				preferencesControl={<AppPreferences placement="navigation" />}
+			/>
 			{authOpen && !backendUnavailable ? <AuthModal onDismiss={() => setAuthOpen(false)} /> : null}
 		</>
 	);
@@ -78,7 +85,11 @@ function RegisteredExperience() {
 
 	return (
 		<StreaksView controller={controller} showMascot>
-			<AccountDock dashboard={dashboard} />
+			<AccountCoinBalance balance={dashboard.wallet.balance} />
+			<AppNavigation
+				accountControl={<AccountDock dashboard={dashboard} />}
+				preferencesControl={<AppPreferences placement="navigation" />}
+			/>
 			{notice ? (
 				<div className={styles.notice} role="status">
 					<p>{notice}</p>

@@ -1,7 +1,14 @@
 .page {
 	min-height: 100dvh;
 	padding: max(18vh, 7rem) max(1.5rem, env(safe-area-inset-right))
-		max(7rem, calc(env(safe-area-inset-bottom) + 6rem)) max(1.5rem, env(safe-area-inset-left));
+		max(8.5rem, calc(env(safe-area-inset-bottom) + 7.5rem)) max(1.5rem, env(safe-area-inset-left));
+}
+
+@media (min-width: 48rem) {
+	.page {
+		padding-left: max(8.5rem, calc(env(safe-area-inset-left) + 8rem));
+		padding-bottom: 5rem;
+	}
 }
 
 @media (max-width: 30rem) {
