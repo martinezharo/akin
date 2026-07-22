@@ -34,14 +34,16 @@
 }
 
 .artwork :global(.akin-ear-left) {
-	--akin-ear-out: -9deg;
-	--akin-ear-back: 3deg;
+	--akin-ear-out: -16deg;
+	--akin-ear-back: 6deg;
+	--akin-ear-settle: -10deg;
 	transform-origin: right bottom;
 }
 
 .artwork :global(.akin-ear-right) {
-	--akin-ear-out: 9deg;
-	--akin-ear-back: -3deg;
+	--akin-ear-out: 16deg;
+	--akin-ear-back: -6deg;
+	--akin-ear-settle: 10deg;
 	transform-origin: left bottom;
 }
 
@@ -68,10 +70,12 @@
 }
 
 @keyframes akinEarFlick {
-	0%, 92%, 97%, 100% { transform: rotate(0); }
-	93.2% { transform: rotate(var(--akin-ear-out)); }
-	94.3% { transform: rotate(var(--akin-ear-back)); }
-	95.3% { transform: rotate(var(--akin-ear-out)); }
+	0%, 92%, 97.4%, 100% { transform: rotate(0); }
+	92.7% { transform: rotate(var(--akin-ear-out)); }
+	93.5% { transform: rotate(var(--akin-ear-back)); }
+	94.3% { transform: rotate(var(--akin-ear-out)); }
+	95.1% { transform: rotate(var(--akin-ear-back)); }
+	96% { transform: rotate(var(--akin-ear-settle)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
