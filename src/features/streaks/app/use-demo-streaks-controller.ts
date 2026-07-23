@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { MAX_REWARD_STREAKS } from "@convex/lib/app-rules";
 import {
 	createDemoAccountState,
 	DEMO_STARTING_COINS,
@@ -117,7 +118,7 @@ export function useDemoStreaksController(base: StreaksController) {
 			discardUndo();
 			const id = base.create(name, icon);
 			setAccount((current) =>
-				current.rewardEligibleStreakIds.length >= 10
+				current.rewardEligibleStreakIds.length >= MAX_REWARD_STREAKS
 					? current
 					: {
 							...current,
@@ -223,14 +224,14 @@ export function useDemoStreaksController(base: StreaksController) {
 
 	return {
 		controller,
-			dashboard,
-			toggleRewardEligible: (streakId: string, rewardEligible: boolean) => {
+		dashboard,
+		toggleRewardEligible: (streakId: string, rewardEligible: boolean) => {
 			discardUndo();
 			base.dismissUndo();
 			setAccount((current) => {
 				const ids = current.rewardEligibleStreakIds.filter((id) => id !== streakId);
 				if (!rewardEligible) return { ...current, rewardEligibleStreakIds: ids };
-				if (ids.length >= 10) return current;
+				if (ids.length >= MAX_REWARD_STREAKS) return current;
 				return { ...current, rewardEligibleStreakIds: [streakId, ...ids] };
 			});
 		},
