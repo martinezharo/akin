@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MAX_REWARD_STREAKS } from "@convex/lib/app_rules";
+import { MAX_REWARD_STREAKS } from "@/domain/rewards/reward-rules";
 import {
 	createDemoAccountState,
 	DEMO_STARTING_COINS,
 	loadDemoAccountState,
 	saveDemoAccountState,
 	type DemoAccountState,
-} from "@/features/account/demo-account-storage";
-import type { AccountDashboardView } from "@/features/account/account-types";
+} from "@/features/account/demo/demo-account-storage";
+import type { AccountDashboardView } from "@/features/account/model/account-types";
 import type { LocalDateKey } from "../model/calendar";
 import type { ReviewAnswers } from "../model/progress";
 import type { Streak } from "../model/streak";

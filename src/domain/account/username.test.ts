@@ -1,0 +1,22 @@
+import { describe, expect, it } from "vitest";
+import {
+	isValidUsername,
+	normalizeUsername,
+	USERNAME_MAX_LENGTH,
+	USERNAME_MIN_LENGTH,
+} from "./username";
+
+describe("username rules", () => {
+	it("normalizes user input before validation", () => {
+		expect(normalizeUsername("  Akin_Friend  ")).toBe("akin_friend");
+		expect(isValidUsername("  Akin_Friend  ")).toBe(true);
+	});
+
+	it("rejects values outside the shared contract", () => {
+		expect(USERNAME_MIN_LENGTH).toBe(3);
+		expect(USERNAME_MAX_LENGTH).toBe(20);
+		expect(isValidUsername("ab")).toBe(false);
+		expect(isValidUsername("contains-dash")).toBe(false);
+		expect(isValidUsername("a".repeat(21))).toBe(false);
+	});
+});
