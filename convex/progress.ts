@@ -11,7 +11,6 @@ import {
 	assertCurrentLocalDate,
 	assertLocalDate,
 	assertLocalDates,
-	datesAfterThrough,
 } from "./lib/dates";
 import { findOwnedStreak, hasCheckIn, isRewardEligible, listActiveStreaks } from "./lib/streaks";
 import {
@@ -26,6 +25,7 @@ import {
 import { getProfile, getWallet, requireAuthUser } from "./lib/users";
 
 const answer = v.object({ streakId: v.string(), completed: v.boolean() });
+const REVIEW_GAP_BATCH_DAYS = 30;
 
 async function createCheckIn(
 	ctx: MutationCtx,
@@ -176,7 +176,7 @@ export const resolveDay = mutation({
 export const resolveGap = mutation({
 	args: { days: v.array(v.string()), today: v.string(), answers: v.array(answer), reviewSessionId: v.string() },
 	handler: async (ctx, args) => {
-		assertLocalDates(args.days);
+		assertLocalDates(args.days, REVIEW_GAP_BATCH_DAYS);
 		const user = await requireAuthUser(ctx);
 		const [profile, streaks] = await Promise.all([
 			getProfile(ctx, user._id),
@@ -184,13 +184,36 @@ export const resolveGap = mutation({
 		]);
 		if (!profile) throw new Error("Profile missing for authenticated user");
 		assertCurrentLocalDate(args.today, profile.timeZone ?? "UTC");
-		const expectedDays = datesAfterThrough(profile.lastReviewedOn, addLocalDays(args.today, -1));
+		const firstExpectedDay = addLocalDays(profile.lastReviewedOn, 1);
+		const finalReviewDay = addLocalDays(args.today, -1);
+		const lastBatchDay = args.days.at(-1)!;
+		const previousUndo = await ctx.db
+			.query("undoRecords")
+			.withIndex("by_user_session", (query) =>
+				query.eq("userId", user._id).eq("sessionId", args.reviewSessionId),
+			)
+			.unique();
 		if (
-			expectedDays.length <= 3 ||
-			expectedDays.length !== args.days.length ||
-			expectedDays.some((day, index) => day !== args.days[index])
+			(!previousUndo && addLocalDays(profile.lastReviewedOn, 4) > finalReviewDay) ||
+			args.days[0] !== firstExpectedDay ||
+			lastBatchDay > finalReviewDay
 		) {
 			throw new ConvexError({ code: "INVALID_REVIEW_GAP", message: "Review gap is out of sequence" });
+		}
+		const previousLedgerIds =
+			previousUndo?.snapshotV2?.type === "progress"
+				? previousUndo.snapshotV2.ledgerIds
+				: [];
+		const previousLedgers = await Promise.all(
+			previousLedgerIds.map((ledgerId) => ctx.db.get(ledgerId)),
+		);
+		const rewardedByStreak = new Map<string, number>();
+		for (const ledger of previousLedgers) {
+			if (!ledger || ledger.userId !== user._id) continue;
+			rewardedByStreak.set(
+				ledger.streakId,
+				(rewardedByStreak.get(ledger.streakId) ?? 0) + ledger.amount,
+			);
 		}
 		const answers = new Map(args.answers.map((item) => [item.streakId, item.completed]));
 		const snapshot = await baseUndoSnapshot();
@@ -215,9 +238,11 @@ export const resolveGap = mutation({
 					daysBefore: streak.days,
 					daysAfter: streak.days + unresolvedDays.length,
 				});
-				let streakCoins = 0;
+				let streakCoins = rewardedByStreak.get(streak._id) ?? 0;
 				for (const day of unresolvedDays) {
-					const canAward = isRewardEligible(streak) && streakCoins < rewardedDayLimit(args.days.length);
+					const canAward =
+						isRewardEligible(streak) &&
+						streakCoins < rewardedDayLimit(4);
 					const created = await createCheckIn(ctx, {
 						userId: user._id,
 						streakId: streak._id,

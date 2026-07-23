@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addLocalDays, assertLocalDate, assertLocalDates, datesAfterThrough } from "./dates";
+import { addLocalDays, assertLocalDate, assertLocalDates } from "./dates";
 
 describe("server local-date rules", () => {
 	it("moves safely across month and leap-year boundaries", () => {
@@ -17,12 +17,12 @@ describe("server local-date rules", () => {
 		expect(() => assertLocalDates(["2026-07-15", "2026-07-16"])).not.toThrow();
 	});
 
-	it("builds the exact unresolved range", () => {
-		expect(datesAfterThrough("2026-07-14", "2026-07-18")).toEqual([
-			"2026-07-15",
-			"2026-07-16",
-			"2026-07-17",
-			"2026-07-18",
-		]);
+	it("enforces the operation-specific batch size", () => {
+		expect(() =>
+			assertLocalDates(
+				["2026-07-15", "2026-07-16", "2026-07-17"],
+				2,
+			),
+		).toThrow();
 	});
 });

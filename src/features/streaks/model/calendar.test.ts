@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	addLocalDays,
+	chunkLocalDates,
 	getLocalDateKey,
 	getUnreviewedDays,
 	isLocalDateKey,
@@ -8,6 +9,20 @@ import {
 } from "./calendar";
 
 describe("streak calendar", () => {
+	it("splits long review gaps without losing or duplicating days", () => {
+		const days = Array.from(
+			{ length: 401 },
+			(_, index) => addLocalDays("2025-01-01", index),
+		);
+
+		const batches = chunkLocalDates(days, 30);
+
+		expect(batches).toHaveLength(14);
+		expect(batches[0]).toHaveLength(30);
+		expect(batches.at(-1)).toHaveLength(11);
+		expect(batches.flat()).toEqual(days);
+	});
+
 	it("formats local dates without applying UTC offsets", () => {
 		expect(getLocalDateKey(new Date(2026, 6, 16, 23, 30))).toBe("2026-07-16");
 	});

@@ -8,7 +8,10 @@ import {
 	getStreakIconOptions,
 	type StreakIconValue,
 } from "../components/icon-picker/streak-icons";
-import { getUnreviewedDays, type LocalDateKey } from "../model/calendar";
+import {
+	getUnreviewedDays,
+	type LocalDateKey,
+} from "../model/calendar";
 import { hasStreakCheckIn, type StreakCheckIn } from "../model/check-in";
 import type { ReviewAnswers } from "../model/progress";
 import { createStreak, type Streak } from "../model/streak";
@@ -18,6 +21,7 @@ import {
 	STREAKS_STORAGE_KEY,
 } from "../persistence/storage";
 import type { CoinReward, StreaksController, UndoToast } from "./use-streaks-controller";
+import { resolveReviewGapInBatches } from "./review-gap-batches";
 
 type RemoteUndo = UndoToast & { undoId: Id<"undoRecords"> };
 
@@ -52,6 +56,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 	const reviewSessionRef = useRef<string | null>(null);
 	const reviewUndoRef = useRef<RemoteUndo | null>(null);
 	const reviewCoinRewardRef = useRef(0);
+	const resolvingGapRef = useRef(false);
 	const toastKeyRef = useRef(0);
 	const rewardIdRef = useRef(0);
 
@@ -222,27 +227,39 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 				.catch(report);
 		},
 		resolveGap: (days, answers) => {
+			if (resolvingGapRef.current) return;
+			resolvingGapRef.current = true;
 			setUndoToast(null);
-			void resolveRemoteGap({
-				days,
-				today,
-				answers: answersForServer(answers),
-				reviewSessionId: reviewSessionId(),
-			})
-				.then((result) => {
-					showCoinReward(reviewCoinRewardRef.current + result.coinsAwarded);
+			const sessionId = reviewSessionId();
+			void (async () => {
+				const result = await resolveReviewGapInBatches(days, (batch) =>
+					resolveRemoteGap({
+						days: batch,
+						today,
+						answers: answersForServer(answers),
+						reviewSessionId: sessionId,
+					}),
+				);
+				if (result.finalUndoId) {
+					showCoinReward(
+						reviewCoinRewardRef.current + result.coinsAwarded,
+					);
 					reviewCoinRewardRef.current = 0;
 					toastKeyRef.current += 1;
 					setUndoToast({
 						key: toastKeyRef.current,
 						kind: "review",
 						name: null,
-						undoId: result.undoId,
+						undoId: result.finalUndoId,
 					});
 					reviewUndoRef.current = null;
 					reviewSessionRef.current = null;
-				})
-				.catch(report);
+				}
+			})()
+				.catch(report)
+				.finally(() => {
+					resolvingGapRef.current = false;
+				});
 		},
 		undo: () => {
 			if (undoToast) void undoRemote({ undoId: undoToast.undoId }).catch(report);

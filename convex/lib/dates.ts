@@ -49,18 +49,11 @@ export function assertCurrentLocalDate(value: string, timeZone: string): void {
 	}
 }
 
-export function datesAfterThrough(startExclusive: string, endInclusive: string): string[] {
-	const values: string[] = [];
-	let value = addLocalDays(startExclusive, 1);
-	while (value <= endInclusive && values.length <= 366) {
-		values.push(value);
-		value = addLocalDays(value, 1);
-	}
-	return values;
-}
-
-export function assertLocalDates(values: readonly string[]): void {
-	if (values.length === 0 || values.length > 366) {
+export function assertLocalDates(
+	values: readonly string[],
+	maxLength = 366,
+): void {
+	if (values.length === 0 || values.length > maxLength) {
 		throw new ConvexError({ code: "INVALID_DATE_RANGE", message: "Invalid date range" });
 	}
 	for (const value of values) assertLocalDate(value);

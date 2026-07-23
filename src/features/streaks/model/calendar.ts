@@ -46,6 +46,20 @@ export function getUnreviewedDays(
 	return days;
 }
 
+export function chunkLocalDates(
+	days: readonly LocalDateKey[],
+	batchSize: number,
+): LocalDateKey[][] {
+	if (!Number.isSafeInteger(batchSize) || batchSize <= 0) {
+		throw new Error("Batch size must be a positive integer");
+	}
+	const batches: LocalDateKey[][] = [];
+	for (let index = 0; index < days.length; index += batchSize) {
+		batches.push(days.slice(index, index + batchSize));
+	}
+	return batches;
+}
+
 export function formatLocalDate(dateKey: LocalDateKey, locale = APP_LOCALE): string {
 	return new Intl.DateTimeFormat(locale, {
 		weekday: "long",
