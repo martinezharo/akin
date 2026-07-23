@@ -1,5 +1,6 @@
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 import { authComponent } from "../auth";
+import { DEFAULT_PET_HAIR_ID, DEFAULT_PET_SKIN_ID } from "./app-rules";
 import { addLocalDays } from "./dates";
 import { listActiveStreaks } from "./streaks";
 
@@ -36,9 +37,9 @@ export async function ensureUserState(
 			userId: user._id,
 			displayName: user.name,
 			email: user.email,
-			petSkin: "ember",
-			petHair: "honey",
-			ownedPetSkins: ["ember"],
+			petSkin: DEFAULT_PET_SKIN_ID,
+			petHair: DEFAULT_PET_HAIR_ID,
+			ownedPetSkins: [DEFAULT_PET_SKIN_ID],
 			timeZone,
 			lastReviewedOn: today,
 			recentIcons: [],
