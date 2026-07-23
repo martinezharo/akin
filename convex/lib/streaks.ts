@@ -2,7 +2,7 @@ import { ConvexError } from "convex/values";
 import type { Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 
-export const MAX_REWARD_STREAKS = 10;
+export { MAX_REWARD_STREAKS } from "./app-rules";
 
 type RewardEligibleStreak = {
 	rewardEligible?: boolean;
