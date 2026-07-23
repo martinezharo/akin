@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { assertCurrentLocalDate, assertLocalDate } from "./lib/dates";
+import { MAX_REWARD_STREAKS } from "./lib/app-rules";
 import { normalizeIcon, normalizeStreakName } from "./lib/streaks";
 import {
 	advanceFullyCheckedDays,
@@ -80,7 +81,7 @@ export const prepareLocalImport = mutation({
 				icon: normalizeIcon(streak.icon),
 				days: Math.max(0, Math.min(1_000_000, Math.floor(streak.days))),
 				createdOn: streak.createdOn,
-				rewardEligible: index < 10,
+				rewardEligible: index < MAX_REWARD_STREAKS,
 				sortOrder: index,
 				createdAt: now,
 				updatedAt: now,
