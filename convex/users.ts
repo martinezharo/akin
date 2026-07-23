@@ -1,6 +1,5 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
 import { assertCurrentLocalDate, assertLocalDate } from "./lib/dates";
 import { normalizeIcon, normalizeStreakName } from "./lib/streaks";
 import {
@@ -48,26 +47,21 @@ export const ensure = mutation({
 	},
 });
 
-export const importLocalData = mutation({
+export const prepareLocalImport = mutation({
 	args: {
 		today: v.string(),
 		timeZone: v.string(),
-		lastReviewedOn: v.string(),
-		recentIcons: v.array(v.string()),
 		streaks: v.array(localStreak),
-		checkIns: v.array(localCheckIn),
 	},
 	handler: async (ctx, args) => {
 		assertCurrentLocalDate(args.today, args.timeZone);
-		assertLocalDate(args.lastReviewedOn);
 		const user = await requireAuthUser(ctx);
 		const { profile } = await ensureUserState(ctx, user, args.today, args.timeZone);
-		if (profile.importedLocalDataAt !== undefined) return { imported: false };
+		if (profile.importedLocalDataAt !== undefined) return { ready: false };
+		if (args.streaks.length > 100) throw new Error("Too many streaks to import");
 
 		const now = Date.now();
-		const sourceStreaks = args.streaks.slice(0, 100);
-		const streakIds = new Map<string, Id<"streaks">>();
-		for (const [index, streak] of sourceStreaks.entries()) {
+		for (const [index, streak] of args.streaks.entries()) {
 			assertLocalDate(streak.createdOn);
 			const existing = await ctx.db
 				.query("streaks")
@@ -76,49 +70,107 @@ export const importLocalData = mutation({
 				)
 				.unique();
 			if (existing) {
-				streakIds.set(streak.clientId, existing._id);
 				continue;
 			}
 
-			const streakId = await ctx.db.insert("streaks", {
+			await ctx.db.insert("streaks", {
 				userId: user._id,
 				clientId: streak.clientId,
 				name: normalizeStreakName(streak.name),
 				icon: normalizeIcon(streak.icon),
-				days: Math.max(0, Math.floor(streak.days)),
+				days: Math.max(0, Math.min(1_000_000, Math.floor(streak.days))),
 				createdOn: streak.createdOn,
 				rewardEligible: index < 10,
 				sortOrder: index,
 				createdAt: now,
 				updatedAt: now,
 			});
-			streakIds.set(streak.clientId, streakId);
 		}
+		return { ready: true };
+	},
+});
 
-		for (const checkIn of args.checkIns.slice(0, 20_000)) {
+export const importLocalCheckIns = mutation({
+	args: {
+		today: v.string(),
+		timeZone: v.string(),
+		checkIns: v.array(localCheckIn),
+	},
+	handler: async (ctx, args) => {
+		assertCurrentLocalDate(args.today, args.timeZone);
+		if (args.checkIns.length > 50) throw new Error("Check-in import batch is too large");
+		const user = await requireAuthUser(ctx);
+		const profile = await getProfile(ctx, user._id);
+		if (!profile || profile.importedLocalDataAt !== undefined) return { imported: 0 };
+
+		const clientIds = [...new Set(args.checkIns.map((checkIn) => checkIn.streakId))];
+		const streaks = await Promise.all(
+			clientIds.map((clientId) =>
+				ctx.db
+					.query("streaks")
+					.withIndex("by_user_client", (queryBuilder) =>
+						queryBuilder.eq("userId", user._id).eq("clientId", clientId),
+					)
+					.unique(),
+			),
+		);
+		const streaksByClientId = new Map(
+			streaks.flatMap((streak) =>
+				streak && streak.deletedAt === undefined
+					? [[streak.clientId, streak] as const]
+					: [],
+			),
+		);
+		const now = Date.now();
+		let imported = 0;
+		for (const checkIn of args.checkIns) {
 			assertLocalDate(checkIn.completedOn);
-			const streakId = streakIds.get(checkIn.streakId);
-			if (!streakId) continue;
+			const streak = streaksByClientId.get(checkIn.streakId);
+			if (
+				!streak ||
+				checkIn.completedOn < streak.createdOn ||
+				checkIn.completedOn > args.today
+			) continue;
 			const duplicate = await ctx.db
 				.query("checkIns")
 				.withIndex("by_user_streak_date", (queryBuilder) =>
 					queryBuilder
 						.eq("userId", user._id)
-						.eq("streakId", streakId)
+						.eq("streakId", streak._id)
 						.eq("localDate", checkIn.completedOn),
 				)
 				.unique();
 			if (!duplicate) {
 				await ctx.db.insert("checkIns", {
 					userId: user._id,
-					streakId,
+					streakId: streak._id,
 					localDate: checkIn.completedOn,
 					completedAt: now,
 					source: "import",
 				});
+				imported += 1;
 			}
 		}
+		return { imported };
+	},
+});
 
+export const finishLocalImport = mutation({
+	args: {
+		today: v.string(),
+		timeZone: v.string(),
+		lastReviewedOn: v.string(),
+		recentIcons: v.array(v.string()),
+	},
+	handler: async (ctx, args) => {
+		assertCurrentLocalDate(args.today, args.timeZone);
+		assertLocalDate(args.lastReviewedOn);
+		const user = await requireAuthUser(ctx);
+		const profile = await getProfile(ctx, user._id);
+		if (!profile || profile.importedLocalDataAt !== undefined) {
+			return { imported: false };
+		}
+		const now = Date.now();
 		await ctx.db.patch(profile._id, {
 			lastReviewedOn: args.lastReviewedOn <= args.today ? args.lastReviewedOn : args.today,
 			timeZone: args.timeZone,

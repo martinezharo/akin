@@ -22,6 +22,7 @@ import {
 } from "../persistence/storage";
 import type { CoinReward, StreaksController, UndoToast } from "./use-streaks-controller";
 import { resolveReviewGapInBatches } from "./review-gap-batches";
+import { importLocalDataInBatches } from "./local-import";
 
 type RemoteUndo = UndoToast & { undoId: Id<"undoRecords"> };
 
@@ -37,7 +38,9 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 	const user = useQuery(api.users.current);
 	const dashboard = useQuery(api.dashboard.get);
 	const ensureUser = useMutation(api.users.ensure);
-	const importLocalData = useMutation(api.users.importLocalData);
+	const prepareLocalImport = useMutation(api.users.prepareLocalImport);
+	const importLocalCheckIns = useMutation(api.users.importLocalCheckIns);
+	const finishLocalImport = useMutation(api.users.finishLocalImport);
 	const createRemote = useMutation(api.streaks.create);
 	const rememberRemoteIcon = useMutation(api.streaks.rememberIcon);
 	const updateRemoteIcon = useMutation(api.streaks.updateIcon);
@@ -86,21 +89,20 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 		if (!user?.isReady || !user.needsLocalImport || importStartedRef.current === user.id) return;
 		importStartedRef.current = user.id;
 		const local = loadStreaksData(STREAKS_STORAGE_KEY, createEmptyStreaksData(today));
-		void importLocalData({
+		void importLocalDataInBatches({
+			data: local,
 			today,
 			timeZone,
-			lastReviewedOn: local.lastReviewedOn,
-			recentIcons: local.recentIcons,
-			streaks: local.streaks.map((streak) => ({
-				clientId: streak.id,
-				name: streak.name,
-				icon: streak.icon ?? "✨",
-				days: streak.days,
-				createdOn: streak.createdOn,
-			})),
-			checkIns: local.checkIns,
-		}).catch(report);
-	}, [importLocalData, report, timeZone, today, user]);
+			operations: {
+				prepare: prepareLocalImport,
+				importCheckIns: importLocalCheckIns,
+				finish: finishLocalImport,
+			},
+		}).catch((error) => {
+			importStartedRef.current = null;
+			report(error);
+		});
+	}, [finishLocalImport, importLocalCheckIns, prepareLocalImport, report, timeZone, today, user]);
 
 	const data = useMemo(() => {
 		if (!dashboard) return null;
