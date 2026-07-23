@@ -2,7 +2,7 @@
 
 import { Check, Coins, RotateCcw, Sparkles, UserRound } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { type CSSProperties, type PointerEvent, useRef, useState } from "react";
+import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from "react";
 import { AccountDock } from "@/features/account/account-dock";
 import { AccountRewardsBalance } from "@/features/account/account-rewards-balance";
 import { AuthModal } from "@/features/account/auth-modal";
@@ -80,6 +80,12 @@ function PetStudio({
 	const pettingMessageTimer = useRef<number | undefined>(undefined);
 	const lastPointerPetAt = useRef(Number.NEGATIVE_INFINITY);
 	const noticeTimer = useRef<number | undefined>(undefined);
+
+	useEffect(() => () => {
+		window.clearTimeout(pettingTimer.current);
+		window.clearTimeout(pettingMessageTimer.current);
+		window.clearTimeout(noticeTimer.current);
+	}, []);
 
 	const draftSkin = getPetSkin(draftSkinId);
 	const draftHair = getPetHair(draftHairId);
