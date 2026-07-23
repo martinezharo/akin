@@ -52,15 +52,6 @@
 	font-size: 1.4rem;
 	letter-spacing: -0.035em;
 }
-.email {
-	margin: 0.1rem 0 0;
-	overflow: hidden;
-	color: var(--muted);
-	font-size: 0.77rem;
-	font-weight: 700;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
 
 .dashboardGrid { display: block; }
 .card {

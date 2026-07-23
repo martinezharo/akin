@@ -32,7 +32,9 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 	const [savingId, setSavingId] = useState<string | null>(null);
 	const titleId = useId();
 	const eligibleCount = dashboard.streaks.filter((streak) => streak.rewardEligible).length;
-	const initial = dashboard.user.name.trim().charAt(0).toUpperCase() || "A";
+	const username = dashboard.user.username?.trim();
+	const visibleIdentity = username ? `@${username}` : dashboard.user.name;
+	const initial = (username ?? dashboard.user.name).charAt(0).toUpperCase() || "A";
 
 	async function toggle(streakId: string, rewardEligible: boolean) {
 		setShowRewardLimitNotice(false);
@@ -56,8 +58,7 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 						<div className={styles.bigAvatar} aria-hidden="true">{initial}</div>
 						<div>
 							<p className={styles.eyebrow}>{eyebrow}</p>
-							<h1 id={titleId}>{dashboard.user.name}</h1>
-							<p className={styles.email}>{dashboard.user.email}</p>
+							<h1 id={titleId}>{visibleIdentity}</h1>
 						</div>
 					</section>
 

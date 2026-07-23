@@ -31,6 +31,9 @@ describe("account page", () => {
 		);
 
 		expect(screen.getByLabelText("Signed in as @akin_friend")).toBeTruthy();
+		expect(screen.getByRole("heading", { level: 1, name: "@akin_friend" })).toBeTruthy();
+		expect(screen.queryByText("Akin Friend")).toBeNull();
+		expect(screen.queryByText("friend@example.com")).toBeNull();
 		const wallet = screen.getByLabelText("128 coins, 84 XP");
 		expect(wallet.className).toContain("walletPills");
 	});
