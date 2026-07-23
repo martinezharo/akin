@@ -1,3 +1,5 @@
+import { MAX_REWARD_STREAKS } from "@convex/lib/app-rules";
+
 export const DEMO_ACCOUNT_STORAGE_KEY = "akin:demo-account:v1";
 export const DEMO_STARTING_COINS = 999;
 export const DEMO_ACCOUNT_UPDATED_EVENT = "akin:demo-account-updated";
@@ -20,7 +22,7 @@ export function createDemoAccountState(streakIds: string[]): DemoAccountState {
 		balance: DEMO_STARTING_COINS,
 		lifetimeEarned: DEMO_STARTING_COINS,
 		xp: 0,
-		rewardEligibleStreakIds: streakIds.slice(0, 10),
+		rewardEligibleStreakIds: streakIds.slice(0, MAX_REWARD_STREAKS),
 	};
 }
 
@@ -64,7 +66,7 @@ export function loadDemoAccountState(streakIds: string[]): DemoAccountState {
 		balance: isNonNegativeInteger(persisted.balance) ? persisted.balance : fallback.balance,
 		lifetimeEarned: isNonNegativeInteger(persisted.lifetimeEarned) ? persisted.lifetimeEarned : fallback.lifetimeEarned,
 		xp: isNonNegativeInteger(persisted.xp) ? persisted.xp : fallback.xp,
-		rewardEligibleStreakIds: [...new Set(eligibleStreakIds.filter((id) => activeIds.has(id)))].slice(0, 10),
+		rewardEligibleStreakIds: [...new Set(eligibleStreakIds.filter((id) => activeIds.has(id)))].slice(0, MAX_REWARD_STREAKS),
 	};
 }
 
