@@ -6,6 +6,12 @@ import { listActiveStreaks } from "./streaks";
 
 export const STARTING_COINS = 20;
 
+export const USERNAME_PATTERN = /^[a-z0-9_]{3,20}$/;
+
+export function normalizeUsername(value: string) {
+	return value.trim().toLowerCase();
+}
+
 export async function requireAuthUser(ctx: QueryCtx | MutationCtx) {
 	return await authComponent.getAuthUser(ctx);
 }

@@ -13,6 +13,7 @@ import { AppNavigation } from "@/shared/ui/app-navigation";
 import { AccountDock } from "./account-dock";
 import { AccountRewardsBalance } from "./account-rewards-balance";
 import { GuestAccountControls } from "./guest-account-controls";
+import { UsernamePresence } from "./username-setup-modal";
 import styles from "./account.module.css";
 
 function AkinLoadingMark() {
@@ -60,7 +61,7 @@ function LoadingExperience() {
 
 function RegisteredExperience() {
 	const today = useLocalDay();
-	const { controller, dashboard, isLoading, notice, dismissNotice } =
+	const { controller, dashboard, isLoading, notice, dismissNotice, user } =
 		useRegisteredStreaksController(today);
 
 	if (isLoading || !dashboard) {
@@ -73,19 +74,22 @@ function RegisteredExperience() {
 	}
 
 	return (
-		<StreaksView controller={controller}>
-			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
-			<AppNavigation
-				accountControl={<AccountDock />}
-				preferencesControl={<AppPreferences placement="navigation" />}
-			/>
-			{notice ? (
-				<div className={styles.notice} role="status">
-					<p>{notice}</p>
-					<button type="button" onClick={dismissNotice} aria-label="Dismiss"><X aria-hidden="true" /></button>
-				</div>
-			) : null}
-		</StreaksView>
+		<>
+			<UsernamePresence username={user?.username} />
+			<StreaksView controller={controller}>
+				<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
+				<AppNavigation
+					accountControl={<AccountDock />}
+					preferencesControl={<AppPreferences placement="navigation" />}
+				/>
+				{notice ? (
+					<div className={styles.notice} role="status">
+						<p>{notice}</p>
+						<button type="button" onClick={dismissNotice} aria-label="Dismiss"><X aria-hidden="true" /></button>
+					</div>
+				) : null}
+			</StreaksView>
+		</>
 	);
 }
 

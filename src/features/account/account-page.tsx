@@ -15,6 +15,7 @@ import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
 import type { AccountDashboardView } from "./account-types";
 import { GuestAccountControls } from "./guest-account-controls";
+import { UsernamePresence } from "./username-setup-modal";
 import styles from "./account-page.module.css";
 
 type AccountPageViewProps = {
@@ -122,6 +123,7 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 				/>
 			) : null}
 			<AppNavigation preferencesControl={<AppPreferences placement="navigation" />} />
+			<UsernamePresence username={dashboard.user.username} />
 		</main>
 	);
 }
