@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useId, useState } from "react";
 import { api } from "@convex/_generated/api";
+import { MAX_REWARD_STREAKS } from "@convex/lib/app-rules";
 import { authClient } from "@/lib/auth-client";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { UndoToast } from "@/shared/ui/undo-toast";
@@ -38,7 +39,7 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 		try {
 			await onToggleRewardEligible(streakId, rewardEligible);
 		} catch {
-			setError("Ten is the limit. Switch one streak off before choosing another.");
+			setError(`${MAX_REWARD_STREAKS} is the limit. Switch one streak off before choosing another.`);
 		} finally {
 			setSavingId(null);
 		}
@@ -71,14 +72,14 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 						<section className={`${styles.card} ${styles.rewardCard}`} aria-labelledby="reward-title">
 							<div className={styles.rewardHeading}>
 								<div><SlidersHorizontal aria-hidden="true" /><h2 id="reward-title">Reward streaks</h2></div>
-								<span className={styles.rewardCount}>{eligibleCount}/10</span>
+								<span className={styles.rewardCount}>{eligibleCount}/{MAX_REWARD_STREAKS}</span>
 							</div>
-							<p className={styles.rewardCopy}>Choose up to ten streaks that earn one coin and one XP whenever you keep them.</p>
+							<p className={styles.rewardCopy}>Choose up to {MAX_REWARD_STREAKS} streaks that earn one coin and one XP whenever you keep them.</p>
 
 							{dashboard.streaks.length ? (
 								<div className={styles.rewardList}>
 									{dashboard.streaks.map((streak) => {
-										const isAtRewardStreakLimit = !streak.rewardEligible && eligibleCount >= 10;
+										const isAtRewardStreakLimit = !streak.rewardEligible && eligibleCount >= MAX_REWARD_STREAKS;
 										const disabled = savingId === streak.id;
 										return (
 											<label key={streak.id} data-disabled={disabled || isAtRewardStreakLimit}>
@@ -109,7 +110,7 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 					<footer className={styles.pageFooter}>{footer}</footer>
 					</div>
 			</div>
-			{showRewardLimitNotice && eligibleCount >= 10 ? (
+			{showRewardLimitNotice && eligibleCount >= MAX_REWARD_STREAKS ? (
 				<UndoToast
 					message="Reward crew full — swap one out first."
 					actionLabel="Got it"
