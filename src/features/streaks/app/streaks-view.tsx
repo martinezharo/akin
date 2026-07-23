@@ -2,7 +2,6 @@
 
 import { type ReactNode, useEffect, useState } from "react";
 import { ui } from "@/i18n/en";
-import { AkinMascot } from "@/shared/ui/akin-mascot";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import { CoinRewardFeedback } from "@/features/rewards/coin-reward-feedback";
 import { primeRewardSound } from "@/features/rewards/reward-sound-preference";
@@ -14,11 +13,9 @@ import type { StreaksController } from "./use-streaks-controller";
 
 export function StreaksView({
 	controller,
-	showMascot = false,
 	children,
 }: {
 	controller: StreaksController;
-	showMascot?: boolean;
 	children?: ReactNode;
 }) {
 	const [adjustHintStreakId, setAdjustHintStreakId] = useState<string | null>(null);
@@ -54,7 +51,6 @@ export function StreaksView({
 
 	return (
 		<>
-			{showMascot ? <AkinMascot /> : null}
 			<CoinRewardFeedback reward={controller.coinReward} />
 			<section className={styles.shell} aria-labelledby="streaks-title">
 				<h1 id="streaks-title" className="sr-only">

@@ -75,7 +75,7 @@ function RegisteredExperience() {
 	}
 
 	return (
-		<StreaksView controller={controller} showMascot>
+		<StreaksView controller={controller}>
 			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
 			<AppNavigation
 				accountControl={<AccountDock />}
