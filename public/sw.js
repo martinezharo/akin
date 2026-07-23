@@ -1,5 +1,6 @@
 const SHELL_CACHE = "akin-shell-v3";
 const RUNTIME_CACHE = "akin-runtime-v3";
+const MAX_RUNTIME_ENTRIES = 80;
 const APP_SHELL = [
 	"/",
 	"/manifest.webmanifest",
@@ -7,6 +8,20 @@ const APP_SHELL = [
 	"/icons/akin-192.png",
 	"/icons/akin-512.png",
 ];
+
+async function trimCache(cache, maxEntries) {
+	const requests = await cache.keys();
+	const overflow = requests.length - maxEntries;
+	if (overflow <= 0) return;
+	await Promise.all(requests.slice(0, overflow).map((request) => cache.delete(request)));
+}
+
+async function putRuntimeResponse(cache, request, response) {
+	// Reinsert existing entries so cache order reflects recent use before pruning.
+	await cache.delete(request);
+	await cache.put(request, response);
+	await trimCache(cache, MAX_RUNTIME_ENTRIES);
+}
 
 self.addEventListener("install", (event) => {
 	event.waitUntil(
@@ -31,6 +46,7 @@ self.addEventListener("activate", (event) => {
 							.map((key) => caches.delete(key)),
 					),
 				),
+			caches.open(RUNTIME_CACHE).then((cache) => trimCache(cache, MAX_RUNTIME_ENTRIES)),
 			self.clients.claim(),
 		]),
 	);
@@ -48,7 +64,9 @@ self.addEventListener("fetch", (event) => {
 				.then((response) => {
 					if (response.ok) {
 						const copy = response.clone();
-						event.waitUntil(caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy)));
+						event.waitUntil(
+							caches.open(RUNTIME_CACHE).then((cache) => putRuntimeResponse(cache, request, copy)),
+						);
 					}
 					return response;
 				})
@@ -65,7 +83,7 @@ self.addEventListener("fetch", (event) => {
 					.then((response) => {
 						if (response.ok) {
 							const copy = response.clone();
-							event.waitUntil(cache.put(request, copy));
+							event.waitUntil(putRuntimeResponse(cache, request, copy));
 						}
 						return response;
 					})

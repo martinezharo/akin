@@ -27,16 +27,14 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 	return (
 		<>
 			<StreaksApp />
-			{backendUnavailable ? <div className={styles.guestDock} data-offline>
-				{backendUnavailable ? (
-					<>
-						<span><WifiOff aria-hidden="true" /> Convex is taking a nap</span>
-						<button type="button" onClick={() => window.location.reload()}>
-							<RefreshCw aria-hidden="true" /> Try again
-						</button>
-					</>
-				) : null}
-			</div> : null}
+			{backendUnavailable ? (
+				<div className={styles.guestDock} data-offline>
+					<span><WifiOff aria-hidden="true" /> Convex is taking a nap</span>
+					<button type="button" onClick={() => window.location.reload()}>
+						<RefreshCw aria-hidden="true" /> Try again
+					</button>
+				</div>
+			) : null}
 			<GuestAccountControls showRewards={!backendUnavailable} />
 		</>
 	);
