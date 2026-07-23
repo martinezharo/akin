@@ -12,7 +12,7 @@
 	z-index: 1;
 	width: min(100%, 36rem);
 	margin-inline: auto;
-	padding: max(1rem, env(safe-area-inset-top)) clamp(1.25rem, 5vw, 1.5rem) max(8.5rem, calc(env(safe-area-inset-bottom) + 7.5rem));
+	padding: max(5.4rem, calc(env(safe-area-inset-top) + 4.55rem)) clamp(1.25rem, 5vw, 1.5rem) max(8.5rem, calc(env(safe-area-inset-bottom) + 7.5rem));
 }
 
 .profileHero {
@@ -51,15 +51,6 @@
 	margin: 0;
 	font-size: 1.4rem;
 	letter-spacing: -0.035em;
-}
-.email {
-	margin: 0.1rem 0 0;
-	overflow: hidden;
-	color: var(--muted);
-	font-size: 0.77rem;
-	font-weight: 700;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 .dashboardGrid { display: block; }
@@ -165,7 +156,7 @@
 :global(:root[data-theme="dark"]) .walletMeta { border-color: rgb(255 232 145 / 14%); }
 
 @media (min-width: 48rem) {
-	.content { width: min(100%, 44rem); padding: 1.35rem 2.3rem 3.2rem 8.7rem; }
+	.content { width: min(100%, 44rem); padding: max(5.4rem, calc(env(safe-area-inset-top) + 4.55rem)) 2.3rem 3.2rem 8.7rem; }
 }
 
 @media (max-width: 30rem) {

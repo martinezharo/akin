@@ -7,8 +7,10 @@ import { AccountDock } from "@/features/account/account-dock";
 import { AccountRewardsBalance } from "@/features/account/account-rewards-balance";
 import { AuthModal } from "@/features/account/auth-modal";
 import { GuestAccountControls } from "@/features/account/guest-account-controls";
+import { RemoteUsernamePresence } from "@/features/account/username-setup-modal";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
+import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import {
 	getPetHair,
 	getPetSkin,
@@ -67,6 +69,8 @@ function PetStudio({
 	purchaseSkin,
 	isDemo,
 }: StudioProps & { isDemo: boolean }) {
+	const today = useLocalDay();
+	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 	const [activePart, setActivePart] = useState<"skin" | "hair">("skin");
 	const [draftSkinId, setDraftSkinId] = useState<PetSkinId>(customization.skinId);
 	const [draftHairId, setDraftHairId] = useState<PetHairId>(customization.hairId);
@@ -169,6 +173,7 @@ function PetStudio({
 
 	return (
 		<main className={styles.page}>
+			{isAuthenticated && !isDemo ? <RemoteUsernamePresence today={today} timeZone={timeZone} /> : null}
 			<div className={styles.ambient} aria-hidden="true"><span /><span /></div>
 			{hasChanges ? (
 				<button className={styles.apply} type="button" onClick={() => void applyLook()} disabled={Boolean(pendingId)} data-purchase={skinChanged && !skinIsOwned || undefined}>

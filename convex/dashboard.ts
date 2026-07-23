@@ -23,7 +23,7 @@ export const get = query({
 
 		const clientIds = new Map(streaks.map((streak) => [streak._id, streak.clientId]));
 		return {
-			user: { id: user._id, name: user.name, email: user.email },
+			user: { id: user._id, name: user.name, email: user.email, username: profile.username ?? null },
 			lastReviewedOn: profile.lastReviewedOn,
 			recentIcons: profile.recentIcons,
 			streaks: streaks.map((streak) => ({

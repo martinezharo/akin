@@ -8,7 +8,7 @@ import {
 	PET_SKINS,
 	type PetHairId,
 	type PetSkinId,
-} from "@convex/lib/app-rules";
+} from "@convex/lib/app_rules";
 
 export {
 	PET_HAIRS,
@@ -16,7 +16,7 @@ export {
 	PET_SKINS,
 	type PetHairId,
 	type PetSkinId,
-} from "@convex/lib/app-rules";
+} from "@convex/lib/app_rules";
 
 export const PET_CUSTOMIZATION_STORAGE_KEY = "akin.pet-customization.v1";
 export const DEMO_PET_CUSTOMIZATION_STORAGE_KEY = "akin.demo-pet-customization.v1";

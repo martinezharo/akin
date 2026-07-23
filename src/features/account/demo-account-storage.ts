@@ -1,4 +1,4 @@
-import { MAX_REWARD_STREAKS } from "@convex/lib/app-rules";
+import { MAX_REWARD_STREAKS } from "@convex/lib/app_rules";
 
 export const DEMO_ACCOUNT_STORAGE_KEY = "akin:demo-account:v1";
 export const DEMO_STARTING_COINS = 999;

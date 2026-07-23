@@ -1,13 +1,15 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { assertCurrentLocalDate, assertLocalDate } from "./lib/dates";
-import { MAX_REWARD_STREAKS } from "./lib/app-rules";
+import { MAX_REWARD_STREAKS } from "./lib/app_rules";
 import { normalizeIcon, normalizeStreakName } from "./lib/streaks";
 import {
 	advanceFullyCheckedDays,
 	ensureUserState,
 	getProfile,
+	normalizeUsername,
 	requireAuthUser,
+	USERNAME_PATTERN,
 } from "./lib/users";
 
 const localStreak = v.object({
@@ -32,9 +34,43 @@ export const current = query({
 			id: user._id,
 			name: user.name,
 			email: user.email,
+			username: profile?.username ?? null,
 			isReady: profile !== null,
 			needsLocalImport: profile?.importedLocalDataAt === undefined,
 		};
+	},
+});
+
+export const setUsername = mutation({
+	args: {
+		username: v.string(),
+		today: v.optional(v.string()),
+		timeZone: v.optional(v.string()),
+	},
+	handler: async (ctx, { username: rawUsername, today, timeZone }) => {
+		const user = await requireAuthUser(ctx);
+		let profile = await getProfile(ctx, user._id);
+		if (!profile) {
+			if (!today || !timeZone) throw new Error("Your Akin profile is still waking up. Try again in a moment.");
+			assertCurrentLocalDate(today, timeZone);
+			profile = (await ensureUserState(ctx, user, today, timeZone)).profile;
+		}
+
+		const username = normalizeUsername(rawUsername);
+		if (!USERNAME_PATTERN.test(username)) {
+			throw new Error("Choose 3–20 characters: lowercase letters, numbers, or underscores.");
+		}
+
+		const takenProfile = await ctx.db
+			.query("profiles")
+			.withIndex("by_username", (queryBuilder) => queryBuilder.eq("username", username))
+			.unique();
+		if (takenProfile && takenProfile._id !== profile._id) {
+			throw new Error("That username is already taken. Try a nearby variation.");
+		}
+
+		await ctx.db.patch(profile._id, { username, updatedAt: Date.now() });
+		return { username };
 	},
 });
 

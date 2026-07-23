@@ -6,6 +6,7 @@ export default defineSchema({
 	profiles: defineTable({
 		userId: v.string(),
 		displayName: v.string(),
+		username: v.optional(v.string()),
 		email: v.string(),
 		petSkin: v.optional(v.string()),
 		petHair: v.optional(v.string()),
@@ -16,7 +17,9 @@ export default defineSchema({
 		importedLocalDataAt: v.optional(v.number()),
 		createdAt: v.number(),
 		updatedAt: v.number(),
-	}).index("by_user", ["userId"]),
+	})
+		.index("by_user", ["userId"])
+		.index("by_username", ["username"]),
 
 	streaks: defineTable({
 		userId: v.string(),

@@ -276,6 +276,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 	};
 
 	return {
+		user,
 		controller,
 		dashboard,
 		isLoading: user === undefined || dashboard === undefined || dashboard === null,
