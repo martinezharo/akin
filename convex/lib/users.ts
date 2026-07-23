@@ -77,7 +77,11 @@ export async function advanceFullyCheckedDays(
 		listActiveStreaks(ctx, userId),
 		ctx.db
 			.query("checkIns")
-			.withIndex("by_user", (query) => query.eq("userId", userId))
+			.withIndex("by_user_date", (query) =>
+				query
+					.eq("userId", userId)
+					.gte("localDate", profile.lastReviewedOn),
+			)
 			.collect(),
 	]);
 	const completed = new Set(

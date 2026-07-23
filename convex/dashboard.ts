@@ -6,16 +6,20 @@ export const get = query({
 	args: {},
 	handler: async (ctx) => {
 		const user = await requireAuthUser(ctx);
-		const [profile, wallet, streaks, checkIns] = await Promise.all([
+		const [profile, wallet, streaks] = await Promise.all([
 			getProfile(ctx, user._id),
 			getWallet(ctx, user._id),
 			listActiveStreaks(ctx, user._id),
-			ctx.db
-				.query("checkIns")
-				.withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", user._id))
-				.collect(),
 		]);
 		if (!profile || !wallet) return null;
+		const checkIns = await ctx.db
+			.query("checkIns")
+			.withIndex("by_user_date", (queryBuilder) =>
+				queryBuilder
+					.eq("userId", user._id)
+					.gte("localDate", profile.lastReviewedOn),
+			)
+			.collect();
 
 		const clientIds = new Map(streaks.map((streak) => [streak._id, streak.clientId]));
 		return {
