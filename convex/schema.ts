@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { undoSnapshotV2Validator } from "./lib/undo-schema";
+import { undoSnapshotV2Validator } from "./lib/undo_schema";
 
 export default defineSchema({
 	profiles: defineTable({
