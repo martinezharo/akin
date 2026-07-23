@@ -14,6 +14,7 @@ import {
 import {
 	DEFAULT_OWNED_PET_SKINS,
 	DEFAULT_PET_CUSTOMIZATION,
+	DEMO_PET_CUSTOMIZATION_STORAGE_KEY,
 	getPetHair,
 	getPetSkin,
 	getPetSkinPurchasePrice,
@@ -64,7 +65,8 @@ export function PetCustomizationProvider({ children }: { children: ReactNode }) 
 	const pathname = usePathname();
 	const isDemo = pathname === "/demo" || pathname.startsWith("/demo/");
 	const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
-	const serverPet = useQuery(api.pet.get, isAuthenticated ? {} : "skip");
+	const usesRemotePet = isAuthenticated && !isDemo;
+	const serverPet = useQuery(api.pet.get, usesRemotePet ? {} : "skip");
 	const setHairMutation = useMutation(api.pet.setHair);
 	const purchaseSkinMutation = useMutation(api.pet.purchaseSkin);
 	const demoAccountSnapshot = useSyncExternalStore(subscribeDemoAccount, getDemoAccountSnapshot, () => "");
@@ -73,52 +75,70 @@ export function PetCustomizationProvider({ children }: { children: ReactNode }) 
 		...DEFAULT_PET_CUSTOMIZATION,
 		ownedSkinIds: DEFAULT_OWNED_PET_SKINS,
 	}));
-	const [guestHydrated, setGuestHydrated] = useState(false);
+	const [demoState, setDemoState] = useState<StoredPetCustomization>(() => ({
+		...DEFAULT_PET_CUSTOMIZATION,
+		ownedSkinIds: DEFAULT_OWNED_PET_SKINS,
+	}));
+	const [localStateHydrated, setLocalStateHydrated] = useState(false);
 	const [pendingId, setPendingId] = useState<string | null>(null);
 
 	useEffect(() => {
 		// localStorage is only available after hydration; reconcile it once.
 		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setGuestState(loadGuestPetState());
-		setGuestHydrated(true);
+		setDemoState(loadGuestPetState(DEMO_PET_CUSTOMIZATION_STORAGE_KEY));
+		setLocalStateHydrated(true);
 	}, []);
 
 	useEffect(() => {
-		if (!guestHydrated || isAuthenticated) return;
+		if (!localStateHydrated || usesRemotePet) return;
 		saveGuestPetState(guestState);
-	}, [guestHydrated, guestState, isAuthenticated]);
+	}, [guestState, localStateHydrated, usesRemotePet]);
+
+	useEffect(() => {
+		if (!localStateHydrated) return;
+		saveGuestPetState(demoState, DEMO_PET_CUSTOMIZATION_STORAGE_KEY);
+	}, [demoState, localStateHydrated]);
 
 	const value = useMemo<PetCustomizationContextValue>(() => {
+		const localState = isDemo ? demoState : guestState;
 		const serverSkinId = serverPet && isPetSkinId(serverPet.skinId) ? serverPet.skinId : null;
 		const serverHairId = serverPet && isPetHairId(serverPet.hairId) ? serverPet.hairId : null;
 		const customization: PetCustomization = {
-			skinId: serverSkinId ?? guestState.skinId,
-			hairId: serverHairId ?? guestState.hairId,
+			skinId: serverSkinId ?? localState.skinId,
+			hairId: serverHairId ?? localState.hairId,
 		};
 		const ownedSkinIds = serverPet
 			? normalizeOwnedPetSkins(serverPet.ownedSkinIds, customization.skinId)
-			: guestState.ownedSkinIds;
+			: localState.ownedSkinIds;
 		const balance = serverPet?.balance ?? (isDemo ? demoWallet.balance : 0);
 		const xp = serverPet?.xp ?? (isDemo ? demoWallet.xp : 0);
 		const skin = getPetSkin(customization.skinId);
 		const hair = getPetHair(customization.hairId);
 
 		return {
-			isAuthenticated,
+			isAuthenticated: usesRemotePet,
 			customization,
 			ownedSkinIds,
 			skinColor: skin.color,
 			hairColor: hair.color,
 			coins: balance,
 			xp,
-			isLoading: isAuthLoading || (!isAuthenticated && !guestHydrated) || (isAuthenticated && serverPet === undefined),
+			isLoading: isDemo
+				? !localStateHydrated
+				: isAuthLoading || (!usesRemotePet && !localStateHydrated) || (usesRemotePet && serverPet === undefined),
 			pendingId,
 			chooseHair: async (hairId) => {
 				if (hairId === customization.hairId) return;
 				setPendingId(hairId);
 				try {
-					if (isAuthenticated) await setHairMutation({ hairId });
-					else setGuestState((current) => ({ ...current, hairId }));
+					if (usesRemotePet) {
+						await setHairMutation({ hairId });
+					} else if (isDemo) {
+						setDemoState((current) => ({ ...current, hairId }));
+					} else {
+						setGuestState((current) => ({ ...current, hairId }));
+					}
 				} finally {
 					setPendingId(null);
 				}
@@ -131,15 +151,17 @@ export function PetCustomizationProvider({ children }: { children: ReactNode }) 
 
 				setPendingId(skinId);
 				try {
-					if (isAuthenticated) {
+					if (usesRemotePet) {
 						await purchaseSkinMutation({ skinId });
 					} else {
 						if (price > 0 && (!isDemo || !spendDemoCoins(price))) return { ok: false, reason: "error" };
-						setGuestState((current) => ({
+						const updateLocalState = (current: StoredPetCustomization) => ({
 							...current,
 							skinId,
 							ownedSkinIds: alreadyOwned ? current.ownedSkinIds : [...current.ownedSkinIds, skinId],
-						}));
+						});
+						if (isDemo) setDemoState(updateLocalState);
+						else setGuestState(updateLocalState);
 					}
 					return { ok: true };
 				} catch {
@@ -149,7 +171,7 @@ export function PetCustomizationProvider({ children }: { children: ReactNode }) 
 				}
 			},
 		};
-	}, [demoWallet.balance, demoWallet.xp, guestHydrated, guestState, isAuthenticated, isAuthLoading, isDemo, pendingId, purchaseSkinMutation, serverPet, setHairMutation]);
+	}, [demoState, demoWallet.balance, demoWallet.xp, guestState, isAuthLoading, isDemo, localStateHydrated, pendingId, purchaseSkinMutation, serverPet, setHairMutation, usesRemotePet]);
 
 	const style = {
 		"--akin-skin-color": value.skinColor,

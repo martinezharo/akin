@@ -1,4 +1,5 @@
 export const PET_CUSTOMIZATION_STORAGE_KEY = "akin.pet-customization.v1";
+export const DEMO_PET_CUSTOMIZATION_STORAGE_KEY = "akin.demo-pet-customization.v1";
 
 export const PET_SKINS = [
 	{ id: "ember", name: "Ember", color: "#E84B1B", shadow: "#B93312", price: 0 },
@@ -62,10 +63,12 @@ export function getPetSkinPurchasePrice(skinId: PetSkinId, ownedSkinIds: readonl
 	return ownedSkinIds.includes(skinId) ? 0 : getPetSkin(skinId).price;
 }
 
-export function loadGuestPetState(): StoredPetCustomization {
+export function loadGuestPetState(
+	storageKey = PET_CUSTOMIZATION_STORAGE_KEY,
+): StoredPetCustomization {
 	const fallback: StoredPetCustomization = { ...DEFAULT_PET_CUSTOMIZATION, ownedSkinIds: DEFAULT_OWNED_PET_SKINS };
 	try {
-		const stored = JSON.parse(localStorage.getItem(PET_CUSTOMIZATION_STORAGE_KEY) || "null") as Partial<StoredPetCustomization> | null;
+		const stored = JSON.parse(localStorage.getItem(storageKey) || "null") as Partial<StoredPetCustomization> | null;
 		if (!stored) return fallback;
 		const skinId = isPetSkinId(stored.skinId ?? "") ? stored.skinId : fallback.skinId;
 		const hairId = isPetHairId(stored.hairId ?? "") ? stored.hairId : fallback.hairId;
@@ -83,9 +86,12 @@ export function loadGuestPetState(): StoredPetCustomization {
 	}
 }
 
-export function saveGuestPetState(state: StoredPetCustomization) {
+export function saveGuestPetState(
+	state: StoredPetCustomization,
+	storageKey = PET_CUSTOMIZATION_STORAGE_KEY,
+) {
 	try {
-		localStorage.setItem(PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify(state));
+		localStorage.setItem(storageKey, JSON.stringify(state));
 	} catch {
 		// The pet remains usable for this session when storage is unavailable.
 	}

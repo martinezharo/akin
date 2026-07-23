@@ -39,7 +39,7 @@ export function PetPage() {
 
 	if (!isDemo && !pet.isAuthenticated) return <GuestPetGate isLoading={pet.isLoading} />;
 
-	return <PetStudio {...pet} key={equippedKey} />;
+	return <PetStudio {...pet} isDemo={isDemo} key={equippedKey} />;
 }
 
 function GuestPetGate({ isLoading }: { isLoading: boolean }) {
@@ -65,7 +65,8 @@ function PetStudio({
 	pendingId,
 	chooseHair,
 	purchaseSkin,
-}: StudioProps) {
+	isDemo,
+}: StudioProps & { isDemo: boolean }) {
 	const [activePart, setActivePart] = useState<"skin" | "hair">("skin");
 	const [draftSkinId, setDraftSkinId] = useState<PetSkinId>(customization.skinId);
 	const [draftHairId, setDraftHairId] = useState<PetHairId>(customization.hairId);
@@ -217,7 +218,7 @@ function PetStudio({
 			</div>
 			{notice ? <div className={styles.notice} role="status"><Check aria-hidden="true" /> {notice}</div> : null}
 			<AppNavigation
-				accountControl={isAuthenticated ? <AccountDock /> : (
+				accountControl={isDemo ? undefined : isAuthenticated ? <AccountDock /> : (
 					<button className={accountStyles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open your account">
 						<UserRound aria-hidden="true" />
 						<span>Me</span>

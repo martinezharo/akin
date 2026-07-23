@@ -3,6 +3,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
 	DEFAULT_PET_CUSTOMIZATION,
+	DEMO_PET_CUSTOMIZATION_STORAGE_KEY,
 	getPetHair,
 	getPetSkin,
 	getPetSkinPurchasePrice,
@@ -45,5 +46,13 @@ describe("pet customization catalog", () => {
 	it("compensates storage from the ownership-less version", () => {
 		localStorage.setItem(PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "plum", hairId: "honey", coins: 12 }));
 		expect(loadGuestPetState().ownedSkinIds).toEqual(PET_SKIN_IDS);
+	});
+
+	it("keeps demo customization separate from guest customization", () => {
+		localStorage.setItem(PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "plum", hairId: "honey", ownedSkinIds: ["ember", "plum"] }));
+		localStorage.setItem(DEMO_PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "sky", hairId: "rose", ownedSkinIds: ["ember", "sky"] }));
+
+		expect(loadGuestPetState()).toMatchObject({ skinId: "plum", hairId: "honey" });
+		expect(loadGuestPetState(DEMO_PET_CUSTOMIZATION_STORAGE_KEY)).toMatchObject({ skinId: "sky", hairId: "rose" });
 	});
 });
