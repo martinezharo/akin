@@ -120,7 +120,7 @@ export const setRewardEligible = mutation({
 			if (active.filter(isRewardEligible).length >= MAX_REWARD_STREAKS) {
 				throw new ConvexError({
 					code: "REWARD_STREAK_LIMIT",
-					message: "Only ten streaks can earn rewards",
+					message: `Only ${MAX_REWARD_STREAKS} streaks can earn rewards`,
 				});
 			}
 		}
