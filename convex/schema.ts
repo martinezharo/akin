@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { undoSnapshotV2Validator } from "./lib/undo-schema";
 
 export default defineSchema({
 	profiles: defineTable({
@@ -71,7 +72,10 @@ export default defineSchema({
 		userId: v.string(),
 		sessionId: v.optional(v.string()),
 		kind: v.union(v.literal("today"), v.literal("review"), v.literal("delete")),
-		snapshot: v.any(),
+		// Deprecated after V2. Keep it optional until every pre-deploy undo record
+		// has expired; new records are always validated through snapshotV2.
+		snapshot: v.optional(v.any()),
+		snapshotV2: v.optional(undoSnapshotV2Validator),
 		createdAt: v.number(),
 		expiresAt: v.number(),
 		usedAt: v.optional(v.number()),

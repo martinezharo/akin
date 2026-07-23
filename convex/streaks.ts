@@ -97,11 +97,14 @@ export const remove = mutation({
 	handler: async (ctx, args) => {
 		const user = await requireAuthUser(ctx);
 		const streak = await findOwnedStreak(ctx, user._id, args.streakId);
+		const deletedAt = Date.now();
 		const undoId = await createUndoRecord(ctx, user._id, "delete", {
+			version: 2,
 			type: "delete",
 			streakId: streak._id,
+			deletedAt,
 		});
-		await ctx.db.patch(streak._id, { deletedAt: Date.now(), updatedAt: Date.now() });
+		await ctx.db.patch(streak._id, { deletedAt, updatedAt: deletedAt });
 		return { undoId, name: streak.name };
 	},
 });
