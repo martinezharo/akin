@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { assertCurrentLocalDate, assertLocalDate } from "./lib/dates";
-import { MAX_REWARD_STREAKS } from "./lib/app-rules";
+import { MAX_REWARD_STREAKS } from "./lib/app_rules";
 import { normalizeIcon, normalizeStreakName } from "./lib/streaks";
 import {
 	advanceFullyCheckedDays,

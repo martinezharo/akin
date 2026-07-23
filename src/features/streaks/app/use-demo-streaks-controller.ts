@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MAX_REWARD_STREAKS } from "@convex/lib/app-rules";
+import { MAX_REWARD_STREAKS } from "@convex/lib/app_rules";
 import {
 	createDemoAccountState,
 	DEMO_STARTING_COINS,

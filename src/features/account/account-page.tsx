@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useId, useState } from "react";
 import { api } from "@convex/_generated/api";
-import { MAX_REWARD_STREAKS } from "@convex/lib/app-rules";
+import { MAX_REWARD_STREAKS } from "@convex/lib/app_rules";
 import { authClient } from "@/lib/auth-client";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { UndoToast } from "@/shared/ui/undo-toast";
@@ -14,6 +14,7 @@ import { AppPreferences } from "@/features/preferences/app-preferences";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
 import type { AccountDashboardView } from "./account-types";
+import { AccountRewardsBalance } from "./account-rewards-balance";
 import { GuestAccountControls } from "./guest-account-controls";
 import { UsernamePresence } from "./username-setup-modal";
 import styles from "./account-page.module.css";
@@ -48,6 +49,7 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 
 	return (
 		<main className={styles.page}>
+			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
 			<div className={styles.ambient} aria-hidden="true" />
 			<div className={styles.content}>
 					<section className={styles.profileHero} aria-labelledby={titleId}>

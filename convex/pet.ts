@@ -8,7 +8,7 @@ import {
 	PET_SKIN_IDS,
 	PET_SKIN_PRICES,
 	type PetSkinId,
-} from "./lib/app-rules";
+} from "./lib/app_rules";
 import { getProfile, getWallet, requireAuthUser } from "./lib/users";
 
 function getOwnedSkins(profile: { petSkin?: string; ownedPetSkins?: string[] } | null): PetSkinId[] {

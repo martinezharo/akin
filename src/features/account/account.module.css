@@ -225,9 +225,9 @@
 	place-items: center;
 	margin-bottom: 1.2rem;
 	border-radius: 1.15rem 1.15rem 1.15rem 0.35rem;
-	background: var(--selection);
-	box-shadow: 0.3rem 0.32rem 0 var(--accent);
-	color: var(--selection-foreground);
+	background: var(--accent);
+	box-shadow: 0.3rem 0.32rem 0 var(--selection);
+	color: #fff;
 	transform: rotate(4deg);
 }
 .usernameMark svg { width: 1.5rem; }

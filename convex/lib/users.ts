@@ -1,6 +1,6 @@
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 import { authComponent } from "../auth";
-import { DEFAULT_PET_HAIR_ID, DEFAULT_PET_SKIN_ID } from "./app-rules";
+import { DEFAULT_PET_HAIR_ID, DEFAULT_PET_SKIN_ID } from "./app_rules";
 import { addLocalDays } from "./dates";
 import { listActiveStreaks } from "./streaks";
 
