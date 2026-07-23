@@ -126,7 +126,7 @@ export async function upsertReviewUndoRecord(
 			userId,
 			sessionId,
 			kind: "review",
-			snapshot,
+			snapshotV2: snapshot,
 			createdAt: now,
 			expiresAt: now + UNDO_WINDOW_MS,
 		});
