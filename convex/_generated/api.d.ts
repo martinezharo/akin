@@ -10,10 +10,12 @@
 
 import type * as auth from "../auth.js";
 import type * as dashboard from "../dashboard.js";
+import type * as friendships from "../friendships.js";
 import type * as http from "../http.js";
 import type * as lib_app_rules from "../lib/app_rules.js";
 import type * as lib_coins from "../lib/coins.js";
 import type * as lib_dates from "../lib/dates.js";
+import type * as lib_friendships from "../lib/friendships.js";
 import type * as lib_streaks from "../lib/streaks.js";
 import type * as lib_undo from "../lib/undo.js";
 import type * as lib_undo_schema from "../lib/undo_schema.js";
@@ -32,10 +34,12 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   dashboard: typeof dashboard;
+  friendships: typeof friendships;
   http: typeof http;
   "lib/app_rules": typeof lib_app_rules;
   "lib/coins": typeof lib_coins;
   "lib/dates": typeof lib_dates;
+  "lib/friendships": typeof lib_friendships;
   "lib/streaks": typeof lib_streaks;
   "lib/undo": typeof lib_undo;
   "lib/undo_schema": typeof lib_undo_schema;

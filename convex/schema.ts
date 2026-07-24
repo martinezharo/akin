@@ -59,6 +59,18 @@ export default defineSchema({
 		updatedAt: v.number(),
 	}).index("by_user", ["userId"]),
 
+	friendships: defineTable({
+		pairKey: v.string(),
+		requesterId: v.string(),
+		recipientId: v.string(),
+		status: v.union(v.literal("pending"), v.literal("accepted")),
+		createdAt: v.number(),
+		updatedAt: v.number(),
+	})
+		.index("by_pair_key", ["pairKey"])
+		.index("by_requester_id_and_status", ["requesterId", "status"])
+		.index("by_recipient_id_and_status", ["recipientId", "status"]),
+
 	coinLedger: defineTable({
 		userId: v.string(),
 		checkInId: v.id("checkIns"),

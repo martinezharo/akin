@@ -12,6 +12,7 @@ import {
 	USERNAME_ERROR_CODES,
 	USERNAME_PATTERN,
 } from "./lib/users";
+import { getFriendship, getFriendshipState } from "./lib/friendships";
 
 const localStreak = v.object({
 	clientId: v.string(),
@@ -61,17 +62,21 @@ export const searchByUsername = query({
 		);
 		return await Promise.all(
 			matches.map(async (profile) => {
-				const wallet = await ctx.db
-					.query("wallets")
-					.withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", profile.userId))
-					.unique();
+				const [wallet, friendship] = await Promise.all([
+					ctx.db
+						.query("wallets")
+						.withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", profile.userId))
+						.unique(),
+					getFriendship(ctx, user._id, profile.userId),
+				]);
 				return {
 					id: profile._id,
 					username: profile.username!,
-					displayName: profile.displayName,
 					petSkin: profile.petSkin ?? "ember",
 					petHair: profile.petHair ?? "honey",
 					xp: wallet?.xp ?? 0,
+					relationship: getFriendshipState(friendship, user._id),
+					requestId: friendship?._id ?? null,
 				};
 			}),
 		);
