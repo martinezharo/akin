@@ -4,13 +4,9 @@ import { DEFAULT_PET_HAIR_ID, DEFAULT_PET_SKIN_ID } from "./app_rules";
 import { addLocalDays } from "./dates";
 import { listActiveStreaks } from "./streaks";
 
+export { normalizeUsername, USERNAME_PATTERN } from "../../src/domain/account/username";
+
 export const STARTING_COINS = 20;
-
-export const USERNAME_PATTERN = /^[a-z0-9_]{3,20}$/;
-
-export function normalizeUsername(value: string) {
-	return value.trim().toLowerCase();
-}
 
 export async function requireAuthUser(ctx: QueryCtx | MutationCtx) {
 	return await authComponent.getAuthUser(ctx);
