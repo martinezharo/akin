@@ -23,7 +23,7 @@ vi.mock("@/features/account/auth-modal", () => ({ AuthModal: () => <div role="di
 vi.mock("@/shared/ui/akin-mascot-artwork", () => ({
 	AkinMascotArtwork: ({ className }: { className?: string }) => <svg className={className} data-testid="companion-artwork" />,
 }));
-vi.mock("./pet-customization-provider", () => ({
+vi.mock("./model/pet-customization-provider", () => ({
 	usePetCustomization: () => ({
 		isAuthenticated: mocks.isAuthenticated,
 		customization: { skinId: "ember", hairId: "honey" },

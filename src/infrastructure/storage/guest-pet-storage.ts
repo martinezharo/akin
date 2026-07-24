@@ -27,8 +27,10 @@ export function loadGuestPetState(
 	try {
 		const stored = JSON.parse(localStorage.getItem(storageKey) || "null") as Partial<StoredPetCustomization> | null;
 		if (!stored) return fallback;
-		const skinId = isPetSkinId(stored.skinId ?? "") ? stored.skinId : fallback.skinId;
-		const hairId = isPetHairId(stored.hairId ?? "") ? stored.hairId : fallback.hairId;
+		const storedSkinId = stored.skinId;
+		const storedHairId = stored.hairId;
+		const skinId = typeof storedSkinId === "string" && isPetSkinId(storedSkinId) ? storedSkinId : fallback.skinId;
+		const hairId = typeof storedHairId === "string" && isPetHairId(storedHairId) ? storedHairId : fallback.hairId;
 		return {
 			skinId,
 			hairId,
