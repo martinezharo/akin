@@ -1,0 +1,192 @@
+.page {
+	min-height: 100dvh;
+	padding: 2.2rem 1rem 7.4rem;
+	overflow: hidden;
+	background:
+		radial-gradient(circle at 88% 8%, color-mix(in srgb, var(--selection) 25%, transparent) 0 9rem, transparent 18rem),
+		radial-gradient(circle at 8% 44%, color-mix(in srgb, var(--accent) 9%, transparent) 0 7rem, transparent 17rem),
+		var(--background);
+}
+
+.shell { width: min(100%, 66rem); margin: 0 auto; }
+
+.hero { max-width: 37rem; margin-bottom: 1.7rem; }
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.38rem;
+	margin-bottom: 0.65rem;
+	color: var(--accent);
+	font-size: 0.74rem;
+	font-weight: 1000;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+.eyebrow svg { width: 1rem; }
+.hero h1 {
+	max-width: 10ch;
+	margin: 0;
+	font-size: clamp(2.55rem, 9vw, 5.1rem);
+	font-weight: 1000;
+	letter-spacing: -0.065em;
+	line-height: 0.91;
+}
+.hero h1 em { color: var(--accent); font-style: normal; }
+.hero p { max-width: 32rem; margin: 1rem 0 0; color: var(--muted); font-size: 1rem; font-weight: 700; line-height: 1.45; }
+
+.searchWrap { position: relative; z-index: 2; max-width: 40rem; margin-bottom: 2rem; }
+.searchWrap > label { display: block; margin: 0 0 0.45rem 0.8rem; font-size: 0.72rem; font-weight: 1000; text-transform: uppercase; }
+.searchBox {
+	display: grid;
+	grid-template-columns: auto auto 1fr auto;
+	height: 4.15rem;
+	align-items: center;
+	gap: 0.55rem;
+	padding: 0 0.85rem 0 1.1rem;
+	border: 2px solid var(--foreground);
+	border-radius: 1.45rem;
+	background: var(--background);
+	box-shadow: 0 0.45rem 0 var(--foreground);
+	transition: transform var(--motion-spring), box-shadow var(--motion-spring);
+}
+.searchBox:focus-within { transform: translateY(-0.18rem); box-shadow: 0 0.65rem 0 var(--accent); }
+.searchBox[data-pending] { border-color: var(--accent); }
+.searchBox > svg { width: 1.35rem; color: var(--muted); }
+.at { color: var(--accent); font-size: 1.3rem; font-weight: 1000; }
+.searchBox input {
+	min-width: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--foreground);
+	font-size: 1.08rem;
+	font-weight: 900;
+}
+.searchBox input::placeholder { color: color-mix(in srgb, var(--muted) 62%, transparent); }
+.searchBox button {
+	display: grid;
+	width: 2.4rem;
+	height: 2.4rem;
+	place-items: center;
+	border: 0;
+	border-radius: 50%;
+	background: var(--icon-background);
+	color: var(--foreground);
+	cursor: pointer;
+}
+.searchBox button svg { width: 1rem; }
+.hint { display: block; margin: 0.65rem 0 0 0.8rem; color: var(--muted); font-size: 0.72rem; font-weight: 800; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: 1rem; }
+.card {
+	--akin-skin-color: var(--friend-skin);
+	--akin-hair-color: var(--friend-hair);
+	position: relative;
+	min-height: 21rem;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--friend-skin) 60%, var(--line));
+	border-radius: 2.1rem;
+	background:
+		linear-gradient(150deg, color-mix(in srgb, var(--friend-hair) 45%, white) 0 46%, color-mix(in srgb, var(--friend-skin) 78%, white));
+	box-shadow: 0 1rem 2.3rem color-mix(in srgb, var(--friend-skin) 22%, transparent);
+	animation: cardIn 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	animation-delay: var(--card-delay);
+}
+.card::before {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(rgb(255 255 255 / 36%) 1px, transparent 1px);
+	background-size: 9px 9px;
+	content: "";
+	mask-image: linear-gradient(to bottom, black, transparent 65%);
+}
+.petStage { position: relative; height: 14.8rem; }
+.petHalo {
+	position: absolute;
+	top: 2.4rem;
+	left: 50%;
+	width: 12.5rem;
+	height: 12.5rem;
+	border: 1px solid rgb(255 255 255 / 58%);
+	border-radius: 48% 52% 58% 42%;
+	background: rgb(255 255 255 / 24%);
+	transform: translateX(-50%) rotate(-8deg);
+}
+.pet { position: absolute; left: 50%; bottom: -1rem; width: 14.8rem; height: 14.8rem; transform: translateX(-50%); transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1); }
+.card:hover .pet { transform: translateX(-50%) translateY(-0.35rem) rotate(2deg) scale(1.04); }
+.cardInfo {
+	position: absolute;
+	right: 0.65rem;
+	bottom: 0.65rem;
+	left: 0.65rem;
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 0.6rem;
+	padding: 1rem 1rem 0.95rem;
+	border: 1px solid rgb(255 255 255 / 54%);
+	border-radius: 1.55rem;
+	background: rgb(255 255 255 / 74%);
+	box-shadow: 0 0.6rem 1.6rem rgb(50 30 18 / 13%);
+	color: #171814;
+	backdrop-filter: blur(15px);
+}
+.cardInfo h2 { margin: 0; font-size: 1.05rem; font-weight: 1000; letter-spacing: -0.025em; }
+.cardInfo p { margin: 0.14rem 0 0; color: rgb(23 24 20 / 58%); font-size: 0.75rem; font-weight: 900; }
+.cardInfo strong {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.42rem 0.58rem;
+	border-radius: 999px;
+	background: #171814;
+	color: #fff;
+	font-size: 0.72rem;
+	font-weight: 1000;
+	white-space: nowrap;
+}
+.cardInfo strong svg { width: 0.8rem; height: 0.8rem; color: #ffd382; fill: #ffd382; }
+
+.empty, .centered {
+	display: grid;
+	min-height: 17rem;
+	place-items: center;
+	align-content: center;
+	padding: 2rem;
+	text-align: center;
+}
+.empty svg, .centered > svg { width: 3rem; height: 3rem; margin-bottom: 0.5rem; color: var(--accent); }
+.empty h2, .centered h1 { margin: 0; font-size: 1.35rem; font-weight: 1000; }
+.empty p, .centered p { max-width: 26rem; margin: 0.45rem 0 0; color: var(--muted); font-weight: 700; }
+.faces { display: flex; margin-bottom: 0.8rem; }
+.faces span {
+	display: grid;
+	width: 3.3rem;
+	height: 3.3rem;
+	place-items: center;
+	margin-left: -0.35rem;
+	border: 3px solid var(--background);
+	border-radius: 50%;
+	background: var(--selection);
+	color: var(--selection-foreground);
+	font-weight: 1000;
+}
+.faces span:nth-child(2) { background: var(--accent); color: white; transform: translateY(-0.35rem); }
+.faces span:nth-child(3) { background: #a9d7b6; color: #183020; }
+
+.centered { min-height: 100dvh; }
+.loadingDot { width: 2.6rem; height: 2.6rem; border: 0.45rem solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 700ms linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes cardIn { from { opacity: 0; transform: translateY(1rem) scale(0.97); } }
+
+@media (min-width: 48rem) {
+	.page { padding: 4rem 3rem 4rem 9rem; }
+	.hero { margin-bottom: 2.2rem; }
+	.searchWrap { margin-bottom: 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card, .loadingDot { animation: none; }
+}

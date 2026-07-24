@@ -17,7 +17,13 @@ function GitHubMark() {
 	);
 }
 
-export function AuthModal({ onDismiss }: { onDismiss: () => void }) {
+export function AuthModal({
+	onDismiss,
+	callbackURL = "/",
+}: {
+	onDismiss: () => void;
+	callbackURL?: string;
+}) {
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const titleId = useId();
@@ -29,7 +35,7 @@ export function AuthModal({ onDismiss }: { onDismiss: () => void }) {
 		try {
 			const result = await authClient.signIn.social({
 				provider: "github",
-				callbackURL: "/",
+				callbackURL,
 			});
 			if (!result.error) return;
 			setError(result.error.message || "GitHub couldn’t open the door. Try again.");

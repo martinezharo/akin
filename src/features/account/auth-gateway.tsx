@@ -25,6 +25,16 @@ function AkinLoadingMark() {
 }
 
 function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: boolean }) {
+	const [friendAuthRequest, setFriendAuthRequest] = useState(false);
+
+	useEffect(() => {
+		const url = new URL(window.location.href);
+		if (url.searchParams.get("auth") !== "friends") return;
+		window.history.replaceState(window.history.state, "", "/");
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setFriendAuthRequest(true);
+	}, []);
+
 	return (
 		<>
 			<StreaksApp />
@@ -36,7 +46,11 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 					</button>
 				</div>
 			) : null}
-			<GuestAccountControls showRewards={!backendUnavailable} />
+			<GuestAccountControls
+				initialAuthOpen={friendAuthRequest}
+				authCallbackUrl={friendAuthRequest ? "/friends" : undefined}
+				showRewards={!backendUnavailable}
+			/>
 		</>
 	);
 }

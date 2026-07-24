@@ -11,14 +11,21 @@ import styles from "./app-navigation.module.css";
 
 type AppNavigationProps = {
 	accountControl?: ReactNode;
+	onLockedFriendsClick?: () => void;
 	onLockedPetClick?: () => void;
 	preferencesControl: ReactNode;
 };
 
-export function AppNavigation({ accountControl, onLockedPetClick, preferencesControl }: AppNavigationProps) {
+export function AppNavigation({
+	accountControl,
+	onLockedFriendsClick,
+	onLockedPetClick,
+	preferencesControl,
+}: AppNavigationProps) {
 	const pathname = usePathname();
 	const homeHref = getExperiencePath(pathname, "/");
 	const petHref = getExperiencePath(pathname, "/pet");
+	const friendsHref = getExperiencePath(pathname, "/friends");
 	const meHref = getExperiencePath(pathname, "/me");
 
 	return (
@@ -28,11 +35,17 @@ export function AppNavigation({ accountControl, onLockedPetClick, preferencesCon
 				<span>Home</span>
 			</Link>
 
-			<button className={styles.item} type="button" disabled aria-label="Friends, coming soon">
-				<UsersRound aria-hidden="true" />
-				<span>Friends</span>
-				<small aria-hidden="true">Soon</small>
-			</button>
+			{onLockedFriendsClick ? (
+				<button className={styles.item} type="button" onClick={onLockedFriendsClick}>
+					<UsersRound aria-hidden="true" />
+					<span>Friends</span>
+				</button>
+			) : (
+				<Link className={styles.item} href={friendsHref} aria-current={pathname === friendsHref ? "page" : undefined}>
+					<UsersRound aria-hidden="true" />
+					<span>Friends</span>
+				</Link>
+			)}
 
 			{onLockedPetClick ? (
 				<button

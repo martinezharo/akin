@@ -41,6 +41,42 @@ export const current = query({
 	},
 });
 
+export const searchByUsername = query({
+	args: { username: v.string() },
+	handler: async (ctx, { username: rawUsername }) => {
+		const user = await requireAuthUser(ctx);
+		const username = normalizeUsername(rawUsername.replace(/^@/, ""));
+		if (username.length < 2) return [];
+
+		const profiles = await ctx.db
+			.query("profiles")
+			.withIndex("by_username", (queryBuilder) =>
+				queryBuilder.gte("username", username).lt("username", `${username}\uffff`),
+			)
+			.take(12);
+
+		const matches = profiles.filter(
+			(profile) => profile.userId !== user._id && profile.username !== undefined,
+		);
+		return await Promise.all(
+			matches.map(async (profile) => {
+				const wallet = await ctx.db
+					.query("wallets")
+					.withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", profile.userId))
+					.unique();
+				return {
+					id: profile._id,
+					username: profile.username!,
+					displayName: profile.displayName,
+					petSkin: profile.petSkin ?? "ember",
+					petHair: profile.petHair ?? "honey",
+					xp: wallet?.xp ?? 0,
+				};
+			}),
+		);
+	},
+});
+
 export const setUsername = mutation({
 	args: {
 		username: v.string(),

@@ -15,15 +15,20 @@ afterEach(cleanup);
 describe("AppNavigation", () => {
 	it("shows a locked companion button that requests authentication", async () => {
 		const user = userEvent.setup();
+		const onLockedFriendsClick = vi.fn();
 		const onLockedPetClick = vi.fn();
 
 		render(
 			<AppNavigation
+				onLockedFriendsClick={onLockedFriendsClick}
 				onLockedPetClick={onLockedPetClick}
 				preferencesControl={<button type="button">Preferences</button>}
 			/>,
 		);
 
+		expect(screen.queryByRole("link", { name: "Friends" })).toBeNull();
+		await user.click(screen.getByRole("button", { name: "Friends" }));
+		expect(onLockedFriendsClick).toHaveBeenCalledOnce();
 		expect(screen.queryByRole("link", { name: /companion/i })).toBeNull();
 		await user.click(screen.getByRole("button", { name: "Sign in to unlock your Akin companion" }));
 		expect(onLockedPetClick).toHaveBeenCalledOnce();

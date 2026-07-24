@@ -1,7 +1,7 @@
 "use client";
 
 import { UserRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { GuestRewardsBalance } from "./account-rewards-balance";
@@ -10,15 +10,24 @@ import styles from "./account.module.css";
 
 export function GuestAccountControls({
 	initialAuthOpen = false,
+	authCallbackUrl,
 	onAuthDismiss,
 	showRewards = true,
 }: {
 	initialAuthOpen?: boolean;
+	authCallbackUrl?: string;
 	onAuthDismiss?: () => void;
 	showRewards?: boolean;
 }) {
 	const [authOpen, setAuthOpen] = useState(initialAuthOpen);
 	const requestAccess = () => setAuthOpen(true);
+
+	useEffect(() => {
+		if (!initialAuthOpen) return;
+		// This prop also handles auth requests that arrive after a client-side redirect.
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setAuthOpen(true);
+	}, [initialAuthOpen]);
 
 	function dismissAuth() {
 		setAuthOpen(false);
@@ -29,6 +38,7 @@ export function GuestAccountControls({
 		<>
 			{showRewards ? <GuestRewardsBalance onRequestAccess={requestAccess} /> : null}
 			<AppNavigation
+				onLockedFriendsClick={requestAccess}
 				onLockedPetClick={requestAccess}
 				accountControl={(
 					<button className={styles.accountButton} type="button" onClick={requestAccess} aria-label="Sign in or open your account">
@@ -38,7 +48,7 @@ export function GuestAccountControls({
 				)}
 				preferencesControl={<AppPreferences placement="navigation" />}
 			/>
-			{authOpen ? <AuthModal onDismiss={dismissAuth} /> : null}
+			{authOpen ? <AuthModal onDismiss={dismissAuth} callbackURL={authCallbackUrl} /> : null}
 		</>
 	);
 }
