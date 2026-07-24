@@ -44,4 +44,7 @@ jobs:
         run: pnpm exec tsc --noEmit
 
       - name: Build
+        env:
+          NEXT_PUBLIC_CONVEX_URL: https://ci-placeholder.convex.cloud
+          NEXT_PUBLIC_CONVEX_SITE_URL: https://ci-placeholder.convex.site
         run: pnpm build
