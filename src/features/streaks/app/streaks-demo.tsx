@@ -3,6 +3,7 @@
 import { addLocalDays } from "../model/calendar";
 import { DemoAccountDock } from "@/features/account/account-dock";
 import { AccountRewardsBalance } from "@/features/account/account-rewards-balance";
+import { UsernamePresence } from "@/features/account/username-setup-modal";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { DemoTimeControls } from "../components/demo-time-controls/demo-time-controls";
@@ -15,6 +16,7 @@ function HydratedStreaksDemo() {
 
 	return (
 		<StreaksView controller={controller}>
+			<UsernamePresence username={dashboard.user.username} />
 			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
 			<AppNavigation
 				accountControl={<DemoAccountDock />}

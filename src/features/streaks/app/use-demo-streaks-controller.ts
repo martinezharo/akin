@@ -19,6 +19,7 @@ const DEMO_USER = {
 	id: "demo-user",
 	name: "Mika Daydream",
 	email: "mika@demo.akin",
+	username: "demo",
 };
 
 function coinsForDay(

@@ -41,6 +41,7 @@ describe("demo account", () => {
 		const { result } = renderDemo();
 
 		expect(result.current.dashboard.user.email).toBe("mika@demo.akin");
+		expect(result.current.dashboard.user.username).toBe("demo");
 		expect(result.current.dashboard.wallet).toEqual({
 			balance: 999,
 			lifetimeEarned: 999,
