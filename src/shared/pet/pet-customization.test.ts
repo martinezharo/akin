@@ -9,10 +9,9 @@ import {
 	getPetSkinPurchasePrice,
 	isPetHairId,
 	isPetSkinId,
-	loadGuestPetState,
+	loadDemoPetState,
 	normalizeOwnedPetSkins,
 	PET_HAIRS,
-	PET_CUSTOMIZATION_STORAGE_KEY,
 	PET_SKIN_IDS,
 	PET_SKINS,
 } from "./pet-customization";
@@ -43,16 +42,14 @@ describe("pet customization catalog", () => {
 		expect(getPetSkinPurchasePrice("sky", ownedSkinIds)).toBe(110);
 	});
 
-	it("compensates storage from the ownership-less version", () => {
-		localStorage.setItem(PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "plum", hairId: "honey", coins: 12 }));
-		expect(loadGuestPetState().ownedSkinIds).toEqual(PET_SKIN_IDS);
+	it("keeps legacy demo profiles fully unlocked", () => {
+		localStorage.setItem(DEMO_PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "plum", hairId: "honey", coins: 12 }));
+		expect(loadDemoPetState().ownedSkinIds).toEqual(PET_SKIN_IDS);
 	});
 
-	it("keeps demo customization separate from guest customization", () => {
-		localStorage.setItem(PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "plum", hairId: "honey", ownedSkinIds: ["ember", "plum"] }));
+	it("loads demo customization from its dedicated storage", () => {
 		localStorage.setItem(DEMO_PET_CUSTOMIZATION_STORAGE_KEY, JSON.stringify({ skinId: "sky", hairId: "rose", ownedSkinIds: ["ember", "sky"] }));
 
-		expect(loadGuestPetState()).toMatchObject({ skinId: "plum", hairId: "honey" });
-		expect(loadGuestPetState(DEMO_PET_CUSTOMIZATION_STORAGE_KEY)).toMatchObject({ skinId: "sky", hairId: "rose" });
+		expect(loadDemoPetState()).toMatchObject({ skinId: "sky", hairId: "rose" });
 	});
 });

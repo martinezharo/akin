@@ -18,6 +18,7 @@ import {
 
 const mocks = vi.hoisted(() => ({
 	pathname: "/demo/pet",
+	isAuthenticated: true,
 	remoteMutation: vi.fn(),
 	useQuery: vi.fn(),
 }));
@@ -27,7 +28,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("convex/react", () => ({
-	useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }),
+	useConvexAuth: () => ({ isAuthenticated: mocks.isAuthenticated, isLoading: false }),
 	useMutation: () => mocks.remoteMutation,
 	useQuery: (...args: unknown[]) => mocks.useQuery(...args),
 }));
@@ -73,9 +74,26 @@ beforeEach(() => {
 afterEach(() => {
 	cleanup();
 	vi.clearAllMocks();
+	mocks.pathname = "/demo/pet";
+	mocks.isAuthenticated = true;
 });
 
 describe("PetCustomizationProvider demo isolation", () => {
+	it("does not persist pet state for unauthenticated users", async () => {
+		mocks.pathname = "/";
+		mocks.isAuthenticated = false;
+		render(
+			<PetCustomizationProvider>
+				<PetStateProbe />
+			</PetCustomizationProvider>,
+		);
+
+		await waitFor(() => {
+			expect(screen.getByLabelText("pet state").textContent).toBe("ember:0:false");
+		});
+		expect(localStorage.getItem(DEMO_PET_CUSTOMIZATION_STORAGE_KEY)).toBeNull();
+	});
+
 	it("uses demo storage and never reaches authenticated pet mutations", async () => {
 		const user = userEvent.setup();
 		render(
