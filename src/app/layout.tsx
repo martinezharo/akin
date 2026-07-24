@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
 import Script from "next/script";
 import { APP_LANGUAGE } from "@/i18n/config";
+import { ui } from "@/i18n/en";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import { PetCustomizationProvider } from "@/features/pet/pet-customization-provider";
 import "./globals.css";
@@ -26,13 +27,13 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-	title: "Akin",
-	description: "Build playful streaks for the promises that matter to you.",
-	applicationName: "Akin",
+	title: ui.metadata.title,
+	description: ui.metadata.description,
+	applicationName: ui.metadata.title,
 	manifest: "/manifest.webmanifest",
 	appleWebApp: {
 		capable: true,
-		title: "Akin",
+		title: ui.metadata.title,
 		statusBarStyle: "default",
 	},
 	icons: {

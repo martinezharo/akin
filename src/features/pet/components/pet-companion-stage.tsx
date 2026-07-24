@@ -2,10 +2,11 @@
 
 import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from "react";
 import { AkinMascotArtwork } from "@/shared/ui/akin-mascot-artwork";
+import { ui } from "@/i18n/en";
 import motionStyles from "@/shared/ui/akin-mascot-motion.module.css";
 import styles from "../pet-page.module.css";
 
-const PETTING_MESSAGES = ["That tickles!", "Again, again!", "You found my happy spot.", "Best part of my day ✦"];
+const PETTING_MESSAGES = [...ui.pet.stage.messages];
 const PETTING_REACTION_DURATION = 780;
 const PETTING_MESSAGE_DURATION = 2200;
 const POINTER_PET_INTERVAL = 900;
@@ -54,7 +55,7 @@ export function PetCompanionStage({ skinColor, hairColor }: { skinColor: string;
 	} as CSSProperties;
 
 	return (
-		<section className={styles.stage} style={previewStyle} aria-label="Your companion">
+		<section className={styles.stage} style={previewStyle} aria-label={ui.pet.stage.label}>
 			<div className={styles.orbit} aria-hidden="true" data-active={petting || undefined} />
 			<button
 				className={`${styles.petButton} ${motionStyles.interactive}`}
@@ -64,7 +65,7 @@ export function PetCompanionStage({ skinColor, hairColor }: { skinColor: string;
 				onClick={(event) => { if (event.detail === 0) petCompanion(); }}
 				data-interacting={petting || undefined}
 				data-pointer-motion="true"
-				aria-label="Pet your companion"
+				aria-label={ui.pet.stage.petButton}
 			>
 				<AkinMascotArtwork key={pettingSequence} className={`${styles.petArtwork} ${motionStyles.animated}`} />
 				<span className={styles.petShadow} aria-hidden="true" />

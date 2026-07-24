@@ -14,6 +14,7 @@ import { AccountDock } from "./account-dock";
 import { AccountRewardsBalance } from "./account-rewards-balance";
 import { GuestAccountControls } from "./guest-account-controls";
 import { UsernamePresence } from "./username-setup-modal";
+import { ui } from "@/i18n/en";
 import styles from "./account.module.css";
 
 function AkinLoadingMark() {
@@ -40,9 +41,9 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 			<StreaksApp />
 			{backendUnavailable ? (
 				<div className={styles.guestDock} data-offline>
-					<span><WifiOff aria-hidden="true" /> Convex is taking a nap</span>
+					<span><WifiOff aria-hidden="true" /> {ui.account.offline.kicker}</span>
 					<button type="button" onClick={() => window.location.reload()}>
-						<RefreshCw aria-hidden="true" /> Try again
+						<RefreshCw aria-hidden="true" /> {ui.account.offline.retry}
 					</button>
 				</div>
 			) : null}
@@ -68,7 +69,7 @@ function LoadingExperience() {
 	return (
 		<div className={styles.loading} role="status">
 			<AkinLoadingMark />
-			<p>Waking up your streaks…</p>
+			<p>{ui.account.loading.wakingUp}</p>
 		</div>
 	);
 }
@@ -82,7 +83,7 @@ function RegisteredExperience() {
 		return (
 			<div className={styles.loading} role="status">
 				<AkinLoadingMark />
-				<p>Gathering your little wins…</p>
+				<p>{ui.account.loading.gathering}</p>
 			</div>
 		);
 	}
@@ -99,7 +100,7 @@ function RegisteredExperience() {
 				{notice ? (
 					<div className={styles.notice} role="status">
 						<p>{notice}</p>
-						<button type="button" onClick={dismissNotice} aria-label="Dismiss"><X aria-hidden="true" /></button>
+						<button type="button" onClick={dismissNotice} aria-label={ui.account.dismiss}><X aria-hidden="true" /></button>
 					</div>
 				) : null}
 			</StreaksView>

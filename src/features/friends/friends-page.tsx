@@ -73,7 +73,7 @@ function FriendCards({ friends }: { friends: Friend[] }) {
 								<h2>{friend.displayName}</h2>
 								<p>@{friend.username}</p>
 							</div>
-							<strong><Sparkles aria-hidden="true" /> {friend.xp.toLocaleString("en-US")} XP</strong>
+							<strong><Sparkles aria-hidden="true" /> {friend.xp.toLocaleString("en-US")} {ui.friends.xpUnit}</strong>
 						</div>
 					</article>
 				);

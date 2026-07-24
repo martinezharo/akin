@@ -3,6 +3,7 @@
 import { Coins, Sparkles } from "lucide-react";
 import { type ReactNode, useId } from "react";
 import { AppPreferences } from "@/features/preferences/app-preferences";
+import { ui } from "@/i18n/en";
 import { AppNavigation } from "@/shared/ui/app-navigation";
 import { AccountRewardsBalance } from "./account-rewards-balance";
 import { UsernamePresence } from "./username-setup-modal";
@@ -17,7 +18,7 @@ type AccountPageViewProps = {
 	footer: ReactNode;
 };
 
-export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "Your Akin", footer }: AccountPageViewProps) {
+export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = ui.account.page.defaultEyebrow, footer }: AccountPageViewProps) {
 	const titleId = useId();
 	const username = dashboard.user.username?.trim();
 	const visibleIdentity = username ? `@${username}` : dashboard.user.name;
@@ -40,11 +41,11 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = "
 					<section className={`${styles.card} ${styles.walletCard}`} aria-labelledby="wallet-title">
 						<div className={styles.coinArt}><Coins aria-hidden="true" /></div>
 						<div className={styles.walletValue}>
-							<span className="sr-only" id="wallet-title">Your coin wallet</span>
+							<span className="sr-only" id="wallet-title">{ui.account.wallet.label}</span>
 							<strong>{dashboard.wallet.balance.toLocaleString()}</strong>
-							<span>coins ready for future companions</span>
+							<span>{ui.account.wallet.ready}</span>
 						</div>
-						<p className={styles.walletMeta}><Sparkles aria-hidden="true" /> {dashboard.wallet.lifetimeEarned.toLocaleString()} earned all time · {dashboard.wallet.xp.toLocaleString()} XP</p>
+						<p className={styles.walletMeta}><Sparkles aria-hidden="true" /> {dashboard.wallet.lifetimeEarned.toLocaleString()} {ui.account.wallet.earnedAllTime} · {dashboard.wallet.xp.toLocaleString()} {ui.account.wallet.xpUnit}</p>
 					</section>
 
 					<RewardStreakSettings

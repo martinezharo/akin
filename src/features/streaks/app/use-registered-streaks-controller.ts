@@ -3,6 +3,8 @@
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@convex/_generated/api";
+import { ui } from "@/i18n/en";
+import { MAX_REWARD_STREAKS } from "@/domain/rewards/reward-rules";
 import type { Id } from "@convex/_generated/dataModel";
 import {
 	getStreakIconOptions,
@@ -31,7 +33,7 @@ function answersForServer(answers: ReviewAnswers) {
 }
 
 function errorMessage(error: unknown) {
-	return error instanceof Error ? error.message : "Something went sideways. Try that again.";
+	return error instanceof Error ? error.message : ui.account.error.generic;
 }
 
 export function useRegisteredStreaksController(today: LocalDateKey) {
@@ -162,7 +164,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 			})
 				.then((result) => {
 					if (!result.rewardEligible) {
-						setNotice("This streak is saved, but only ten streaks can earn rewards. Choose them from your reward settings.");
+						setNotice(ui.account.error.rewardEligibleNotice(MAX_REWARD_STREAKS));
 					}
 				})
 				.catch(report);

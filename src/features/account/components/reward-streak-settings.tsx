@@ -4,6 +4,7 @@ import { Coins, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { MAX_REWARD_STREAKS } from "@/domain/rewards/reward-rules";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
+import { ui } from "@/i18n/en";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import type { AccountDashboardView } from "../model/account-types";
 import styles from "../account-page.module.css";
@@ -26,7 +27,7 @@ export function RewardStreakSettings({ streaks, onToggleRewardEligible }: Reward
 		try {
 			await onToggleRewardEligible(streakId, rewardEligible);
 		} catch {
-			setError(`${MAX_REWARD_STREAKS} is the limit. Switch one streak off before choosing another.`);
+			setError(ui.account.rewardSettings.limitError(MAX_REWARD_STREAKS));
 		} finally {
 			setSavingId(null);
 		}
@@ -36,10 +37,10 @@ export function RewardStreakSettings({ streaks, onToggleRewardEligible }: Reward
 		<>
 			<section className={`${styles.card} ${styles.rewardCard}`} aria-labelledby="reward-title">
 				<div className={styles.rewardHeading}>
-					<div><SlidersHorizontal aria-hidden="true" /><h2 id="reward-title">Reward streaks</h2></div>
+					<div><SlidersHorizontal aria-hidden="true" /><h2 id="reward-title">{ui.account.rewardSettings.heading}</h2></div>
 					<span className={styles.rewardCount}>{eligibleCount}/{MAX_REWARD_STREAKS}</span>
 				</div>
-				<p className={styles.rewardCopy}>Choose up to {MAX_REWARD_STREAKS} streaks that earn one coin and one XP whenever you keep them.</p>
+				<p className={styles.rewardCopy}>{ui.account.rewardSettings.copy(MAX_REWARD_STREAKS)}</p>
 
 				{streaks.length ? (
 					<div className={styles.rewardList}>
@@ -54,7 +55,7 @@ export function RewardStreakSettings({ streaks, onToggleRewardEligible }: Reward
 										type="checkbox"
 										checked={streak.rewardEligible}
 										disabled={disabled}
-										aria-label={`Reward ${streak.name}`}
+										aria-label={ui.account.rewardSettings.toggleLabel(streak.name)}
 										onChange={(event) => {
 											if (event.currentTarget.checked && isAtRewardStreakLimit) {
 												setShowRewardLimitNotice(true);
@@ -68,14 +69,14 @@ export function RewardStreakSettings({ streaks, onToggleRewardEligible }: Reward
 							);
 						})}
 					</div>
-				) : <p className={styles.emptyRewards}>Your first streak will automatically earn rewards.</p>}
+				) : <p className={styles.emptyRewards}>{ui.account.rewardSettings.empty}</p>}
 				{error ? <p className={styles.settingsError} role="alert">{error}</p> : null}
 			</section>
 
 			{showRewardLimitNotice && eligibleCount >= MAX_REWARD_STREAKS ? (
 				<UndoToast
-					message="Reward crew full — swap one out first."
-					actionLabel="Got it"
+					message={ui.account.rewardSettings.toastMessage}
+					actionLabel={ui.account.rewardSettings.toastAction}
 					durationMs={4200}
 					statusIcon={<Coins />}
 					variant="warning"

@@ -3,6 +3,7 @@
 import { ArrowRight, Cloud, Coins, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useId, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { ui } from "@/i18n/en";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import styles from "./account.module.css";
 
@@ -38,9 +39,9 @@ export function AuthModal({
 				callbackURL,
 			});
 			if (!result.error) return;
-			setError(result.error.message || "GitHub couldn’t open the door. Try again.");
+			setError(result.error.message || ui.account.auth.fallbackError);
 		} catch {
-			setError("GitHub couldn’t open the door. Try again.");
+			setError(ui.account.auth.fallbackError);
 		} finally {
 			setPending(false);
 		}
@@ -54,33 +55,33 @@ export function AuthModal({
 			onDismiss={onDismiss}
 		>
 			<div className={styles.authCard}>
-				<button className={styles.close} type="button" onClick={onDismiss} aria-label="Close">
+				<button className={styles.close} type="button" onClick={onDismiss} aria-label={ui.account.auth.close}>
 					<X aria-hidden="true" />
 				</button>
 				<div className={styles.authMark} aria-hidden="true">
 					<Sparkles />
 				</div>
-				<p className={styles.eyebrow}>Make it yours</p>
+				<p className={styles.eyebrow}>{ui.account.auth.kicker}</p>
 				<h2 className={styles.authTitle} id={titleId}>
-					Keep every little win.
+					{ui.account.auth.title}
 				</h2>
 				<p className={styles.authCopy} id={descriptionId}>
-					Sign in or create your Akin account with GitHub and turn every promise into something you can keep.
+					{ui.account.auth.description}
 				</p>
-				<ul className={styles.authBenefits} aria-label="Account benefits">
-					<li><span><Cloud aria-hidden="true" /></span>Keep streaks and check-ins synced on every device</li>
-					<li><span><Coins aria-hidden="true" /></span>Earn coins and XP whenever you keep a reward streak</li>
-					<li><span><Sparkles aria-hidden="true" /></span>Unlock, customise and care for your Akin companion</li>
-					<li><span><ShieldCheck aria-hidden="true" /></span>Keep your progress safely tied to your account</li>
+				<ul className={styles.authBenefits} aria-label={ui.account.auth.benefitsLabel}>
+					<li><span><Cloud aria-hidden="true" /></span>{ui.account.auth.benefitSync}</li>
+					<li><span><Coins aria-hidden="true" /></span>{ui.account.auth.benefitCoins}</li>
+					<li><span><Sparkles aria-hidden="true" /></span>{ui.account.auth.benefitCompanion}</li>
+					<li><span><ShieldCheck aria-hidden="true" /></span>{ui.account.auth.benefitSafe}</li>
 				</ul>
 
 				{error ? <p className={styles.authError} role="alert">{error}</p> : null}
 				<button className={styles.githubSubmit} type="button" disabled={pending} onClick={() => void continueWithGitHub()}>
 					<span className={styles.githubBadge}><GitHubMark /></span>
-					<strong>{pending ? "Heading to GitHub…" : "Continue with GitHub"}</strong>
+					<strong>{pending ? ui.account.auth.buttonLoading : ui.account.auth.buttonIdle}</strong>
 					<ArrowRight aria-hidden="true" />
 				</button>
-				<p className={styles.authFootnote}>One click. No new password to remember.</p>
+				<p className={styles.authFootnote}>{ui.account.auth.footnote}</p>
 			</div>
 		</ModalDialog>
 	);

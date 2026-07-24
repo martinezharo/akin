@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { ui } from "@/i18n/en";
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
 		id: "/",
-		name: "Akin",
-		short_name: "Akin",
-		description: "Build playful streaks for the promises that matter to you.",
+		name: ui.metadata.title,
+		short_name: ui.metadata.title,
+		description: ui.metadata.description,
 		start_url: "/",
 		scope: "/",
 		display: "standalone",

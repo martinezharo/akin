@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
+import { ui } from "@/i18n/en";
 import { AkinMascotArtwork } from "./akin-mascot-artwork";
 import motionStyles from "./akin-mascot-motion.module.css";
 import styles from "./app-navigation.module.css";
@@ -29,21 +30,21 @@ export function AppNavigation({
 	const meHref = getExperiencePath(pathname, "/me");
 
 	return (
-		<nav className={styles.navigation} aria-label="Main navigation">
+		<nav className={styles.navigation} aria-label={ui.navigation.label}>
 			<Link className={styles.item} href={homeHref} aria-current={pathname === homeHref ? "page" : undefined}>
 				<House aria-hidden="true" />
-				<span>Home</span>
+				<span>{ui.navigation.home}</span>
 			</Link>
 
 			{onLockedFriendsClick ? (
 				<button className={styles.item} type="button" onClick={onLockedFriendsClick}>
 					<UsersRound aria-hidden="true" />
-					<span>Friends</span>
+					<span>{ui.navigation.friends}</span>
 				</button>
 			) : (
 				<Link className={styles.item} href={friendsHref} aria-current={pathname === friendsHref ? "page" : undefined}>
 					<UsersRound aria-hidden="true" />
-					<span>Friends</span>
+					<span>{ui.navigation.friends}</span>
 				</Link>
 			)}
 
@@ -52,7 +53,7 @@ export function AppNavigation({
 					className={`${styles.item} ${styles.akinItem} ${styles.akinLocked}`}
 					type="button"
 					onClick={onLockedPetClick}
-					aria-label="Sign in to unlock your Akin companion"
+					aria-label={ui.navigation.lockedPet}
 				>
 					<span className={styles.akinIcon} aria-hidden="true">
 						<AkinMascotArtwork className={styles.akinArtwork} viewBox="400 900 4216 3216" />
@@ -69,9 +70,9 @@ export function AppNavigation({
 
 			<div className={styles.control}>
 				{accountControl ?? (
-					<Link className={styles.item} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label="Me">
+					<Link className={styles.item} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label={ui.account.me}>
 						<UserRound aria-hidden="true" />
-						<span>Me</span>
+						<span>{ui.account.me}</span>
 					</Link>
 				)}
 			</div>

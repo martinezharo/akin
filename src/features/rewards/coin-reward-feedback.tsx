@@ -3,6 +3,7 @@
 import { Coins } from "lucide-react";
 import { type CSSProperties, useEffect, useLayoutEffect, useState } from "react";
 import type { CoinReward } from "@/features/streaks/app/use-streaks-controller";
+import { ui } from "@/i18n/en";
 import { playRewardSound, warmRewardSound } from "./reward-sound-preference";
 import styles from "./coin-reward-feedback.module.css";
 
@@ -55,7 +56,7 @@ export function CoinRewardFeedback({ reward }: { reward: CoinReward | null }) {
 
 	return (
 		<div className={styles.layer} aria-live="polite" aria-atomic="true" style={style}>
-			<span className={styles.announcement}>{`${flight.reward.amount} ${flight.reward.amount === 1 ? "coin" : "coins"} earned`}</span>
+			<span className={styles.announcement}>{ui.rewards.coinsEarned(flight.reward.amount)}</span>
 			<div className={styles.gain} aria-hidden="true">+{flight.reward.amount}</div>
 			{[0, 1, 2].map((coin) => (
 				<span className={styles.coin} data-coin={coin} key={coin} aria-hidden="true"><Coins /></span>

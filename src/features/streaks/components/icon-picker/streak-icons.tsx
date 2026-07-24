@@ -1,4 +1,5 @@
 import { Goal, SmilePlus } from "lucide-react";
+import { ui } from "@/i18n/en";
 import styles from "./streak-icons.module.css";
 
 export type StreakIconValue = string | null;
@@ -11,25 +12,25 @@ export type StreakIconOption = {
 export const DEFAULT_STREAK_ICON: StreakIconValue = null;
 
 export const STREAK_ICON_OPTIONS = [
-	{ value: "💪", label: "Strength" },
-	{ value: "🧠", label: "Learning" },
-	{ value: "📚", label: "Reading" },
-	{ value: "🏃", label: "Running" },
-	{ value: "🧘", label: "Meditation" },
-	{ value: "💧", label: "Hydration" },
-	{ value: "🥗", label: "Healthy food" },
-	{ value: "😴", label: "Sleep" },
-	{ value: "✍️", label: "Writing" },
-	{ value: "🎨", label: "Creativity" },
-	{ value: "🎸", label: "Music" },
-	{ value: "🌱", label: "Growth" },
-	{ value: "🧹", label: "Tidying" },
-	{ value: "💸", label: "Saving" },
-	{ value: "❤️", label: "Wellbeing" },
-	{ value: "☀️", label: "Morning" },
-	{ value: "🌙", label: "Evening" },
-	{ value: "✅", label: "Daily goal" },
-	{ value: "✨", label: "Something special" },
+	{ value: "💪", label: ui.streaks.iconLabels.strength },
+	{ value: "🧠", label: ui.streaks.iconLabels.learning },
+	{ value: "📚", label: ui.streaks.iconLabels.reading },
+	{ value: "🏃", label: ui.streaks.iconLabels.running },
+	{ value: "🧘", label: ui.streaks.iconLabels.meditation },
+	{ value: "💧", label: ui.streaks.iconLabels.hydration },
+	{ value: "🥗", label: ui.streaks.iconLabels.healthyFood },
+	{ value: "😴", label: ui.streaks.iconLabels.sleep },
+	{ value: "✍️", label: ui.streaks.iconLabels.writing },
+	{ value: "🎨", label: ui.streaks.iconLabels.creativity },
+	{ value: "🎸", label: ui.streaks.iconLabels.music },
+	{ value: "🌱", label: ui.streaks.iconLabels.growth },
+	{ value: "🧹", label: ui.streaks.iconLabels.tidying },
+	{ value: "💸", label: ui.streaks.iconLabels.saving },
+	{ value: "❤️", label: ui.streaks.iconLabels.wellbeing },
+	{ value: "☀️", label: ui.streaks.iconLabels.morning },
+	{ value: "🌙", label: ui.streaks.iconLabels.evening },
+	{ value: "✅", label: ui.streaks.iconLabels.dailyGoal },
+	{ value: "✨", label: ui.streaks.iconLabels.somethingSpecial },
 ] as const satisfies ReadonlyArray<StreakIconOption>;
 
 const STREAK_ICON_OPTION_BY_VALUE = new Map<string, StreakIconOption>(
@@ -47,7 +48,7 @@ export function getStreakIconOptions(recentIcons: readonly string[]): StreakIcon
 		options.push(
 			STREAK_ICON_OPTION_BY_VALUE.get(value) ?? {
 				value,
-				label: `Recently used emoji ${value}`,
+				label: ui.streaks.recentlyUsedEmoji(value),
 			},
 		);
 	}

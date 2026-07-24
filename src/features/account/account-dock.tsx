@@ -4,6 +4,7 @@ import { UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
+import { ui } from "@/i18n/en";
 import styles from "./account.module.css";
 
 type AccountDockViewProps = {
@@ -17,9 +18,9 @@ function AccountDockView({
 	const meHref = getExperiencePath(pathname, "/me");
 
 	return (
-		<Link className={styles.accountButton} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label="Open account and reward settings">
+		<Link className={styles.accountButton} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label={ui.account.dockLabel}>
 			<UserRound aria-hidden="true" />
-			<span>Me</span>
+			<span>{ui.account.me}</span>
 			{avatarBadge ? <small>{avatarBadge}</small> : null}
 		</Link>
 	);

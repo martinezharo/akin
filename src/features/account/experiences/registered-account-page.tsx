@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
+import { ui } from "@/i18n/en";
 import { AccountPageView } from "../components/account-page-view";
 import { AccountLoading } from "../components/account-loading";
 import styles from "../account-page.module.css";
@@ -22,7 +23,7 @@ export function RegisteredAccountPage() {
 			}}
 			footer={(
 				<button className={styles.signOut} type="button" onClick={() => void authClient.signOut()}>
-					<LogOut aria-hidden="true" /> Sign out
+					<LogOut aria-hidden="true" /> {ui.account.signOut}
 				</button>
 			)}
 		/>

@@ -1,6 +1,7 @@
 "use client";
 
 import { FlaskConical } from "lucide-react";
+import { ui } from "@/i18n/en";
 import { AccountPageView } from "../components/account-page-view";
 import type { AccountDashboardView } from "../model/account-types";
 import styles from "../account-page.module.css";
@@ -13,11 +14,11 @@ export function DemoAccountPage({ dashboard, onToggleRewardEligible, onResetWall
 	return (
 		<AccountPageView
 			dashboard={dashboard}
-			eyebrow="Demo Akin"
+			eyebrow={ui.account.demo.eyebrow}
 			onToggleRewardEligible={onToggleRewardEligible}
 			footer={(
 				<button className={styles.demoReset} type="button" onClick={onResetWallet}>
-					<FlaskConical aria-hidden="true" /> Reset wallet to 999
+					<FlaskConical aria-hidden="true" /> {ui.account.demo.resetWallet}
 				</button>
 			)}
 		/>

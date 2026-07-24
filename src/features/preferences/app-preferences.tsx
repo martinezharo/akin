@@ -154,7 +154,7 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 				aria-label={shouldHighlightInstall ? `${ui.preferences.open}. ${ui.preferences.installNotice}` : ui.preferences.open}
 			>
 				<Settings2 aria-hidden="true" />
-				{placement === "navigation" ? <span>Settings</span> : null}
+				{placement === "navigation" ? <span>{ui.preferences.triggerLabel}</span> : null}
 				{shouldHighlightInstall ? <span className={styles.noticeBadge} aria-hidden="true">!</span> : null}
 			</button>
 
@@ -178,7 +178,7 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 									<div className={styles.mark} aria-hidden="true"><Settings2 /></div>
 									<p className={styles.kicker}>{ui.preferences.kicker}</p>
 									<h2 id={titleId}>{ui.preferences.title}</h2>
-									<p className={styles.intro} id={descriptionId}>A few small choices, just the way you like them.</p>
+									<p className={styles.intro} id={descriptionId}>{ui.preferences.intro}</p>
 								</div>
 
 								<div className={styles.settingsList}>
@@ -196,7 +196,7 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 									</section>
 
 									<section className={styles.setting} aria-labelledby={`${titleId}-sound`}>
-										<div className={styles.settingCopy}><strong id={`${titleId}-sound`}>Reward sound</strong><small>A tiny chime when coins land.</small></div>
+										<div className={styles.settingCopy}><strong id={`${titleId}-sound`}>{ui.preferences.rewardSound}</strong><small>{ui.preferences.rewardSoundHint}</small></div>
 										<button className={styles.soundToggle} type="button" aria-pressed={rewardSound} onClick={toggleRewardSound}>
 											<i aria-hidden="true" />
 										</button>
@@ -272,8 +272,8 @@ function LanguagePicker({ id, labelledBy, value, onChange }: { id: string; label
 				onClick={() => open ? closePicker() : openPicker()}
 				onKeyDown={handleTriggerKeyDown}
 			>
-				<span className={styles.languageCode} aria-hidden="true">EN</span>
-				<strong id={`${id}-value`}>{ui.preferences.english}</strong>
+<span className={styles.languageCode} aria-hidden="true">{ui.preferences.languageCode}</span>
+		<strong id={`${id}-value`}>{ui.preferences.english}</strong>
 				<span className={styles.languageChevron} aria-hidden="true" data-open={open}>
 					<ChevronDown />
 				</span>
@@ -295,11 +295,11 @@ function LanguagePicker({ id, labelledBy, value, onChange }: { id: string; label
 							}
 						}}
 					>
-						<span className={styles.languageCode} aria-hidden="true">EN</span>
+				<span className={styles.languageCode} aria-hidden="true">{ui.preferences.languageCode}</span>
 						<strong>{ui.preferences.english}</strong>
 						{value === "en" ? <Check aria-hidden="true" /> : <span className={styles.languageCheckSlot} aria-hidden="true" />}
 					</button>
-					<p className={styles.languageSoon}>More languages on the way</p>
+					<p className={styles.languageSoon}>{ui.preferences.languageSoon}</p>
 				</div>
 			) : null}
 		</div>

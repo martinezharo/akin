@@ -2,6 +2,7 @@
 
 import { Check, Coins } from "lucide-react";
 import type { CSSProperties } from "react";
+import { ui } from "@/i18n/en";
 import styles from "../pet-page.module.css";
 
 export function ColorRail({ options, selectedId, equippedId, ownedIds, onSelect, label }: {
@@ -25,13 +26,13 @@ export function ColorRail({ options, selectedId, equippedId, ownedIds, onSelect,
 						className={styles.colorChoice}
 						onClick={() => onSelect(option.id)}
 						aria-pressed={selected}
-						aria-label={`${option.name}${owned ? ", owned" : option.price ? `, ${option.price} coins` : ""}`}
+						aria-label={`${option.name}${owned ? `, ${ui.pet.colorRail.owned}` : option.price ? `, ${ui.pet.colorRail.coins(option.price)}` : ""}`}
 					>
 						<span className={styles.colorDot} style={{ "--swatch-color": option.color } as CSSProperties}>
 							{equipped ? <Check aria-hidden="true" /> : null}
 						</span>
 						<strong>{option.name}</strong>
-						<small>{owned ? (equipped ? "On" : "Owned") : <><Coins aria-hidden="true" /> {option.price}</>}</small>
+						<small>{owned ? (equipped ? ui.pet.colorRail.on : ui.pet.colorRail.ownedLabel) : <><Coins aria-hidden="true" /> {option.price}</>}</small>
 					</button>
 				);
 			})}

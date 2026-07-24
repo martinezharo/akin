@@ -11,6 +11,7 @@ import {
 	USERNAME_MIN_LENGTH,
 	USERNAME_PATTERN,
 } from "@/domain/account/username";
+import { ui } from "@/i18n/en";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import styles from "../account.module.css";
 
@@ -27,7 +28,7 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 		event.preventDefault();
 		const normalized = normalizeUsername(username);
 		if (!USERNAME_PATTERN.test(normalized)) {
-			setError("Use 3–20 lowercase letters, numbers, or underscores.");
+			setError(ui.account.username.invalidError);
 			return;
 		}
 
@@ -40,7 +41,7 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 				await setUsername({ username: normalized });
 			}
 		} catch (caughtError) {
-			setError(caughtError instanceof Error ? caughtError.message : "That username could not be saved. Try again.");
+			setError(caughtError instanceof Error ? caughtError.message : ui.account.username.saveFailed);
 		} finally {
 			setPending(false);
 		}
@@ -56,14 +57,14 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 				<div className={styles.usernameMark} aria-hidden="true">
 					<Sparkles />
 				</div>
-				<p className={styles.eyebrow}>A tiny signature</p>
-				<h2 className={styles.authTitle} id={titleId}>What should we call you?</h2>
+				<p className={styles.eyebrow}>{ui.account.username.kicker}</p>
+				<h2 className={styles.authTitle} id={titleId}>{ui.account.username.title}</h2>
 				<p className={styles.authCopy} id={descriptionId}>
-					Pick a unique username for your Akin world. You can use letters, numbers, and underscores.
+					{ui.account.username.description}
 				</p>
 
 				<form className={styles.usernameForm} onSubmit={(event) => void submit(event)}>
-					<label htmlFor={inputId}>Username</label>
+					<label htmlFor={inputId}>{ui.account.username.label}</label>
 					<div className={styles.usernameInputWrap}>
 						<AtSign aria-hidden="true" />
 						<input
@@ -76,7 +77,7 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 							minLength={USERNAME_MIN_LENGTH}
 							name="username"
 							pattern={USERNAME_HTML_PATTERN}
-							placeholder="your_name"
+							placeholder={ui.account.username.placeholder}
 							spellCheck={false}
 							value={username}
 							onChange={(event) => {
@@ -87,11 +88,11 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 					</div>
 					{error ? <p className={styles.authError} role="alert">{error}</p> : null}
 					<button className={styles.usernameSubmit} type="submit" disabled={pending}>
-						<strong>{pending ? "Saving your name…" : "Make it mine"}</strong>
+						<strong>{pending ? ui.account.username.buttonLoading : ui.account.username.buttonIdle}</strong>
 						<ArrowRight aria-hidden="true" />
 					</button>
 				</form>
-				<p className={styles.authFootnote}>This is how your streak world knows you.</p>
+				<p className={styles.authFootnote}>{ui.account.username.footnote}</p>
 			</div>
 		</ModalDialog>
 	);
@@ -102,7 +103,7 @@ export function UsernamePresence({ username, today, timeZone }: { username?: str
 	if (!username) return <UsernameSetupModal today={today} timeZone={timeZone} />;
 
 	return (
-		<div className={styles.usernameBadge} aria-label={`Signed in as @${username}`}>
+		<div className={styles.usernameBadge} aria-label={ui.account.username.signedInAs(username)}>
 			<AtSign aria-hidden="true" />
 			<strong>@{username}</strong>
 		</div>

@@ -8,6 +8,7 @@ import { AuthModal } from "@/features/account/auth-modal";
 import { RemoteUsernamePresence } from "@/features/account/components/username-setup-modal";
 import accountStyles from "@/features/account/account.module.css";
 import { AppPreferences } from "@/features/preferences/app-preferences";
+import { ui } from "@/i18n/en";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import {
 	getPetHair,
@@ -74,8 +75,8 @@ export function PetStudio({
 			const result = await purchaseSkin(draftSkinId);
 			if (!result.ok) {
 				showNotice(result.reason === "insufficient"
-					? `You need ${Math.max(0, draftSkin.price - coins)} more coins for ${draftSkin.name}.`
-					: "That look could not be saved. Try again.");
+					? ui.pet.studio.insufficientCoins(Math.max(0, draftSkin.price - coins), draftSkin.name)
+					: ui.pet.studio.saveFailed);
 				return;
 			}
 		}
@@ -84,21 +85,21 @@ export function PetStudio({
 			try {
 				await chooseHair(draftHairId);
 			} catch {
-				showNotice("The hair color could not be saved. Try again.");
+				showNotice(ui.pet.studio.hairFailed);
 				return;
 			}
 		}
 
-		showNotice(skinChanged && !skinIsOwned ? `${draftSkin.name} is yours forever.` : "New look equipped.");
+		showNotice(skinChanged && !skinIsOwned ? ui.pet.studio.purchased(draftSkin.name) : ui.pet.studio.newEquipped);
 	}
 
 	const actionLabel = pendingId
-		? "Saving…"
+		? ui.pet.studio.saving
 		: !hasChanges
-			? "Current look"
+			? ui.pet.studio.currentLook
 			: skinChanged && !skinIsOwned
-				? `Unlock for ${draftSkin.price}`
-				: "Wear this look";
+				? ui.pet.studio.unlockFor(draftSkin.price)
+				: ui.pet.studio.wearThis;
 
 	return (
 		<main className={styles.page}>
@@ -122,13 +123,13 @@ export function PetStudio({
 
 				<section className={styles.studio} aria-labelledby="studio-title">
 					<div className={styles.studioHeading}>
-						<h2 id="studio-title">Choose a look</h2>
-						{hasChanges ? <button type="button" className={styles.reset} onClick={resetPreview}><RotateCcw aria-hidden="true" /> Reset</button> : null}
+						<h2 id="studio-title">{ui.pet.studio.chooseLook}</h2>
+						{hasChanges ? <button type="button" className={styles.reset} onClick={resetPreview}><RotateCcw aria-hidden="true" /> {ui.pet.studio.reset}</button> : null}
 					</div>
 
-					<div className={styles.tabs} role="tablist" aria-label="Customize companion">
-						<button type="button" role="tab" aria-selected={activePart === "skin"} onClick={() => setActivePart("skin")}>Skin</button>
-						<button type="button" role="tab" aria-selected={activePart === "hair"} onClick={() => setActivePart("hair")}>Hair</button>
+					<div className={styles.tabs} role="tablist" aria-label={ui.pet.studio.customizeLabel}>
+						<button type="button" role="tab" aria-selected={activePart === "skin"} onClick={() => setActivePart("skin")}>{ui.pet.studio.skinTab}</button>
+						<button type="button" role="tab" aria-selected={activePart === "hair"} onClick={() => setActivePart("hair")}>{ui.pet.studio.hairTab}</button>
 					</div>
 
 					{activePart === "skin" ? (
@@ -138,7 +139,7 @@ export function PetStudio({
 							equippedId={customization.skinId}
 							ownedIds={ownedSkinIds}
 							onSelect={(id) => setDraftSkinId(id as PetSkinId)}
-							label="Skin colors"
+							label={ui.pet.studio.skinColors}
 						/>
 					) : (
 						<ColorRail
@@ -146,28 +147,28 @@ export function PetStudio({
 							selectedId={draftHairId}
 							equippedId={customization.hairId}
 							onSelect={(id) => setDraftHairId(id as PetHairId)}
-							label="Hair colors"
+							label={ui.pet.studio.hairColors}
 						/>
 					)}
 
 					<div className={styles.selectionSummary}>
-						<div><span>Previewing</span><strong>{draftSkin.name} · {draftHair.name}</strong></div>
+						<div><span>{ui.pet.studio.previewing}</span><strong>{draftSkin.name} · {draftHair.name}</strong></div>
 						{missingCoins > 0
-							? <small>Missing {missingCoins} coins</small>
+							? <small>{ui.pet.studio.missingCoins(missingCoins)}</small>
 							: skinChanged && !skinIsOwned
-								? <small>Yours after purchase</small>
-								: <small>{hasChanges ? "Already owned" : "Equipped"}</small>}
+								? <small>{ui.pet.studio.yoursAfterPurchase}</small>
+								: <small>{hasChanges ? ui.pet.studio.alreadyOwned : ui.pet.studio.equipped}</small>}
 					</div>
-					<p className={styles.ownershipNote}>Unlocked skin colors stay in your wardrobe. Switching between them is free.</p>
+					<p className={styles.ownershipNote}>{ui.pet.studio.ownershipNote}</p>
 				</section>
-				{isLoading ? <p className={styles.loading}>Waking up your companion…</p> : null}
+				{isLoading ? <p className={styles.loading}>{ui.pet.studio.loading}</p> : null}
 			</div>
 			{notice ? <div className={styles.notice} role="status"><Check aria-hidden="true" /> {notice}</div> : null}
 			<AppNavigation
 				accountControl={isDemo ? undefined : isAuthenticated ? <AccountDock /> : (
-					<button className={accountStyles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label="Sign in or open your account">
+					<button className={accountStyles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label={ui.account.guestButtonLabel}>
 						<UserRound aria-hidden="true" />
-						<span>Me</span>
+						<span>{ui.account.me}</span>
 					</button>
 				)}
 				preferencesControl={<AppPreferences placement="navigation" />}
