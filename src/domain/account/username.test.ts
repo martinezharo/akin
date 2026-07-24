@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	getUsernameValidationError,
 	isValidUsername,
 	normalizeUsername,
 	USERNAME_MAX_LENGTH,
@@ -18,5 +19,13 @@ describe("username rules", () => {
 		expect(isValidUsername("ab")).toBe(false);
 		expect(isValidUsername("contains-dash")).toBe(false);
 		expect(isValidUsername("a".repeat(21))).toBe(false);
+	});
+
+	it("explains which part of a username needs attention", () => {
+		expect(getUsernameValidationError("")).toBe("empty");
+		expect(getUsernameValidationError("ak")).toBe("tooShort");
+		expect(getUsernameValidationError("a".repeat(21))).toBe("tooLong");
+		expect(getUsernameValidationError("akin-friend")).toBe("invalidCharacters");
+		expect(getUsernameValidationError("akin_friend")).toBeNull();
 	});
 });

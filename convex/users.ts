@@ -9,6 +9,7 @@ import {
 	getProfile,
 	normalizeUsername,
 	requireAuthUser,
+	USERNAME_ERROR_CODES,
 	USERNAME_PATTERN,
 } from "./lib/users";
 
@@ -87,14 +88,14 @@ export const setUsername = mutation({
 		const user = await requireAuthUser(ctx);
 		let profile = await getProfile(ctx, user._id);
 		if (!profile) {
-			if (!today || !timeZone) throw new Error("Your Akin profile is still waking up. Try again in a moment.");
+			if (!today || !timeZone) throw new Error(USERNAME_ERROR_CODES.profileNotReady);
 			assertCurrentLocalDate(today, timeZone);
 			profile = (await ensureUserState(ctx, user, today, timeZone)).profile;
 		}
 
 		const username = normalizeUsername(rawUsername);
 		if (!USERNAME_PATTERN.test(username)) {
-			throw new Error("Choose 3–20 characters: lowercase letters, numbers, or underscores.");
+			throw new Error(USERNAME_ERROR_CODES.invalid);
 		}
 
 		const takenProfile = await ctx.db
@@ -102,7 +103,7 @@ export const setUsername = mutation({
 			.withIndex("by_username", (queryBuilder) => queryBuilder.eq("username", username))
 			.unique();
 		if (takenProfile && takenProfile._id !== profile._id) {
-			throw new Error("That username is already taken. Try a nearby variation.");
+			throw new Error(USERNAME_ERROR_CODES.taken);
 		}
 
 		await ctx.db.patch(profile._id, { username, updatedAt: Date.now() });

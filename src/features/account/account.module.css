@@ -235,9 +235,14 @@
 .usernameForm > label { display: block; margin: 0 0 0.42rem 0.2rem; color: var(--muted); font-size: 0.74rem; font-weight: 950; letter-spacing: 0.08em; text-transform: uppercase; }
 .usernameInputWrap { display: flex; height: 3.5rem; align-items: center; gap: 0.55rem; padding: 0 0.95rem; border: 1.5px solid var(--line); border-radius: 1rem 1rem 1rem 0.4rem; background: var(--icon-background); transition: border-color var(--motion-standard), box-shadow var(--motion-standard), transform var(--motion-spring); }
 .usernameInputWrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); transform: rotate(-0.5deg); }
+.usernameInputWrap[data-invalid="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--icon-background)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
 .usernameInputWrap svg { width: 1.1rem; flex: 0 0 auto; color: var(--accent); }
 .usernameInputWrap input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: var(--foreground); font-size: 1.05rem; font-weight: 850; letter-spacing: 0.01em; }
 .usernameInputWrap input::placeholder { color: var(--muted); opacity: 0.62; }
+.usernameHint { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 0.45rem 0 0; padding: 0 0.2rem; color: var(--muted); font-size: 0.72rem; font-weight: 700; line-height: 1.35; }
+.usernameHint small { flex: 0 0 auto; font-size: inherit; font-variant-numeric: tabular-nums; }
+.usernameError { display: flex; align-items: flex-start; gap: 0.42rem; margin: 0.7rem 0 0; padding: 0.7rem 0.8rem; border-radius: 0.8rem 0.8rem 0.8rem 0.28rem; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font-size: 0.8rem; font-weight: 850; line-height: 1.35; }
+.usernameError svg { width: 1rem; height: 1rem; flex: 0 0 auto; margin-top: 0.05rem; stroke-width: 2.7; }
 .usernameSubmit { display: flex; min-height: 3.55rem; align-items: center; justify-content: space-between; gap: 0.75rem; width: 100%; margin-top: 0.9rem; padding: 0 1.1rem; border: 0; border-radius: 1.05rem 1.05rem 1.05rem 0.4rem; background: var(--button-background); color: var(--button-foreground); cursor: pointer; transition: transform var(--motion-spring), box-shadow var(--motion-standard), opacity var(--motion-standard); }
 .usernameSubmit strong { font-size: 0.9rem; font-weight: 950; }
 .usernameSubmit svg { width: 1.15rem; }

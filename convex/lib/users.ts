@@ -4,7 +4,7 @@ import { DEFAULT_PET_HAIR_ID, DEFAULT_PET_SKIN_ID } from "./app_rules";
 import { addLocalDays } from "./dates";
 import { listActiveStreaks } from "./streaks";
 
-export { normalizeUsername, USERNAME_PATTERN } from "../../src/domain/account/username";
+export { normalizeUsername, USERNAME_ERROR_CODES, USERNAME_PATTERN } from "../../src/domain/account/username";
 
 export const STARTING_COINS = 20;
 

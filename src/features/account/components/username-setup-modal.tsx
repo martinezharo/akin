@@ -1,15 +1,17 @@
 "use client";
 
-import { ArrowRight, AtSign, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowRight, AtSign, Sparkles } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
 import {
 	normalizeUsername,
+	getUsernameValidationError,
 	USERNAME_HTML_PATTERN,
 	USERNAME_MAX_LENGTH,
 	USERNAME_MIN_LENGTH,
-	USERNAME_PATTERN,
+	USERNAME_ERROR_CODES,
+	type UsernameValidationError,
 } from "@/domain/account/username";
 import { ui } from "@/i18n/en";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
@@ -19,21 +21,37 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 	const setUsername = useMutation(api.users.setUsername);
 	const [username, setUsernameValue] = useState("");
 	const [pending, setPending] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [validationError, setValidationError] = useState<UsernameValidationError | null>(null);
+	const [saveError, setSaveError] = useState<"taken" | "profileNotReady" | "generic" | null>(null);
+	const [hasSubmitted, setHasSubmitted] = useState(false);
 	const titleId = useId();
 	const descriptionId = useId();
 	const inputId = useId();
+	const hintId = useId();
+	const errorId = useId();
+
+	const errorMessage = validationError
+		? ui.account.username.validationErrors[validationError]
+		: saveError === "taken"
+			? ui.account.username.takenError
+			: saveError === "profileNotReady"
+				? ui.account.username.profileNotReadyError
+				: saveError === "generic"
+					? ui.account.username.saveFailed
+					: null;
 
 	async function submit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		const normalized = normalizeUsername(username);
-		if (!USERNAME_PATTERN.test(normalized)) {
-			setError(ui.account.username.invalidError);
+		const nextValidationError = getUsernameValidationError(username);
+		setHasSubmitted(true);
+		setValidationError(nextValidationError);
+		setSaveError(null);
+		if (nextValidationError) {
 			return;
 		}
 
 		setPending(true);
-		setError(null);
 		try {
 			if (today && timeZone) {
 				await setUsername({ username: normalized, today, timeZone });
@@ -41,7 +59,14 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 				await setUsername({ username: normalized });
 			}
 		} catch (caughtError) {
-			setError(caughtError instanceof Error ? caughtError.message : ui.account.username.saveFailed);
+			const message = caughtError instanceof Error ? caughtError.message : "";
+			setSaveError(
+				message.includes(USERNAME_ERROR_CODES.taken)
+					? "taken"
+					: message.includes(USERNAME_ERROR_CODES.profileNotReady)
+						? "profileNotReady"
+						: "generic",
+			);
 		} finally {
 			setPending(false);
 		}
@@ -65,7 +90,7 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 
 				<form className={styles.usernameForm} onSubmit={(event) => void submit(event)}>
 					<label htmlFor={inputId}>{ui.account.username.label}</label>
-					<div className={styles.usernameInputWrap}>
+					<div className={styles.usernameInputWrap} data-invalid={errorMessage ? "true" : undefined}>
 						<AtSign aria-hidden="true" />
 						<input
 							autoCapitalize="none"
@@ -78,15 +103,33 @@ export function UsernameSetupModal({ today, timeZone }: { today?: string; timeZo
 							name="username"
 							pattern={USERNAME_HTML_PATTERN}
 							placeholder={ui.account.username.placeholder}
+							aria-describedby={[descriptionId, hintId, errorMessage ? errorId : null].filter(Boolean).join(" ")}
+							aria-invalid={errorMessage ? "true" : "false"}
 							spellCheck={false}
 							value={username}
 							onChange={(event) => {
-								setUsernameValue(event.target.value);
-								setError(null);
+								const nextValue = event.target.value;
+								setUsernameValue(nextValue);
+								setSaveError(null);
+								if (hasSubmitted) setValidationError(getUsernameValidationError(nextValue));
+							}}
+							onBlur={() => {
+								if (hasSubmitted || username) setValidationError(getUsernameValidationError(username));
 							}}
 						/>
 					</div>
-					{error ? <p className={styles.authError} role="alert">{error}</p> : null}
+					<p className={styles.usernameHint} id={hintId}>
+						<span>{ui.account.username.hint}</span>
+						<small aria-label={ui.account.username.characters(username.length, USERNAME_MAX_LENGTH)}>
+							{ui.account.username.characters(username.length, USERNAME_MAX_LENGTH)}
+						</small>
+					</p>
+					{errorMessage ? (
+						<p className={styles.usernameError} id={errorId} role="alert">
+							<AlertCircle aria-hidden="true" />
+							<span>{errorMessage}</span>
+						</p>
+					) : null}
 					<button className={styles.usernameSubmit} type="submit" disabled={pending}>
 						<strong>{pending ? ui.account.username.buttonLoading : ui.account.username.buttonIdle}</strong>
 						<ArrowRight aria-hidden="true" />
