@@ -3,6 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { ui } from "@/i18n/en";
 import { StreakReviewFlow } from "./streak-review";
 
 beforeAll(() => {
@@ -89,7 +90,7 @@ describe("streak review", () => {
 		expect((checkbox as HTMLInputElement).checked).toBe(false);
 
 		await user.click(checkbox);
-		await user.click(screen.getByRole("button", { name: "That’s the honest version" }));
+		await user.click(screen.getByRole("button", { name: ui.review.keepPromise }));
 		expect(onResolveGap).toHaveBeenCalledWith([...days], { read: true });
 	});
 
