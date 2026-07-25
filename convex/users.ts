@@ -7,6 +7,7 @@ import {
 	advanceFullyCheckedDays,
 	ensureUserState,
 	getProfile,
+	getWallet,
 	normalizeUsername,
 	requireAuthUser,
 	USERNAME_ERROR_CODES,
@@ -43,6 +44,31 @@ export const current = query({
 	},
 });
 
+/** Username matches shown for one search. */
+const SEARCH_RESULT_LIMIT = 12;
+
+/**
+ * Username plus reward balances, without the streaks and check-ins that
+ * `dashboard.get` carries. Screens that only render the account header
+ * subscribe to this so a check-in does not re-send the whole dashboard.
+ */
+export const identity = query({
+	args: {},
+	handler: async (ctx) => {
+		const user = await requireAuthUser(ctx);
+		const [profile, wallet] = await Promise.all([
+			getProfile(ctx, user._id),
+			getWallet(ctx, user._id),
+		]);
+		if (!profile) return null;
+		return {
+			username: profile.username ?? null,
+			balance: wallet?.balance ?? 0,
+			xp: wallet?.xp ?? 0,
+		};
+	},
+});
+
 export const searchByUsername = query({
 	args: { username: v.string() },
 	handler: async (ctx, { username: rawUsername }) => {
@@ -50,16 +76,18 @@ export const searchByUsername = query({
 		const username = normalizeUsername(rawUsername.replace(/^@/, ""));
 		if (username.length < 2) return [];
 
+		// The searcher's own profile and username-less profiles are dropped after
+		// the scan, so read a slightly wider page to still fill a full result set.
 		const profiles = await ctx.db
 			.query("profiles")
 			.withIndex("by_username", (queryBuilder) =>
 				queryBuilder.gte("username", username).lt("username", `${username}\uffff`),
 			)
-			.take(12);
+			.take(SEARCH_RESULT_LIMIT + 2);
 
-		const matches = profiles.filter(
-			(profile) => profile.userId !== user._id && profile.username !== undefined,
-		);
+		const matches = profiles
+			.filter((profile) => profile.userId !== user._id && profile.username !== undefined)
+			.slice(0, SEARCH_RESULT_LIMIT);
 		return await Promise.all(
 			matches.map(async (profile) => {
 				const [wallet, friendship] = await Promise.all([
