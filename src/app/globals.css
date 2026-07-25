@@ -6,6 +6,10 @@
 	--button-background: #161714;
 	--button-foreground: #ffffff;
 	--accent: #e84b1b;
+	/* Ink for anything sitting ON the accent. White fails contrast against it —
+	 * badly in dark, where the accent lightens — so accent surfaces carry dark
+	 * ink in both themes instead of inverting with the surface. */
+	--accent-ink: #2f1107;
 	--selection: #ffd382;
 	--selection-foreground: #321207;
 	--icon-background: #f3f3ef;
