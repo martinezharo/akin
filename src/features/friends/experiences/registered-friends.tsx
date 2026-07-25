@@ -9,7 +9,6 @@ import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { ui } from "@/i18n/en";
 import { FriendsView } from "../components/friends-view";
 import {
-	EMPTY_CONNECTIONS,
 	type FriendshipActions,
 	MIN_SEARCH_LENGTH,
 	normalizeUsernameQuery,
@@ -60,7 +59,7 @@ export function RegisteredFriends() {
 			isPending={canSearch && (results === undefined || debouncedQuery !== normalizedQuery)}
 			accountControl={<AccountDock />}
 			identity={identity ?? undefined}
-			connections={connections ?? EMPTY_CONNECTIONS}
+			connections={connections}
 			actions={actions}
 			pendingId={pendingId}
 			actionError={actionError}

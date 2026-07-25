@@ -7,6 +7,7 @@ import { UsernamePresence } from "@/features/account/components/username-setup-m
 import { AppShell } from "@/features/navigation/app-shell";
 import { ui } from "@/i18n/en";
 import {
+	EMPTY_CONNECTIONS,
 	type Friend,
 	type FriendConnections,
 	type FriendshipActions,
@@ -61,7 +62,7 @@ export function FriendsView({
 	onQueryChange,
 	showInitialResults = false,
 	identity,
-	connections,
+	connections: loadedConnections,
 	actions,
 	pendingId,
 	actionError,
@@ -74,7 +75,8 @@ export function FriendsView({
 	onQueryChange: (query: string) => void;
 	showInitialResults?: boolean;
 	identity?: { username: string | null; balance: number; xp: number };
-	connections: FriendConnections;
+	/** `undefined` while the connections query is still loading. */
+	connections: FriendConnections | undefined;
 	actions: FriendshipActions;
 	pendingId: string | null;
 	actionError: string | null;
@@ -82,6 +84,10 @@ export function FriendsView({
 	const inputId = useId();
 	const normalizedQuery = normalizeUsernameQuery(query);
 	const canSearch = normalizedQuery.length >= MIN_SEARCH_LENGTH;
+	// Until the connections load we can't tell an empty crew from an unloaded one,
+	// so we render nothing instead of flashing the "no friends yet" state.
+	const isLoadingConnections = loadedConnections === undefined;
+	const connections = loadedConnections ?? EMPTY_CONNECTIONS;
 	const hasConnections = Boolean(
 		connections.friends.length || connections.incoming.length || connections.outgoing.length,
 	);
@@ -129,7 +135,7 @@ export function FriendsView({
 
 			<section className={styles.results} aria-live="polite" aria-busy={isPending}>
 				{!canSearch && !showInitialResults ? (
-					hasConnections ? null : (
+					hasConnections || isLoadingConnections ? null : (
 						<div className={styles.empty}>
 							<div className={styles.faces} aria-hidden="true">
 								<span>•ᴗ•</span><span>•⩊•</span><span>•◡•</span>
