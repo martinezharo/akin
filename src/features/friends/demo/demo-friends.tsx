@@ -13,6 +13,8 @@ import {
 
 const DEMO_FRIENDS: Friend[] = [
 	{ id: "nova", username: "nova_moves", petSkin: "sky", petHair: "cream", xp: 2840, relationship: "friends" },
+	{ id: "juno", username: "juno_dailies", petSkin: "plum", petHair: "lilac", xp: 3120, relationship: "friends" },
+	{ id: "remy", username: "remy_reps", petSkin: "cinnamon", petHair: "honey", xp: 1685, relationship: "friends" },
 	{ id: "milo", username: "milo_makes", petSkin: "moss", petHair: "honey", xp: 1920, relationship: "incoming", requestId: "demo-milo" },
 	{ id: "bea", username: "bea_bloom", petSkin: "berry", petHair: "mint", xp: 3765, relationship: "outgoing", requestId: "demo-bea" },
 	{ id: "sam", username: "tinywins", petSkin: "cinnamon", petHair: "lilac", xp: 1240, relationship: "none" },
