@@ -48,6 +48,10 @@ export function PetStudio({
 
 	const draftSkin = getPetSkin(draftSkinId);
 	const draftHair = getPetHair(draftHairId);
+	const draftSkinName = ui.pet.skinNames[draftSkin.id];
+	const draftHairName = ui.pet.hairNames[draftHair.id];
+	const localizedSkins = PET_SKINS.map((skin) => ({ ...skin, name: ui.pet.skinNames[skin.id] }));
+	const localizedHairs = PET_HAIRS.map((hair) => ({ ...hair, name: ui.pet.hairNames[hair.id] }));
 	const skinIsOwned = ownedSkinIds.includes(draftSkinId);
 	const skinChanged = draftSkinId !== customization.skinId;
 	const hairChanged = draftHairId !== customization.hairId;
@@ -72,7 +76,7 @@ export function PetStudio({
 			const result = await purchaseSkin(draftSkinId);
 			if (!result.ok) {
 				showNotice(result.reason === "insufficient"
-					? ui.pet.studio.insufficientCoins(Math.max(0, draftSkin.price - coins), draftSkin.name)
+					? ui.pet.studio.insufficientCoins(Math.max(0, draftSkin.price - coins), draftSkinName)
 					: ui.pet.studio.saveFailed);
 				return;
 			}
@@ -87,7 +91,7 @@ export function PetStudio({
 			}
 		}
 
-		showNotice(skinChanged && !skinIsOwned ? ui.pet.studio.purchased(draftSkin.name) : ui.pet.studio.newEquipped);
+		showNotice(skinChanged && !skinIsOwned ? ui.pet.studio.purchased(draftSkinName) : ui.pet.studio.newEquipped);
 	}
 
 	const actionLabel = pendingId
@@ -143,7 +147,7 @@ export function PetStudio({
 
 					{activePart === "skin" ? (
 						<ColorRail
-							options={PET_SKINS}
+							options={localizedSkins}
 							selectedId={draftSkinId}
 							equippedId={customization.skinId}
 							ownedIds={ownedSkinIds}
@@ -152,7 +156,7 @@ export function PetStudio({
 						/>
 					) : (
 						<ColorRail
-							options={PET_HAIRS}
+							options={localizedHairs}
 							selectedId={draftHairId}
 							equippedId={customization.hairId}
 							onSelect={(id) => setDraftHairId(id as PetHairId)}
@@ -161,7 +165,7 @@ export function PetStudio({
 					)}
 
 					<div className={styles.selectionSummary}>
-						<div><span>{ui.pet.studio.previewing}</span><strong>{draftSkin.name} · {draftHair.name}</strong></div>
+						<div><span>{ui.pet.studio.previewing}</span><strong>{draftSkinName} · {draftHairName}</strong></div>
 						{missingCoins > 0
 							? <small>{ui.pet.studio.missingCoins(missingCoins)}</small>
 							: skinChanged && !skinIsOwned

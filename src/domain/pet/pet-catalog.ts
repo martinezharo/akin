@@ -1,18 +1,18 @@
 export const PET_SKINS = [
-	{ id: "ember", name: "Ember", color: "#E84B1B", price: 0 },
-	{ id: "cinnamon", name: "Cinnamon", color: "#C85A3A", price: 35 },
-	{ id: "moss", name: "Moss", color: "#698260", price: 55 },
-	{ id: "berry", name: "Berry", color: "#D86178", price: 75 },
-	{ id: "plum", name: "Plum", color: "#866B96", price: 90 },
-	{ id: "sky", name: "Sky", color: "#5F91B2", price: 110 },
+	{ id: "ember", color: "#E84B1B", price: 0 },
+	{ id: "cinnamon", color: "#C85A3A", price: 35 },
+	{ id: "moss", color: "#698260", price: 55 },
+	{ id: "berry", color: "#D86178", price: 75 },
+	{ id: "plum", color: "#866B96", price: 90 },
+	{ id: "sky", color: "#5F91B2", price: 110 },
 ] as const;
 
 export const PET_HAIRS = [
-	{ id: "honey", name: "Honey", color: "#FFD382" },
-	{ id: "cream", name: "Cream", color: "#F3D2A2" },
-	{ id: "mint", name: "Mint", color: "#A9D7B6" },
-	{ id: "lilac", name: "Lilac", color: "#C7A9E0" },
-	{ id: "rose", name: "Rose", color: "#F29A91" },
+	{ id: "honey", color: "#FFD382" },
+	{ id: "cream", color: "#F3D2A2" },
+	{ id: "mint", color: "#A9D7B6" },
+	{ id: "lilac", color: "#C7A9E0" },
+	{ id: "rose", color: "#F29A91" },
 ] as const;
 
 export type PetSkinId = (typeof PET_SKINS)[number]["id"];

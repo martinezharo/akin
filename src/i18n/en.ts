@@ -298,6 +298,21 @@ export const ui = {
 		},
 	},
 	pet: {
+		skinNames: {
+			ember: "Ember",
+			cinnamon: "Cinnamon",
+			moss: "Moss",
+			berry: "Berry",
+			plum: "Plum",
+			sky: "Sky",
+		},
+		hairNames: {
+			honey: "Honey",
+			cream: "Cream",
+			mint: "Mint",
+			lilac: "Lilac",
+			rose: "Rose",
+		},
 		stage: {
 			label: "Your companion",
 			petButton: "Pet your companion",

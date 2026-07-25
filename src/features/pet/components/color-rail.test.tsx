@@ -4,6 +4,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PET_SKINS } from "@/domain/pet/pet-catalog";
+import { ui } from "@/i18n/en";
 import { ColorRail } from "./color-rail";
 
 afterEach(cleanup);
@@ -15,12 +16,12 @@ describe("pet color rail", () => {
 
 		render(
 			<ColorRail
-				options={PET_SKINS}
+				options={PET_SKINS.map((skin) => ({ ...skin, name: ui.pet.skinNames[skin.id] }))}
 				selectedId="ember"
 				equippedId="ember"
 				ownedIds={["ember"]}
 				onSelect={onSelect}
-				label="Skin colors"
+				label={ui.pet.studio.skinColors}
 			/>,
 		);
 
