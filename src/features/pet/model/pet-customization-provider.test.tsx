@@ -6,11 +6,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	DEMO_ACCOUNT_STORAGE_KEY,
 	DEMO_STARTING_COINS,
-} from "@/features/account/demo-account-storage";
-import {
-	DEMO_PET_CUSTOMIZATION_STORAGE_KEY,
-	type StoredPetCustomization,
-} from "@/shared/pet/pet-customization";
+} from "@/features/account/demo/demo-account-storage";
+import type { StoredPetCustomization } from "@/domain/pet/pet-customization";
+import { DEMO_PET_CUSTOMIZATION_STORAGE_KEY } from "@/infrastructure/storage/demo-pet-storage";
 import {
 	PetCustomizationProvider,
 	usePetCustomization,

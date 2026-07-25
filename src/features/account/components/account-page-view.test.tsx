@@ -2,10 +2,10 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AccountPageView } from "./account-page";
+import { AccountPageView } from "./account-page-view";
 
 vi.mock("@/features/preferences/app-preferences", () => ({ AppPreferences: () => null }));
-vi.mock("@/shared/ui/app-navigation", () => ({
+vi.mock("@/features/navigation/app-navigation", () => ({
 	AppNavigation: () => <nav aria-label="App navigation" />,
 }));
 

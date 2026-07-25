@@ -20,7 +20,7 @@
 	background: transparent;
 	color: var(--foreground);
 	font-size: clamp(1.45rem, 5.8vw, 2rem);
-	font-weight: 750;
+	font-weight: var(--weight-body);
 	letter-spacing: -0.035em;
 	caret-color: var(--accent);
 }

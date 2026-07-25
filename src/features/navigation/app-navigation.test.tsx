@@ -6,7 +6,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AppNavigation } from "./app-navigation";
 
 vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
-vi.mock("./akin-mascot-artwork", () => ({
+vi.mock("@/features/preferences/app-preferences", () => ({ AppPreferences: () => null }));
+vi.mock("@/shared/ui/akin-mascot-artwork", () => ({
 	AkinMascotArtwork: () => <svg data-testid="nav-companion" />,
 }));
 
@@ -22,7 +23,6 @@ describe("AppNavigation", () => {
 			<AppNavigation
 				onLockedFriendsClick={onLockedFriendsClick}
 				onLockedPetClick={onLockedPetClick}
-				preferencesControl={<button type="button">Preferences</button>}
 			/>,
 		);
 

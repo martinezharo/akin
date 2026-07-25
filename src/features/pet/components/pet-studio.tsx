@@ -1,13 +1,12 @@
 "use client";
 
-import { Check, Coins, RotateCcw, Sparkles, UserRound } from "lucide-react";
+import { Check, Coins, RotateCcw, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { AccountDock } from "@/features/account/account-dock";
+import { AccountDock } from "@/features/account/components/account-dock";
 import { AccountRewardsBalance } from "@/features/account/components/account-rewards-balance";
-import { AuthModal } from "@/features/account/auth-modal";
+import { AuthModal } from "@/features/account/components/auth-modal";
 import { RemoteUsernamePresence } from "@/features/account/components/username-setup-modal";
-import accountStyles from "@/features/account/account.module.css";
-import { AppPreferences } from "@/features/preferences/app-preferences";
+import { GuestAccountButton } from "@/features/account/model/use-guest-access";
 import { ui } from "@/i18n/en";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import {
@@ -18,7 +17,7 @@ import {
 	type PetHairId,
 	type PetSkinId,
 } from "@/domain/pet/pet-catalog";
-import { AppNavigation } from "@/shared/ui/app-navigation";
+import { AppShell } from "@/features/navigation/app-shell";
 import type { PetCustomizationContextValue } from "../model/pet-customization-provider";
 import { ColorRail } from "./color-rail";
 import { PetCompanionStage } from "./pet-companion-stage";
@@ -102,23 +101,35 @@ export function PetStudio({
 				: ui.pet.studio.wearThis;
 
 	return (
-		<main className={styles.page}>
-			{isAuthenticated && !isDemo ? <RemoteUsernamePresence today={today} timeZone={timeZone} /> : null}
-			<div className={styles.ambient} aria-hidden="true"><span /><span /></div>
-			{hasChanges ? (
-				<button
-					className={styles.apply}
-					type="button"
-					onClick={() => void applyLook()}
-					disabled={Boolean(pendingId)}
-					data-purchase={skinChanged && !skinIsOwned || undefined}
-				>
-					{skinChanged && !skinIsOwned ? <Coins aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
-					<span>{actionLabel}</span>
-				</button>
-			) : null}
-			<div className={styles.content}>
-				<AccountRewardsBalance balance={coins} xp={xp} />
+		<AppShell
+			variant="canvas"
+			accountControl={isDemo ? undefined : isAuthenticated ? <AccountDock /> : <GuestAccountButton onClick={() => setAuthOpen(true)} />}
+			backdrop={(
+				<>
+					<div className={styles.ambient} aria-hidden="true"><span /><span /></div>
+					{hasChanges ? (
+						<button
+							className={styles.apply}
+							type="button"
+							onClick={() => void applyLook()}
+							disabled={Boolean(pendingId)}
+							data-purchase={skinChanged && !skinIsOwned || undefined}
+						>
+							{skinChanged && !skinIsOwned ? <Coins aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
+							<span>{actionLabel}</span>
+						</button>
+					) : null}
+				</>
+			)}
+			overlay={(
+				<>
+					{isAuthenticated && !isDemo ? <RemoteUsernamePresence today={today} timeZone={timeZone} /> : null}
+					{notice ? <div className={styles.notice} role="status"><Check aria-hidden="true" /> {notice}</div> : null}
+					{authOpen && !isAuthenticated ? <AuthModal onDismiss={() => setAuthOpen(false)} /> : null}
+				</>
+			)}
+		>
+			<AccountRewardsBalance balance={coins} xp={xp} />
 				<PetCompanionStage skinColor={draftSkin.color} hairColor={draftHair.color} />
 
 				<section className={styles.studio} aria-labelledby="studio-title">
@@ -161,19 +172,7 @@ export function PetStudio({
 					</div>
 					<p className={styles.ownershipNote}>{ui.pet.studio.ownershipNote}</p>
 				</section>
-				{isLoading ? <p className={styles.loading}>{ui.pet.studio.loading}</p> : null}
-			</div>
-			{notice ? <div className={styles.notice} role="status"><Check aria-hidden="true" /> {notice}</div> : null}
-			<AppNavigation
-				accountControl={isDemo ? undefined : isAuthenticated ? <AccountDock /> : (
-					<button className={accountStyles.accountButton} type="button" onClick={() => setAuthOpen(true)} aria-label={ui.account.guestButtonLabel}>
-						<UserRound aria-hidden="true" />
-						<span>{ui.account.me}</span>
-					</button>
-				)}
-				preferencesControl={<AppPreferences placement="navigation" />}
-			/>
-			{authOpen && !isAuthenticated ? <AuthModal onDismiss={() => setAuthOpen(false)} /> : null}
-		</main>
+			{isLoading ? <p className={styles.loading}>{ui.pet.studio.loading}</p> : null}
+		</AppShell>
 	);
 }

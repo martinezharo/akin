@@ -1,6 +1,6 @@
 "use client";
 
-import { DemoAccountPage } from "@/features/account/account-page";
+import { DemoAccountPage } from "@/features/account/demo/demo-account-page";
 import { StreaksHydration } from "@/features/streaks/app/streaks-hydration";
 import { useDemoExperience } from "@/features/streaks/app/use-demo-experience";
 

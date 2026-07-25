@@ -14,10 +14,78 @@
 	--popover-background: rgb(254 254 253 / 94%);
 	--popover-shadow: 0 20px 50px rgb(30 32 26 / 16%), 0 2px 8px rgb(30 32 26 / 8%);
 	--focus-ring: 3px solid var(--accent);
-	--radius-pill: 999px;
 	--motion-standard: 160ms ease;
 	--motion-spring: 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+	/* Type scale. Steps are deliberate — pick one, never an in-between value.
+	 * `3xs`–`xl` is UI text; `2xl` and up is display type. */
+	--text-3xs: 0.45rem;
+	--text-2xs: 0.56rem;
+	--text-xs: 0.63rem;
+	--text-sm: 0.72rem;
+	--text-md: 0.82rem;
+	--text-lg: 0.95rem;
+	--text-xl: 1.1rem;
+	--text-2xl: 1.45rem;
+	--text-3xl: 1.7rem;
+	--text-4xl: 1.95rem;
+	--text-5xl: 2.25rem;
+	--weight-body: 700;
+	--weight-strong: 850;
+	--weight-black: 950;
+
+	/* Radii. `pill` for capsules, `round` for circles, the rest for surfaces. */
+	--radius-xs: 0.5rem;
+	--radius-sm: 0.75rem;
+	--radius-md: 1rem;
+	--radius-lg: 1.35rem;
+	--radius-xl: 1.75rem;
+	--radius-2xl: 2.2rem;
+	--radius-pill: 999px;
+	--radius-round: 50%;
+
+	/* The signature Akin shape: rounded everywhere but one pinched corner, so
+	 * cards and bubbles read as hand-drawn rather than as generic rectangles. */
+	--radius-tail-sm: 0.75rem 0.75rem 0.75rem 0.25rem;
+	--radius-tail-md: 1rem 1rem 1rem 0.32rem;
+	--radius-tail-lg: 1.35rem 1.35rem 1.35rem 0.45rem;
+	--radius-tail-xl: 1.75rem 1.75rem 1.75rem 0.65rem;
+	--radius-tail-2xl: 2.2rem 2.2rem 2.2rem 0.85rem;
+	--radius-tail-pill: 999px 999px 999px 0.28rem;
+	--radius-tail-round: 50% 50% 50% 0.32rem;
+
+	--shadow-raised: 0 0.55rem 1.25rem rgb(38 27 15 / 14%);
+	--shadow-floating: 0 1rem 2.8rem rgb(25 26 21 / 17%);
+
+	/* Coins are a physical gold object in the fiction, so they keep the same
+	 * palette in both themes instead of inverting with the surface. */
+	--coin-surface: #ffd95c;
+	--coin-surface-soft: #fff8cf;
+	--coin-surface-deep: #ffe889;
+	--coin-line: #ead371;
+	--coin-edge: #d5a72b;
+	--coin-ink: #5d3d05;
+	--coin-ink-soft: #c98c0d;
+	--positive: #579560;
+
+	/* Layout. The navigation is fixed, so every page reserves room for it via
+	 * these tokens instead of hand-rolling its own safe-area maths. */
+	--nav-size: 4.65rem;
+	--nav-inset: 0.65rem;
+	--nav-clearance-block: max(7.25rem, calc(env(safe-area-inset-bottom) + 6.6rem));
+	--nav-clearance-inline: 0rem;
+	--page-gutter: max(1rem, env(safe-area-inset-left));
+	--page-column: 40rem;
+
 	color-scheme: light;
+}
+
+@media (min-width: 48rem) {
+	:root {
+		/* The bar becomes a left rail, so the clearance swaps axis. */
+		--nav-clearance-block: 3rem;
+		--nav-clearance-inline: 8.5rem;
+	}
 }
 
 :root[data-theme="dark"] {

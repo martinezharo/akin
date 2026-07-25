@@ -4,7 +4,7 @@ import Script from "next/script";
 import { APP_LANGUAGE } from "@/i18n/config";
 import { ui } from "@/i18n/en";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
-import { PetCustomizationProvider } from "@/features/pet/pet-customization-provider";
+import { PetCustomizationProvider } from "@/features/pet/model/pet-customization-provider";
 import "./globals.css";
 
 const preferencesBootScript = `

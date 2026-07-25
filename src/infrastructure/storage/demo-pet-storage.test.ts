@@ -2,19 +2,23 @@
 
 import { beforeEach, describe, expect, it } from "vitest";
 import {
-	DEFAULT_PET_CUSTOMIZATION,
-	DEMO_PET_CUSTOMIZATION_STORAGE_KEY,
 	getPetHair,
 	getPetSkin,
-	getPetSkinPurchasePrice,
 	isPetHairId,
 	isPetSkinId,
-	loadDemoPetState,
-	normalizeOwnedPetSkins,
 	PET_HAIRS,
 	PET_SKIN_IDS,
 	PET_SKINS,
-} from "./pet-customization";
+} from "@/domain/pet/pet-catalog";
+import {
+	DEFAULT_PET_CUSTOMIZATION,
+	getPetSkinPurchasePrice,
+	normalizeOwnedPetSkins,
+} from "@/domain/pet/pet-customization";
+import {
+	DEMO_PET_CUSTOMIZATION_STORAGE_KEY,
+	loadDemoPetState,
+} from "./demo-pet-storage";
 
 beforeEach(() => localStorage.clear());
 

@@ -5,7 +5,7 @@ import { useId, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { ui } from "@/i18n/en";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
-import styles from "./account.module.css";
+import styles from "../account.module.css";
 
 function GitHubMark() {
 	return (

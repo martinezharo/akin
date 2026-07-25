@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { clearDemoAccountStorage } from "@/features/account/demo-account-storage";
+import { clearDemoAccountStorage } from "@/features/account/demo/demo-account-storage";
 import { addLocalDays, getLocalDateKey, type LocalDateKey } from "../model/calendar";
 import {
 	clearDemoStorage,

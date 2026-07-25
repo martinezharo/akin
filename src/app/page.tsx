@@ -1,10 +1,5 @@
-import { AuthGateway } from "@/features/account/auth-gateway";
-import styles from "@/features/streaks/app/streaks-page.module.css";
+import { AuthGateway } from "@/features/account/experiences/auth-gateway";
 
 export default function Home() {
-	return (
-		<main className={styles.page}>
-			<AuthGateway />
-		</main>
-	);
+	return <AuthGateway />;
 }

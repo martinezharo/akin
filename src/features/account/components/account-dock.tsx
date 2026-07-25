@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
 import { ui } from "@/i18n/en";
-import styles from "./account.module.css";
+import styles from "../account.module.css";
 
 type AccountDockViewProps = {
 	avatarBadge?: string;

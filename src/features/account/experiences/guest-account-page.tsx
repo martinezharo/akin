@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { StreaksApp } from "@/features/streaks/app/streaks-app";
-import { GuestAccountControls } from "../guest-account-controls";
+import { GuestAuthGate } from "./guest-auth-gate";
 
 export function GuestAccountPage() {
 	const router = useRouter();
@@ -15,10 +14,5 @@ export function GuestAccountPage() {
 		router.replace("/");
 	}
 
-	return (
-		<>
-			<StreaksApp />
-			<GuestAccountControls initialAuthOpen onAuthDismiss={dismissAuth} />
-		</>
-	);
+	return <GuestAuthGate onDismiss={dismissAuth} />;
 }

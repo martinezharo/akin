@@ -1,20 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { GuestAccountControls } from "@/features/account/guest-account-controls";
-import { StreaksApp } from "@/features/streaks/app/streaks-app";
+import { GuestAuthGate } from "@/features/account/experiences/guest-auth-gate";
+import { AppShell } from "@/features/navigation/app-shell";
 import { ui } from "@/i18n/en";
 import styles from "../pet-page.module.css";
 
 export function GuestPetGate({ isLoading }: { isLoading: boolean }) {
 	const router = useRouter();
 
-	if (isLoading) return <div className={styles.loading} role="status">{ui.pet.guestGate.checking}</div>;
+	if (isLoading) {
+		return (
+			<AppShell variant="canvas">
+				<p className={styles.loading} role="status">{ui.pet.guestGate.checking}</p>
+			</AppShell>
+		);
+	}
 
-	return (
-		<>
-			<StreaksApp />
-			<GuestAccountControls initialAuthOpen onAuthDismiss={() => router.replace("/")} />
-		</>
-	);
+	return <GuestAuthGate onDismiss={() => router.replace("/")} />;
 }

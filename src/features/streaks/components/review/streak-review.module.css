@@ -82,8 +82,8 @@
 
 .kicker {
 	margin: 0;
-	font-size: 0.72rem;
-	font-weight: 950;
+	font-size: var(--text-sm);
+	font-weight: var(--weight-black);
 	letter-spacing: 0.13em;
 	text-transform: uppercase;
 }
@@ -118,7 +118,7 @@
 .title {
 	margin: 0;
 	font-size: clamp(2.35rem, 10vw, 4rem);
-	font-weight: 950;
+	font-weight: var(--weight-black);
 	letter-spacing: -0.06em;
 	line-height: 0.94;
 }
@@ -129,8 +129,8 @@
 	gap: 0.55rem;
 	margin: 0;
 	color: rgb(36 33 22 / 64%);
-	font-size: 0.82rem;
-	font-weight: 900;
+	font-size: var(--text-md);
+	font-weight: var(--weight-strong);
 	letter-spacing: 0.025em;
 	text-transform: capitalize;
 }
@@ -147,8 +147,8 @@
 	max-width: 30rem;
 	margin: 1.3rem 0 1.6rem;
 	color: rgb(36 33 22 / 70%);
-	font-size: 1rem;
-	font-weight: 650;
+	font-size: var(--text-lg);
+	font-weight: var(--weight-body);
 	line-height: 1.5;
 }
 
@@ -173,8 +173,8 @@
 	min-width: 0;
 	align-items: center;
 	gap: 0.8rem;
-	font-size: 0.97rem;
-	font-weight: 850;
+	font-size: var(--text-lg);
+	font-weight: var(--weight-strong);
 	letter-spacing: -0.02em;
 }
 
@@ -191,7 +191,7 @@
 	height: 2.25rem;
 	flex: 0 0 auto;
 	place-items: center;
-	font-size: 1.7rem;
+	font-size: var(--text-2xl);
 }
 
 .checklistStreak {
@@ -237,7 +237,7 @@
 	right: 0.2rem;
 	width: 0.42rem;
 	height: 0.42rem;
-	border-radius: 50%;
+	border-radius: var(--radius-round);
 	background: var(--review-sticker);
 	box-shadow: 0 0 0 0.13rem var(--review-sticker-halo);
 	content: "";
@@ -314,11 +314,11 @@
 	margin-top: 1.25rem;
 	padding: 0.8rem 1.2rem;
 	border: 0;
-	border-radius: 1.2rem;
+	border-radius: var(--radius-lg);
 	background: var(--review-ink);
 	box-shadow: 0 0.6rem 1.5rem rgb(36 33 22 / 20%);
 	color: var(--review-paper);
-	font-weight: 900;
+	font-weight: var(--weight-strong);
 	cursor: pointer;
 	transition: transform var(--motion-spring), opacity var(--motion-standard);
 }
@@ -354,7 +354,7 @@
 	height: 3.2rem;
 	place-items: center;
 	margin-bottom: 1.4rem;
-	border-radius: 1rem 1rem 1rem 0.35rem;
+	border-radius: var(--radius-tail-md);
 	background: #ff815c;
 	box-shadow: 0.5rem 0.6rem 0 #ffd99d;
 	color: #492012;
@@ -379,8 +379,8 @@
 	border-radius: 0 0.8rem 0.8rem 0;
 	background: rgb(255 226 154 / 46%);
 	color: #685019;
-	font-size: 0.82rem;
-	font-weight: 780;
+	font-size: var(--text-md);
+	font-weight: var(--weight-strong);
 	line-height: 1.4;
 }
 
@@ -389,8 +389,8 @@
 	top: 0.72rem;
 	left: 0.8rem;
 	content: "♡";
-	font-size: 1.05rem;
-	font-weight: 950;
+	font-size: var(--text-xl);
+	font-weight: var(--weight-black);
 }
 
 @keyframes cardArrive {
@@ -429,7 +429,7 @@
 
 	.card {
 		padding: 1.25rem;
-		border-radius: 1.55rem;
+		border-radius: var(--radius-lg);
 	}
 
 	.streak {

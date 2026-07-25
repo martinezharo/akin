@@ -4,24 +4,23 @@ import { House, LockKeyhole, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { AppPreferences } from "@/features/preferences/app-preferences";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
 import { ui } from "@/i18n/en";
-import { AkinMascotArtwork } from "./akin-mascot-artwork";
-import motionStyles from "./akin-mascot-motion.module.css";
+import { AkinMascotArtwork } from "@/shared/ui/akin-mascot-artwork";
+import motionStyles from "@/shared/ui/akin-mascot-motion.module.css";
 import styles from "./app-navigation.module.css";
 
-type AppNavigationProps = {
+export type AppNavigationProps = {
 	accountControl?: ReactNode;
 	onLockedFriendsClick?: () => void;
 	onLockedPetClick?: () => void;
-	preferencesControl: ReactNode;
 };
 
 export function AppNavigation({
 	accountControl,
 	onLockedFriendsClick,
 	onLockedPetClick,
-	preferencesControl,
 }: AppNavigationProps) {
 	const pathname = usePathname();
 	const homeHref = getExperiencePath(pathname, "/");
@@ -78,7 +77,7 @@ export function AppNavigation({
 			</div>
 
 			<div className={styles.control}>
-				{preferencesControl}
+				<AppPreferences placement="navigation" />
 			</div>
 		</nav>
 	);

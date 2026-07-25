@@ -2,9 +2,8 @@
 
 import { Coins, Sparkles } from "lucide-react";
 import { type ReactNode, useId } from "react";
-import { AppPreferences } from "@/features/preferences/app-preferences";
+import { AppShell } from "@/features/navigation/app-shell";
 import { ui } from "@/i18n/en";
-import { AppNavigation } from "@/shared/ui/app-navigation";
 import { AccountRewardsBalance } from "./account-rewards-balance";
 import { UsernamePresence } from "./username-setup-modal";
 import type { AccountDashboardView } from "../model/account-types";
@@ -25,39 +24,37 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = u
 	const initial = (username ?? dashboard.user.name).charAt(0).toUpperCase() || "A";
 
 	return (
-		<main className={styles.page}>
-			<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
-			<div className={styles.ambient} aria-hidden="true" />
-			<div className={styles.content}>
-				<section className={styles.profileHero} aria-labelledby={titleId}>
-					<div className={styles.bigAvatar} aria-hidden="true">{initial}</div>
-					<div>
-						<p className={styles.eyebrow}>{eyebrow}</p>
-						<h1 id={titleId}>{visibleIdentity}</h1>
+		<AppShell
+			variant="column"
+			backdrop={<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />}
+			overlay={<UsernamePresence username={dashboard.user.username} />}
+		>
+			<section className={styles.profileHero} aria-labelledby={titleId}>
+				<div className={styles.bigAvatar} aria-hidden="true">{initial}</div>
+				<div>
+					<p className={styles.eyebrow}>{eyebrow}</p>
+					<h1 id={titleId}>{visibleIdentity}</h1>
+				</div>
+			</section>
+
+			<div className={styles.dashboardGrid}>
+				<section className={`${styles.card} ${styles.walletCard}`} aria-labelledby="wallet-title">
+					<div className={styles.coinArt}><Coins aria-hidden="true" /></div>
+					<div className={styles.walletValue}>
+						<span className="sr-only" id="wallet-title">{ui.account.wallet.label}</span>
+						<strong>{dashboard.wallet.balance.toLocaleString()}</strong>
+						<span>{ui.account.wallet.ready}</span>
 					</div>
+					<p className={styles.walletMeta}><Sparkles aria-hidden="true" /> {dashboard.wallet.lifetimeEarned.toLocaleString()} {ui.account.wallet.earnedAllTime} · {dashboard.wallet.xp.toLocaleString()} {ui.account.wallet.xpUnit}</p>
 				</section>
 
-				<div className={styles.dashboardGrid}>
-					<section className={`${styles.card} ${styles.walletCard}`} aria-labelledby="wallet-title">
-						<div className={styles.coinArt}><Coins aria-hidden="true" /></div>
-						<div className={styles.walletValue}>
-							<span className="sr-only" id="wallet-title">{ui.account.wallet.label}</span>
-							<strong>{dashboard.wallet.balance.toLocaleString()}</strong>
-							<span>{ui.account.wallet.ready}</span>
-						</div>
-						<p className={styles.walletMeta}><Sparkles aria-hidden="true" /> {dashboard.wallet.lifetimeEarned.toLocaleString()} {ui.account.wallet.earnedAllTime} · {dashboard.wallet.xp.toLocaleString()} {ui.account.wallet.xpUnit}</p>
-					</section>
+				<RewardStreakSettings
+					streaks={dashboard.streaks}
+					onToggleRewardEligible={onToggleRewardEligible}
+				/>
 
-					<RewardStreakSettings
-						streaks={dashboard.streaks}
-						onToggleRewardEligible={onToggleRewardEligible}
-					/>
-
-					<footer className={styles.pageFooter}>{footer}</footer>
-				</div>
+				<footer className={styles.pageFooter}>{footer}</footer>
 			</div>
-			<AppNavigation preferencesControl={<AppPreferences placement="navigation" />} />
-			<UsernamePresence username={dashboard.user.username} />
-		</main>
+		</AppShell>
 	);
 }

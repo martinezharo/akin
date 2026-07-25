@@ -1,0 +1,61 @@
+/* The single page frame. Every route renders through it, so the safe-area
+ * maths and the room reserved for the fixed navigation live here only. */
+.main {
+	position: relative;
+	min-height: 100dvh;
+	padding-block-end: var(--nav-clearance-block);
+	padding-inline: var(--page-gutter) max(1rem, env(safe-area-inset-right));
+	padding-inline-start: max(var(--page-gutter), var(--nav-clearance-inline));
+	background: var(--background);
+}
+
+/* `hero` gives the home composer its deliberate column of air above the fold. */
+.hero {
+	padding-block-start: max(18vh, 7rem);
+}
+
+/* `column` is the standard reading rhythm: a title area then stacked sections. */
+.column {
+	padding-block-start: max(4.5rem, calc(env(safe-area-inset-top) + 3.75rem));
+}
+
+/* `canvas` opts out of the top rhythm — the page paints its own full-bleed art. */
+.canvas {
+	padding-block-start: max(0.85rem, env(safe-area-inset-top));
+	overflow: hidden;
+}
+
+.hero > .content,
+.column > .content {
+	width: min(100%, var(--page-column));
+	margin-inline: auto;
+}
+
+.canvas > .content {
+	position: relative;
+	z-index: 1;
+	width: min(100%, 66rem);
+	margin-inline: auto;
+}
+
+@media (min-width: 48rem) {
+	.hero {
+		padding-block-start: max(12vh, 6rem);
+	}
+
+	.canvas {
+		padding-block-start: 1.5rem;
+	}
+}
+
+@media (max-width: 30rem) {
+	.hero {
+		padding-block-start: max(14vh, 5.5rem);
+	}
+}
+
+@media (max-width: 24rem) {
+	.main {
+		padding-inline: 0.75rem;
+	}
+}

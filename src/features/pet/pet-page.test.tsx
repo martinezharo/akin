@@ -17,9 +17,9 @@ vi.mock("next/navigation", () => ({
 	useRouter: () => ({ replace: vi.fn() }),
 }));
 vi.mock("@/features/preferences/app-preferences", () => ({ AppPreferences: () => null }));
-vi.mock("@/shared/ui/app-navigation", () => ({ AppNavigation: () => <nav aria-label="App navigation" /> }));
+vi.mock("@/features/navigation/app-navigation", () => ({ AppNavigation: () => <nav aria-label="App navigation" /> }));
 vi.mock("@/features/streaks/app/streaks-app", () => ({ StreaksApp: () => <main>Local streaks</main> }));
-vi.mock("@/features/account/auth-modal", () => ({ AuthModal: () => <div role="dialog">Sign in to Akin</div> }));
+vi.mock("@/features/account/components/auth-modal", () => ({ AuthModal: () => <div role="dialog">Sign in to Akin</div> }));
 vi.mock("@/shared/ui/akin-mascot-artwork", () => ({
 	AkinMascotArtwork: ({ className }: { className?: string }) => <svg className={className} data-testid="companion-artwork" />,
 }));

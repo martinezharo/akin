@@ -4,29 +4,36 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { RefreshCw, WifiOff, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { AppShell } from "@/features/navigation/app-shell";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreaksView } from "@/features/streaks/app/streaks-view";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useRegisteredStreaksController } from "@/features/streaks/app/use-registered-streaks-controller";
-import { AppPreferences } from "@/features/preferences/app-preferences";
-import { AppNavigation } from "@/shared/ui/app-navigation";
-import { AccountDock } from "./account-dock";
-import { AccountRewardsBalance } from "./account-rewards-balance";
-import { GuestAccountControls } from "./guest-account-controls";
-import { UsernamePresence } from "./username-setup-modal";
+import { AccountDock } from "../components/account-dock";
+import { AccountRewardsBalance } from "../components/account-rewards-balance";
+import { UsernamePresence } from "../components/username-setup-modal";
+import { useGuestAccess } from "../model/use-guest-access";
 import { ui } from "@/i18n/en";
-import styles from "./account.module.css";
+import styles from "../account.module.css";
 
-function AkinLoadingMark() {
+function HomeLoading({ message }: { message: string }) {
 	return (
-		<span className={styles.loadingLogo} aria-hidden="true">
-			<Image src="/brand/akin-app-icon.svg" alt="" width={56} height={56} priority />
-		</span>
+		<div className={styles.loading} role="status">
+			<span className={styles.loadingLogo} aria-hidden="true">
+				<Image src="/brand/akin-app-icon.svg" alt="" width={56} height={56} priority />
+			</span>
+			<p>{message}</p>
+		</div>
 	);
 }
 
 function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: boolean }) {
 	const [friendAuthRequest, setFriendAuthRequest] = useState(false);
+	const { navProps, rewards, authModal } = useGuestAccess({
+		initialAuthOpen: friendAuthRequest,
+		authCallbackUrl: friendAuthRequest ? "/friends" : undefined,
+		showRewards: !backendUnavailable,
+	});
 
 	useEffect(() => {
 		const url = new URL(window.location.href);
@@ -37,7 +44,7 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 	}, []);
 
 	return (
-		<>
+		<AppShell variant="hero" {...navProps} backdrop={rewards} overlay={authModal}>
 			<StreaksApp />
 			{backendUnavailable ? (
 				<div className={styles.guestDock} data-offline>
@@ -47,12 +54,7 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 					</button>
 				</div>
 			) : null}
-			<GuestAccountControls
-				initialAuthOpen={friendAuthRequest}
-				authCallbackUrl={friendAuthRequest ? "/friends" : undefined}
-				showRewards={!backendUnavailable}
-			/>
-		</>
+		</AppShell>
 	);
 }
 
@@ -67,10 +69,9 @@ function LoadingExperience() {
 	if (timedOut) return <GuestExperience backendUnavailable />;
 
 	return (
-		<div className={styles.loading} role="status">
-			<AkinLoadingMark />
-			<p>{ui.account.loading.wakingUp}</p>
-		</div>
+		<AppShell variant="hero">
+			<HomeLoading message={ui.account.loading.wakingUp} />
+		</AppShell>
 	);
 }
 
@@ -81,30 +82,27 @@ function RegisteredExperience() {
 
 	if (isLoading || !dashboard) {
 		return (
-			<div className={styles.loading} role="status">
-				<AkinLoadingMark />
-				<p>{ui.account.loading.gathering}</p>
-			</div>
+			<AppShell variant="hero">
+				<HomeLoading message={ui.account.loading.gathering} />
+			</AppShell>
 		);
 	}
 
 	return (
-		<>
-			<UsernamePresence username={user?.username} />
-			<StreaksView controller={controller}>
-				<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />
-				<AppNavigation
-					accountControl={<AccountDock />}
-					preferencesControl={<AppPreferences placement="navigation" />}
-				/>
-				{notice ? (
-					<div className={styles.notice} role="status">
-						<p>{notice}</p>
-						<button type="button" onClick={dismissNotice} aria-label={ui.account.dismiss}><X aria-hidden="true" /></button>
-					</div>
-				) : null}
-			</StreaksView>
-		</>
+		<AppShell
+			variant="hero"
+			accountControl={<AccountDock />}
+			backdrop={<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />}
+			overlay={<UsernamePresence username={user?.username} />}
+		>
+			<StreaksView controller={controller} />
+			{notice ? (
+				<div className={styles.notice} role="status">
+					<p>{notice}</p>
+					<button type="button" onClick={dismissNotice} aria-label={ui.account.dismiss}><X aria-hidden="true" /></button>
+				</div>
+			) : null}
+		</AppShell>
 	);
 }
 
