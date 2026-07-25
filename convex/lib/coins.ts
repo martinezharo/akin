@@ -2,16 +2,9 @@ import type { Id } from "../_generated/dataModel";
 import type { MutationCtx } from "../_generated/server";
 import { getWallet } from "./users";
 
-export function rewardedDayLimit(reviewDayCount: number): number {
-	return reviewDayCount > 3 ? 3 : reviewDayCount;
-}
-
-export function canRewardCompletion(
-	streakCreatedOn: string,
-	completionDay: string,
-): boolean {
-	return streakCreatedOn < completionDay;
-}
+// The reward economics are domain rules shared with the client, so the demo and
+// the backend can never drift apart. See `src/domain/rewards/reward-rules.ts`.
+export { canRewardCompletion, rewardedDayLimit } from "./app_rules";
 
 export async function awardCompletionReward(
 	ctx: MutationCtx,

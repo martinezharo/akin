@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { CoinReward } from "@/features/rewards/coin-reward";
 import {
 	getStreakIconOptions,
 	STREAK_ICON_OPTIONS,
@@ -38,14 +39,6 @@ export type UndoToast = {
 	kind: "review" | "delete" | "today";
 	/** Name of the affected streak, when the toast relates to a single streak. */
 	name: string | null;
-};
-
-export type CoinReward = {
-	/** Changes for every reward, including equal-sized consecutive rewards. */
-	id: number;
-	amount: number;
-	/** The streak that produced the reward, when there is a single clear origin. */
-	streakId: string | null;
 };
 
 type UndoToastState = UndoToast & {

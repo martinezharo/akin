@@ -1,11 +1,8 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
-import {
-	getDemoAccountSnapshot,
-	loadDemoWalletState,
-	subscribeDemoAccount,
-} from "@/features/account/demo/demo-account-storage";
+import { useMemo, useState } from "react";
+import { AccountDock } from "@/features/account/components/account-dock";
+import { useDemoWallet } from "@/features/account/demo/use-demo-account";
 import { FriendsView } from "../components/friends-view";
 import {
 	type Friend,
@@ -27,8 +24,7 @@ export function DemoFriendsPage() {
 	const [query, setQuery] = useState("");
 	const [demoFriends, setDemoFriends] = useState(DEMO_FRIENDS);
 	const [pendingId, setPendingId] = useState<string | null>(null);
-	const demoAccountSnapshot = useSyncExternalStore(subscribeDemoAccount, getDemoAccountSnapshot, () => "");
-	const demoWallet = useMemo(() => loadDemoWalletState(demoAccountSnapshot), [demoAccountSnapshot]);
+	const demoWallet = useDemoWallet();
 
 	const results = useMemo(() => {
 		const normalized = normalizeUsernameQuery(query);
@@ -63,7 +59,7 @@ export function DemoFriendsPage() {
 		<FriendsView
 			results={results}
 			isPending={false}
-			dock="demo"
+			accountControl={<AccountDock />}
 			query={query}
 			onQueryChange={setQuery}
 			identity={{ username: "demo", balance: demoWallet.balance, xp: demoWallet.xp }}

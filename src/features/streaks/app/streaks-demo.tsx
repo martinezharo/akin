@@ -1,36 +1,29 @@
 "use client";
 
-import { DemoAccountDock } from "@/features/account/components/account-dock";
-import { AccountRewardsBalance } from "@/features/account/components/account-rewards-balance";
-import { UsernamePresence } from "@/features/account/components/username-setup-modal";
-import { AppShell } from "@/features/navigation/app-shell";
+import { AccountDock } from "@/features/account/components/account-dock";
 import { DemoTimeControls } from "../components/demo-time-controls/demo-time-controls";
+import { StreaksHomeShell } from "./streaks-home-shell";
 import { StreaksHydration } from "./streaks-hydration";
-import { StreaksView } from "./streaks-view";
 import { useDemoExperience } from "./use-demo-experience";
 
 function HydratedStreaksDemo() {
 	const { today, controller, dashboard, reset, addDays } = useDemoExperience();
 
 	return (
-		<AppShell
-			variant="hero"
-			accountControl={<DemoAccountDock />}
-			backdrop={<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />}
+		<StreaksHomeShell
+			controller={controller}
+			accountControl={<AccountDock />}
+			wallet={dashboard.wallet}
+			username={dashboard.user.username}
 			overlay={(
-				<>
-					<UsernamePresence username={dashboard.user.username} />
-					<DemoTimeControls
-						today={today}
-						hasPendingReview={controller.hasPendingReview}
-						onAdvance={addDays}
-						onReset={reset}
-					/>
-				</>
+				<DemoTimeControls
+					today={today}
+					hasPendingReview={controller.hasPendingReview}
+					onAdvance={addDays}
+					onReset={reset}
+				/>
 			)}
-		>
-			<StreaksView controller={controller} />
-		</AppShell>
+		/>
 	);
 }
 

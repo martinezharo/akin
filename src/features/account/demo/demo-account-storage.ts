@@ -17,12 +17,43 @@ type StoredDemoAccountState = Partial<DemoAccountState> & {
 	coinEligibleStreakIds?: unknown;
 };
 
-export function createDemoAccountState(streakIds: string[]): DemoAccountState {
+export function createDemoAccountState(streakIds: readonly string[]): DemoAccountState {
 	return {
 		balance: DEMO_STARTING_COINS,
 		lifetimeEarned: DEMO_STARTING_COINS,
 		xp: 0,
 		rewardEligibleStreakIds: streakIds.slice(0, MAX_REWARD_STREAKS),
+	};
+}
+
+/** Coins earned in the demo also raise lifetime totals and XP, as on the server. */
+export function withRewards(account: DemoAccountState, amount: number): DemoAccountState {
+	if (amount === 0) return account;
+	return {
+		...account,
+		balance: account.balance + amount,
+		lifetimeEarned: account.lifetimeEarned + amount,
+		xp: account.xp + amount,
+	};
+}
+
+export function withRewardEligibility(
+	account: DemoAccountState,
+	streakId: string,
+	rewardEligible: boolean,
+): DemoAccountState {
+	const ids = account.rewardEligibleStreakIds.filter((id) => id !== streakId);
+	if (!rewardEligible) return { ...account, rewardEligibleStreakIds: ids };
+	if (ids.length >= MAX_REWARD_STREAKS) return account;
+	return { ...account, rewardEligibleStreakIds: [streakId, ...ids] };
+}
+
+export function withResetWallet(account: DemoAccountState): DemoAccountState {
+	return {
+		...account,
+		balance: DEMO_STARTING_COINS,
+		lifetimeEarned: DEMO_STARTING_COINS,
+		xp: 0,
 	};
 }
 
@@ -52,9 +83,12 @@ function notifyDemoAccountChanged() {
 	if (typeof window !== "undefined") window.dispatchEvent(new Event(DEMO_ACCOUNT_UPDATED_EVENT));
 }
 
-export function loadDemoAccountState(streakIds: string[]): DemoAccountState {
+export function loadDemoAccountState(
+	streakIds: readonly string[],
+	snapshot = getDemoAccountSnapshot(),
+): DemoAccountState {
 	const fallback = createDemoAccountState(streakIds);
-	const persisted = readStoredDemoAccount();
+	const persisted = parseStoredDemoAccount(snapshot || null);
 	if (!persisted) return fallback;
 
 	const storedEligibleIds = persisted.rewardEligibleStreakIds ?? persisted.coinEligibleStreakIds;

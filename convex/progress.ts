@@ -242,7 +242,7 @@ export const resolveGap = mutation({
 				for (const day of unresolvedDays) {
 					const canAward =
 						isRewardEligible(streak) &&
-						streakCoins < rewardedDayLimit(4);
+						streakCoins < rewardedDayLimit(args.days.length);
 					const created = await createCheckIn(ctx, {
 						userId: user._id,
 						streakId: streak._id,

@@ -1,26 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { MAX_REWARD_STREAKS } from "@/domain/rewards/reward-rules";
+import { useRef } from "react";
 import {
-	createDemoAccountState,
-	DEMO_STARTING_COINS,
-	loadDemoAccountState,
-	saveDemoAccountState,
+	canRewardCompletion,
+	MAX_REWARD_STREAKS,
+	rewardedDayLimit,
+} from "@/domain/rewards/reward-rules";
+import {
 	type DemoAccountState,
+	withRewardEligibility,
+	withResetWallet,
+	withRewards,
 } from "@/features/account/demo/demo-account-storage";
-import type { AccountDashboardView } from "@/features/account/model/account-types";
+import { toDemoDashboard, useDemoAccount } from "@/features/account/demo/use-demo-account";
+import { useCoinRewardFeed } from "@/features/rewards/use-coin-reward-feed";
 import type { LocalDateKey } from "../model/calendar";
 import type { ReviewAnswers } from "../model/progress";
-import type { Streak } from "../model/streak";
-import type { CoinReward, StreaksController } from "./use-streaks-controller";
-
-const DEMO_USER = {
-	id: "demo-user",
-	name: "Mika Daydream",
-	email: "mika@demo.akin",
-	username: "demo",
-};
+import type { StreaksController } from "./use-streaks-controller";
 
 function coinsForDay(
 	controller: StreaksController,
@@ -43,7 +39,7 @@ function coinsForGap(
 	days: LocalDateKey[],
 	answers: ReviewAnswers,
 ) {
-	const perStreakLimit = days.length > 3 ? 3 : days.length;
+	const perStreakLimit = rewardedDayLimit(days.length);
 	return controller.streaks.reduce((total, streak) => {
 		if (!eligibleIds.has(streak.id) || answers[streak.id] !== true) return total;
 		const unresolvedDays = days.filter(
@@ -55,29 +51,18 @@ function coinsForGap(
 	}, 0);
 }
 
-function withRewards(account: DemoAccountState, amount: number): DemoAccountState {
-	if (amount === 0) return account;
-	return {
-		...account,
-		balance: account.balance + amount,
-		lifetimeEarned: account.lifetimeEarned + amount,
-		xp: account.xp + amount,
-	};
-}
-
+/**
+ * Wraps the local controller with the demo wallet, so the demo pays out under
+ * exactly the reward rules the backend applies to a real account.
+ */
 export function useDemoStreaksController(base: StreaksController) {
-	const [account, setAccount] = useState<DemoAccountState>(() =>
-		loadDemoAccountState(base.streaks.map((streak) => streak.id)),
+	const { account, update: updateAccount, reset: resetAccountState } = useDemoAccount(
+		base.streaks.map((streak) => streak.id),
 	);
 	const undoAccountRef = useRef<DemoAccountState | null>(null);
 	const reviewAccountRef = useRef<DemoAccountState | null>(null);
-	const reviewCoinRewardRef = useRef(0);
-	const rewardIdRef = useRef(0);
-	const [coinReward, setCoinReward] = useState<CoinReward | null>(null);
-
-	useEffect(() => {
-		saveDemoAccountState(account);
-	}, [account]);
+	const { coinReward, show: showCoinReward, collectReviewReward, reset: resetCoinRewards } =
+		useCoinRewardFeed();
 
 	function discardUndo() {
 		undoAccountRef.current = null;
@@ -97,20 +82,9 @@ export function useDemoStreaksController(base: StreaksController) {
 		return new Set(account.rewardEligibleStreakIds);
 	}
 
-	function addRewardsToWallet(amount: number) {
+	function awardCoins(amount: number) {
 		if (amount === 0) return;
-		setAccount((current) => withRewards(current, amount));
-	}
-
-	function showCoinReward(amount: number, streakId: string | null = null) {
-		if (amount === 0) return;
-		rewardIdRef.current += 1;
-		setCoinReward({ id: rewardIdRef.current, amount, streakId });
-	}
-
-	function awardCoins(amount: number, streakId: string | null = null) {
-		addRewardsToWallet(amount);
-		showCoinReward(amount, streakId);
+		updateAccount((current) => withRewards(current, amount));
 	}
 
 	const controller: StreaksController = {
@@ -118,13 +92,10 @@ export function useDemoStreaksController(base: StreaksController) {
 		create: (name, icon) => {
 			discardUndo();
 			const id = base.create(name, icon);
-			setAccount((current) =>
+			updateAccount((current) =>
 				current.rewardEligibleStreakIds.length >= MAX_REWARD_STREAKS
 					? current
-					: {
-							...current,
-							rewardEligibleStreakIds: [id, ...current.rewardEligibleStreakIds],
-						},
+					: { ...current, rewardEligibleStreakIds: [id, ...current.rewardEligibleStreakIds] },
 			);
 			return id;
 		},
@@ -147,12 +118,7 @@ export function useDemoStreaksController(base: StreaksController) {
 		remove: (streakId) => {
 			rememberUndo();
 			base.remove(streakId);
-			setAccount((current) => ({
-				...current,
-				rewardEligibleStreakIds: current.rewardEligibleStreakIds.filter(
-					(id) => id !== streakId,
-				),
-			}));
+			updateAccount((current) => withRewardEligibility(current, streakId, false));
 		},
 		completeToday: (streakId) => {
 			const streak = base.streaks.find((candidate) => candidate.id === streakId);
@@ -169,37 +135,33 @@ export function useDemoStreaksController(base: StreaksController) {
 			base.completeToday(streakId);
 			if (
 				streak &&
-				streak.createdOn < base.today &&
+				canRewardCompletion(streak.createdOn, base.today) &&
 				account.rewardEligibleStreakIds.includes(streakId)
 			) {
-				awardCoins(1, streakId);
+				awardCoins(1);
+				showCoinReward(1, streakId);
 			}
 		},
 		resolveDay: (day, answers) => {
 			rememberReviewUndo();
 			const reward = coinsForDay(base, eligibleIds(), day, answers);
 			base.resolveDay(day, answers);
-			addRewardsToWallet(reward);
-			if (base.unreviewedDays.length > 1) {
-				reviewCoinRewardRef.current += reward;
-			} else {
-				showCoinReward(reviewCoinRewardRef.current + reward);
-				reviewCoinRewardRef.current = 0;
-			}
+			awardCoins(reward);
+			collectReviewReward(reward, { isFinalDay: base.unreviewedDays.length === 1 });
 		},
 		resolveGap: (days, answers) => {
 			rememberReviewUndo();
 			const reward = coinsForGap(base, eligibleIds(), days, answers);
 			base.resolveGap(days, answers);
-			addRewardsToWallet(reward);
-			showCoinReward(reviewCoinRewardRef.current + reward);
-			reviewCoinRewardRef.current = 0;
+			awardCoins(reward);
+			collectReviewReward(reward, { isFinalDay: true });
 		},
 		undo: () => {
 			base.undo();
-			if (undoAccountRef.current) setAccount(undoAccountRef.current);
+			const restored = undoAccountRef.current;
+			if (restored) updateAccount(() => restored);
 			discardUndo();
-			reviewCoinRewardRef.current = 0;
+			resetCoinRewards();
 		},
 		dismissUndo: () => {
 			base.dismissUndo();
@@ -207,48 +169,28 @@ export function useDemoStreaksController(base: StreaksController) {
 		},
 		replaceData: (data) => {
 			discardUndo();
-			reviewCoinRewardRef.current = 0;
+			resetCoinRewards();
 			base.replaceData(data);
 		},
 		coinReward,
 	};
 
-	const streaksWithRewards = base.streaks.map((streak: Streak) => ({
-		...streak,
-		rewardEligible: account.rewardEligibleStreakIds.includes(streak.id),
-	}));
-	const dashboard: AccountDashboardView = {
-		user: DEMO_USER,
-		wallet: { balance: account.balance, lifetimeEarned: account.lifetimeEarned, xp: account.xp },
-		streaks: streaksWithRewards,
-	};
-
 	return {
 		controller,
-		dashboard,
+		dashboard: toDemoDashboard(base.streaks, account),
 		toggleRewardEligible: (streakId: string, rewardEligible: boolean) => {
 			discardUndo();
 			base.dismissUndo();
-			setAccount((current) => {
-				const ids = current.rewardEligibleStreakIds.filter((id) => id !== streakId);
-				if (!rewardEligible) return { ...current, rewardEligibleStreakIds: ids };
-				if (ids.length >= MAX_REWARD_STREAKS) return current;
-				return { ...current, rewardEligibleStreakIds: [streakId, ...ids] };
-			});
+			updateAccount((current) => withRewardEligibility(current, streakId, rewardEligible));
 		},
 		resetWallet: () => {
 			discardUndo();
 			base.dismissUndo();
-			setAccount((current) => ({
-				...current,
-				balance: DEMO_STARTING_COINS,
-				lifetimeEarned: DEMO_STARTING_COINS,
-				xp: 0,
-			}));
+			updateAccount(withResetWallet);
 		},
 		resetAccount: (streakIds: string[]) => {
 			discardUndo();
-			setAccount(createDemoAccountState(streakIds));
+			resetAccountState(streakIds);
 		},
 	};
 }

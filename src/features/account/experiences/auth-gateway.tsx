@@ -6,12 +6,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/features/navigation/app-shell";
 import { StreaksApp } from "@/features/streaks/app/streaks-app";
-import { StreaksView } from "@/features/streaks/app/streaks-view";
+import { StreaksHomeShell } from "@/features/streaks/app/streaks-home-shell";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useRegisteredStreaksController } from "@/features/streaks/app/use-registered-streaks-controller";
 import { AccountDock } from "../components/account-dock";
-import { AccountRewardsBalance } from "../components/account-rewards-balance";
-import { UsernamePresence } from "../components/username-setup-modal";
 import { useGuestAccess } from "../model/use-guest-access";
 import { ui } from "@/i18n/en";
 import styles from "../account.module.css";
@@ -89,20 +87,19 @@ function RegisteredExperience() {
 	}
 
 	return (
-		<AppShell
-			variant="hero"
+		<StreaksHomeShell
+			controller={controller}
 			accountControl={<AccountDock />}
-			backdrop={<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />}
-			overlay={<UsernamePresence username={user?.username} />}
+			wallet={dashboard.wallet}
+			username={user?.username}
 		>
-			<StreaksView controller={controller} />
 			{notice ? (
 				<div className={styles.notice} role="status">
 					<p>{notice}</p>
 					<button type="button" onClick={dismissNotice} aria-label={ui.account.dismiss}><X aria-hidden="true" /></button>
 				</div>
 			) : null}
-		</AppShell>
+		</StreaksHomeShell>
 	);
 }
 

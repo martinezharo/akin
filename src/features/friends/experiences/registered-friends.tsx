@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useDeferredValue, useState } from "react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
+import { AccountDock } from "@/features/account/components/account-dock";
 import { ui } from "@/i18n/en";
 import { FriendsView } from "../components/friends-view";
 import {
@@ -50,7 +51,7 @@ export function RegisteredFriends() {
 			query={query}
 			onQueryChange={setQuery}
 			isPending={canSearch && (results === undefined || deferredQuery !== normalizedQuery)}
-			dock="account"
+			accountControl={<AccountDock />}
 			identity={dashboard ? {
 				username: dashboard.user.username,
 				balance: dashboard.wallet.balance,

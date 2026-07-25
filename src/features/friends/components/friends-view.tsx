@@ -1,8 +1,7 @@
 "use client";
 
 import { Search, UserRoundSearch, X } from "lucide-react";
-import { useId } from "react";
-import { AccountDock, DemoAccountDock } from "@/features/account/components/account-dock";
+import { type ReactNode, useId } from "react";
 import { AccountRewardsBalance } from "@/features/account/components/account-rewards-balance";
 import { UsernamePresence } from "@/features/account/components/username-setup-modal";
 import { AppShell } from "@/features/navigation/app-shell";
@@ -57,7 +56,7 @@ function FriendSection({
 export function FriendsView({
 	results,
 	isPending,
-	dock,
+	accountControl,
 	query,
 	onQueryChange,
 	showInitialResults = false,
@@ -69,7 +68,8 @@ export function FriendsView({
 }: {
 	results: Friend[] | undefined;
 	isPending: boolean;
-	dock: "account" | "demo";
+	/** Rendered in the shell's account slot: the dock, or a guest entry point. */
+	accountControl: ReactNode;
 	query: string;
 	onQueryChange: (query: string) => void;
 	showInitialResults?: boolean;
@@ -89,7 +89,7 @@ export function FriendsView({
 	return (
 		<AppShell
 			variant="column"
-			accountControl={dock === "demo" ? <DemoAccountDock /> : <AccountDock />}
+			accountControl={accountControl}
 			backdrop={identity ? <AccountRewardsBalance balance={identity.balance} xp={identity.xp} /> : null}
 			overlay={identity ? <UsernamePresence username={identity.username} /> : null}
 		>

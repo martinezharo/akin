@@ -2,7 +2,7 @@
 
 import { Coins } from "lucide-react";
 import { type CSSProperties, useEffect, useLayoutEffect, useState } from "react";
-import type { CoinReward } from "@/features/streaks/app/use-streaks-controller";
+import type { CoinReward } from "./coin-reward";
 import { ui } from "@/i18n/en";
 import { playRewardSound, warmRewardSound } from "./reward-sound-preference";
 import styles from "./coin-reward-feedback.module.css";

@@ -22,7 +22,8 @@ import {
 	loadStreaksData,
 	STREAKS_STORAGE_KEY,
 } from "../persistence/storage";
-import type { CoinReward, StreaksController, UndoToast } from "./use-streaks-controller";
+import { useCoinRewardFeed } from "@/features/rewards/use-coin-reward-feed";
+import type { StreaksController, UndoToast } from "./use-streaks-controller";
 import { resolveReviewGapInBatches } from "./review-gap-batches";
 import { importLocalDataInBatches } from "./local-import";
 
@@ -55,15 +56,14 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 	const undoRemote = useMutation(api.progress.undo);
 	const [undoToast, setUndoToast] = useState<RemoteUndo | null>(null);
 	const [notice, setNotice] = useState<string | null>(null);
-	const [coinReward, setCoinReward] = useState<CoinReward | null>(null);
+	const { coinReward, show: showCoinReward, collectReviewReward, reset: resetCoinRewards } =
+		useCoinRewardFeed();
 	const initializedUserRef = useRef<string | null>(null);
 	const importStartedRef = useRef<string | null>(null);
 	const reviewSessionRef = useRef<string | null>(null);
 	const reviewUndoRef = useRef<RemoteUndo | null>(null);
-	const reviewCoinRewardRef = useRef(0);
 	const resolvingGapRef = useRef(false);
 	const toastKeyRef = useRef(0);
-	const rewardIdRef = useRef(0);
 
 	const report = useCallback((error: unknown) => setNotice(errorMessage(error)), []);
 	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
@@ -74,12 +74,6 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 		},
 		[],
 	);
-	const showCoinReward = useCallback((amount: number, streakId: string | null = null) => {
-		if (amount === 0) return;
-		rewardIdRef.current += 1;
-		setCoinReward({ id: rewardIdRef.current, amount, streakId });
-	}, []);
-
 	useEffect(() => {
 		const initializationKey = user ? `${user.id}:${today}` : null;
 		if (!user || initializedUserRef.current === initializationKey) return;
@@ -204,15 +198,9 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 				reviewSessionId: reviewSessionId(),
 			})
 				.then((result) => {
-					// A multi-day review is one moment of closure. The server still
-					// records each day independently, but the user sees one combined
-					// reward after answering the final card.
-					if (unreviewedDays.length > 1) {
-						reviewCoinRewardRef.current += result.coinsAwarded;
-					} else {
-						showCoinReward(reviewCoinRewardRef.current + result.coinsAwarded);
-						reviewCoinRewardRef.current = 0;
-					}
+					collectReviewReward(result.coinsAwarded, {
+						isFinalDay: unreviewedDays.length === 1,
+					});
 					toastKeyRef.current += 1;
 					const reviewUndo: RemoteUndo = {
 						key: toastKeyRef.current,
@@ -245,10 +233,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 					}),
 				);
 				if (result.finalUndoId) {
-					showCoinReward(
-						reviewCoinRewardRef.current + result.coinsAwarded,
-					);
-					reviewCoinRewardRef.current = 0;
+					collectReviewReward(result.coinsAwarded, { isFinalDay: true });
 					toastKeyRef.current += 1;
 					setUndoToast({
 						key: toastKeyRef.current,
@@ -270,7 +255,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 			setUndoToast(null);
 			reviewUndoRef.current = null;
 			reviewSessionRef.current = null;
-			reviewCoinRewardRef.current = 0;
+			resetCoinRewards();
 		},
 		dismissUndo: () => setUndoToast(null),
 		replaceData: () => undefined,

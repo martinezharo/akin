@@ -2,6 +2,7 @@
 
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
+import { useDemoWallet } from "@/features/account/demo/use-demo-account";
 import { addLocalDays, type LocalDateKey } from "../model/calendar";
 import type { StreaksData } from "../persistence/storage";
 import { useDemoStreaksController } from "./use-demo-streaks-controller";
@@ -28,7 +29,8 @@ function renderDemo(data = createData()) {
 			storageKey: "akin:test-demo-streaks",
 			createFallbackData: () => data,
 		});
-		return useDemoStreaksController(base);
+		// Other demo surfaces (friends, pet) read the wallet through this hook.
+		return { ...useDemoStreaksController(base), sharedWallet: useDemoWallet() };
 	});
 }
 
@@ -75,6 +77,15 @@ describe("demo account", () => {
 		expect(result.current.controller.completedTodayStreakIds).toContain(streakId);
 		expect(result.current.dashboard.wallet.balance).toBe(999);
 		expect(result.current.dashboard.wallet.xp).toBe(0);
+	});
+
+	it("shares one wallet with every other demo surface", () => {
+		const { result } = renderDemo();
+
+		act(() => result.current.controller.completeToday("read"));
+
+		expect(result.current.sharedWallet).toEqual(result.current.dashboard.wallet);
+		expect(result.current.sharedWallet.balance).toBe(1_000);
 	});
 
 	it("caps a long-gap reward at three coins per eligible streak", () => {
