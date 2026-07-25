@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 import { GuestAuthGate } from "./guest-auth-gate";
 
 export function GuestAccountPage() {
@@ -11,7 +12,7 @@ export function GuestAccountPage() {
 			router.back();
 			return;
 		}
-		router.replace("/");
+		router.replace(APP_HOME_PATH);
 	}
 
 	return <GuestAuthGate onDismiss={dismissAuth} />;

@@ -14,6 +14,12 @@ vi.mock("@/shared/ui/akin-mascot-artwork", () => ({
 afterEach(cleanup);
 
 describe("AppNavigation", () => {
+	it("sends home to the app, not back to the landing at /", () => {
+		render(<AppNavigation />);
+
+		expect(screen.getByRole("link", { name: "Home" }).getAttribute("href")).toBe("/streaks");
+	});
+
 	it("shows a locked companion button that requests authentication", async () => {
 		const user = userEvent.setup();
 		const onLockedFriendsClick = vi.fn();

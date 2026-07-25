@@ -362,6 +362,71 @@ export const ui = {
 	rewards: {
 		coinsEarned: (amount: number) => `${amount} ${amount === 1 ? "coin" : "coins"} earned`,
 	},
+	landing: {
+		metadata: {
+			title: "Akin — keep the little promises",
+			description:
+				"Name the thing you keep meaning to do, tap it once a day, and let a very calm capybara take the credit. Streaks, coins and a crew — free, always.",
+		},
+		skipToContent: "Skip to the good part",
+		logoLabel: "Akin, home",
+		eyebrow: "Streaks, coins and one very calm capybara",
+		headlineStart: "Keep the",
+		headlineAccent: "little",
+		headlineEnd: "promises.",
+		subhead:
+			"Name the thing you keep meaning to do. Tap it once a day. Akin holds the count, pays you in coins, and feeds a capybara on your consistency.",
+		enterAction: "Enter Akin",
+		demoAction: "Open the demo",
+		demoHint: "The demo is the whole app with someone else's streaks already in it.",
+		checkIn: {
+			label: "Today",
+			walletLabel: "Coins earned right here",
+			prompt: "Go on — tap a badge.",
+			midway: (left: number) => (left === 1 ? "Feels good. One to go." : `Feels good. ${left} to go.`),
+			done: "That was the whole ritual. Tomorrow it asks again.",
+		},
+		ladder: {
+			kicker: "The badge",
+			title: "The count is the whole trophy.",
+			copy:
+				"You are only ever up against yesterday's number. The longer it gets the more it costs to lose, and that is the only pressure Akin will ever put on you.",
+			// Keyed by badge tier, and deliberately free of counts: the badge above
+			// each note already shows the number, and the thresholds live in code.
+			tiers: {
+				glass: { name: "Glass", note: "Day one, and honest about it." },
+				silver: { name: "Silver", note: "It sets, and starts to feel like something." },
+				fire: { name: "Fire", note: "It stops being polite about it." },
+				god: { name: "Beyond", note: "Nobody has got here yet." },
+			},
+			tierLabel: (name: string, days: number) => `${name}, at ${days} days`,
+		},
+		crew: {
+			kicker: "The crew",
+			title: "Add friends. Then beat them.",
+			copy:
+				"Keeping a promise earns XP, and so does theirs. The board sorts your crew by who has actually been showing up, and there is no dignified way to sit at the bottom of it.",
+			unit: "XP",
+			sortNote: "This week",
+		},
+		companion: {
+			kicker: "The companion",
+			title: "Spend it all on the capybara.",
+			copy:
+				"Every promise you keep pays out, and the capybara has a wardrobe waiting to take it off your hands. Try things on, change your mind as often as you like, and let a small animal look delighted with whatever you land on.",
+			swatchesLabel: "Companion colours",
+			tryLabel: (name: string) => `Try ${name}`,
+		},
+		honesty: {
+			kicker: "The day you miss",
+			title: "Akin asks what happened.",
+			copy:
+				"You will miss a day. When you come back, Akin walks you through the days you were gone and asks which ones you actually kept — tick only those. The number you end up with is the honest one, and that is the only kind worth protecting.",
+		},
+		closingTitle: "Day one is the expensive one.",
+		closingCopy: "Every day after is just not breaking it.",
+		footer: "Capybara approved 🥺",
+	},
 	metadata: {
 		title: "Akin",
 		description: "Build playful streaks for the promises that matter to you.",

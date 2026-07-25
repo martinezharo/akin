@@ -1,7 +1,7 @@
 import { addLocalDays, isLocalDateKey, type LocalDateKey } from "../model/calendar";
 import type { StreakCheckIn } from "../model/check-in";
+import { DEMO_PROMISE_ICONS, DEMO_PROMISES } from "../model/demo-promises";
 import type { Streak } from "../model/streak";
-import { ui } from "@/i18n/en";
 
 export type StreaksData = {
 	streaks: Streak[];
@@ -83,13 +83,9 @@ export function createDemoStreaksData(today: LocalDateKey): StreaksData {
 	const createdOn = addLocalDays(today, -140);
 
 	return {
-		streaks: [
-			{ id: "demo-move", name: ui.demo.streakNames.move, icon: "🏃", days: 6, createdOn },
-			{ id: "demo-read", name: ui.demo.streakNames.read, icon: "📚", days: 24, createdOn },
-			{ id: "demo-sleep", name: ui.demo.streakNames.sleep, icon: "🌙", days: 103, createdOn },
-		],
+		streaks: DEMO_PROMISES.map((promise) => ({ ...promise, createdOn })),
 		checkIns: [],
-		recentIcons: ["🏃", "📚", "🌙"],
+		recentIcons: [...DEMO_PROMISE_ICONS],
 		lastReviewedOn: addLocalDays(today, -1),
 	};
 }

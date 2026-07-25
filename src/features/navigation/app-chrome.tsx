@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { AccountRewardsBalance, GuestRewardsBalance } from "@/features/account/components/account-rewards-balance";
 import { GuestUsernamePresence, RemoteUsernamePresence, UsernamePresence } from "@/features/account/components/username-setup-modal";
+import { hasAppChrome } from "@/shared/routing/experience-paths";
 import { AppNavigation, type AppNavigationProps } from "./app-navigation";
 
 /** The wallet pills: real balances, or the teaser a guest can tap to sign up. */
@@ -70,6 +72,9 @@ function samePresence(a: PresenceSlot | null | undefined, b: PresenceSlot | null
  */
 export function AppChromeProvider({ children }: { children: ReactNode }) {
 	const [slots, setSlots] = useState<AppChromeSlots>(EMPTY_SLOTS);
+	// Routes decide this, not pages: the landing must render frameless on the
+	// server too, and a page opting out after mount would flash the bar first.
+	const showChrome = hasAppChrome(usePathname());
 
 	const publish = useCallback((next: AppChromeSlots) => {
 		setSlots((current) => {
@@ -87,19 +92,23 @@ export function AppChromeProvider({ children }: { children: ReactNode }) {
 	return (
 		<AppChromeContext value={publish}>
 			{children}
-			{wallet ? (
-				wallet.kind === "guest"
-					? <GuestRewardsBalance onRequestAccess={wallet.onRequestAccess} />
-					: <AccountRewardsBalance balance={wallet.balance} xp={wallet.xp} />
+			{showChrome ? (
+				<>
+					{wallet ? (
+						wallet.kind === "guest"
+							? <GuestRewardsBalance onRequestAccess={wallet.onRequestAccess} />
+							: <AccountRewardsBalance balance={wallet.balance} xp={wallet.xp} />
+					) : null}
+					{presence ? (
+						presence.kind === "guest"
+							? <GuestUsernamePresence onRequestAccess={presence.onRequestAccess} />
+							: presence.kind === "remote"
+								? <RemoteUsernamePresence today={presence.today} timeZone={presence.timeZone} />
+								: <UsernamePresence username={presence.username} today={presence.today} timeZone={presence.timeZone} />
+					) : null}
+					<AppNavigation {...navigation} />
+				</>
 			) : null}
-			{presence ? (
-				presence.kind === "guest"
-					? <GuestUsernamePresence onRequestAccess={presence.onRequestAccess} />
-					: presence.kind === "remote"
-						? <RemoteUsernamePresence today={presence.today} timeZone={presence.timeZone} />
-						: <UsernamePresence username={presence.username} today={presence.today} timeZone={presence.timeZone} />
-			) : null}
-			<AppNavigation {...navigation} />
 		</AppChromeContext>
 	);
 }

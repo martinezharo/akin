@@ -4,6 +4,7 @@ import { ArrowRight, Cloud, Coins, ShieldCheck, Sparkles, X } from "lucide-react
 import { useId, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { ui } from "@/i18n/en";
+import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import styles from "../account.module.css";
 
@@ -20,7 +21,7 @@ function GitHubMark() {
 
 export function AuthModal({
 	onDismiss,
-	callbackURL = "/",
+	callbackURL = APP_HOME_PATH,
 }: {
 	onDismiss: () => void;
 	callbackURL?: string;

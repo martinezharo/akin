@@ -9,6 +9,7 @@ import { StreaksApp } from "@/features/streaks/app/streaks-app";
 import { StreaksHomeShell } from "@/features/streaks/app/streaks-home-shell";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useRegisteredStreaksController } from "@/features/streaks/app/use-registered-streaks-controller";
+import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 import { AccountDock } from "../components/account-dock";
 import { useGuestAccess } from "../model/use-guest-access";
 import { ui } from "@/i18n/en";
@@ -36,7 +37,7 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 	useEffect(() => {
 		const url = new URL(window.location.href);
 		if (url.searchParams.get("auth") !== "friends") return;
-		window.history.replaceState(window.history.state, "", "/");
+		window.history.replaceState(window.history.state, "", APP_HOME_PATH);
 		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setFriendAuthRequest(true);
 	}, []);

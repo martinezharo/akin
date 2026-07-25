@@ -1,0 +1,146 @@
+.companion {
+	display: grid;
+	gap: 0.6rem;
+	justify-items: center;
+}
+
+/* Holds the speech bubble, which has to live outside the cropped blob below. */
+.portrait {
+	width: 9.5rem;
+}
+
+/* The same blob bubble the friends list puts every companion in, grown to the
+ * size of a portrait sitting for one. It repaints with the chosen colour, and
+ * it is the button — so the crop and the tap target are the same shape. */
+.stage {
+	position: relative;
+	display: grid;
+	width: 100%;
+	aspect-ratio: 1;
+	place-items: center;
+	overflow: hidden;
+	border: 0.2rem solid var(--background);
+	border-radius: 45% 55% 52% 48% / 58% 43% 57% 42%;
+	background: linear-gradient(
+		145deg,
+		color-mix(in srgb, var(--akin-hair-color) 55%, white),
+		var(--akin-skin-color)
+	);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--akin-skin-color) 58%, var(--line)),
+		0 0.9rem 1.8rem color-mix(in srgb, var(--akin-skin-color) 26%, transparent);
+	transition: background 320ms ease, box-shadow 320ms ease;
+}
+
+.stage .mascot {
+	position: absolute;
+	top: 8%;
+	left: -3%;
+	width: 106%;
+	height: 106%;
+}
+
+/* The mascot's own fill is a variable, so the colour change animates rather
+ * than snapping between skins. */
+.mascot path {
+	transition: fill 320ms ease;
+}
+
+.current {
+	margin: 0;
+	color: var(--foreground);
+	font-size: var(--text-md);
+	font-weight: var(--weight-black);
+	letter-spacing: 0.02em;
+}
+
+.swatches {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+	justify-content: center;
+	gap: 0.45rem 0.5rem;
+	list-style: none;
+}
+
+.swatch {
+	display: grid;
+	padding: 0.2rem 0.25rem;
+	justify-items: center;
+	gap: 0.28rem;
+	border: 0;
+	border-radius: var(--radius-md);
+	background: transparent;
+	cursor: pointer;
+	transition: transform var(--motion-spring);
+}
+
+.swatch:hover {
+	transform: translateY(0.08rem);
+}
+
+.swatch:active {
+	transform: translateY(0.16rem);
+}
+
+.swatch:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 0.1rem;
+}
+
+.chip {
+	display: grid;
+	width: 2rem;
+	height: 2rem;
+	place-items: center;
+	border: 0.16rem solid var(--background);
+	border-radius: var(--radius-tail-round);
+	background: var(--swatch);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--swatch) 55%, var(--line)),
+		0 0.3rem 0.7rem color-mix(in srgb, var(--swatch) 30%, transparent);
+	color: #fff;
+	transition: box-shadow var(--motion-standard);
+}
+
+.chip svg {
+	width: 0.85rem;
+	height: 0.85rem;
+	stroke-width: 3.4;
+	filter: drop-shadow(0 1px 1px rgb(0 0 0 / 35%));
+}
+
+.swatch[aria-pressed="true"] .chip {
+	box-shadow:
+		0 0 0 2px var(--foreground),
+		0 0.3rem 0.7rem color-mix(in srgb, var(--swatch) 34%, transparent);
+}
+
+.price {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.16rem;
+	color: var(--muted);
+	font-size: var(--text-2xs);
+	font-weight: var(--weight-black);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+
+.price svg {
+	width: 0.68rem;
+	height: 0.68rem;
+	stroke-width: 2.8;
+	color: var(--coin-ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stage,
+	.mascot path,
+	.swatch,
+	.chip {
+		transition: none;
+	}
+}

@@ -15,6 +15,18 @@ const tierClassNames: Record<StreakBadgeTier, string> = {
 	god: styles.god,
 };
 
+/**
+ * The tiers in the order a streak earns them, with the count that unlocks each.
+ * Anything advertising the ladder reads it from here rather than restating the
+ * numbers, so moving a threshold moves every claim made about it.
+ */
+export const STREAK_BADGE_TIERS = [
+	{ tier: "glass", minDays: 1 },
+	{ tier: "silver", minDays: SILVER_STREAK_MIN_DAYS },
+	{ tier: "fire", minDays: FIRE_STREAK_MIN_DAYS },
+	{ tier: "god", minDays: GOD_STREAK_MIN_DAYS },
+] as const satisfies readonly { tier: StreakBadgeTier; minDays: number }[];
+
 const streakCountFormatter = new Intl.NumberFormat(APP_LOCALE);
 const COMPLETION_BURST_RAYS = Array.from({ length: 8 }, (_, index) => index);
 

@@ -1,0 +1,146 @@
+/* A real Akin surface, lifted off the page: the same pinched corner, the same
+ * hairline, the same floating shadow the app's cards use. */
+.card {
+	position: relative;
+	z-index: 2;
+	width: min(100%, 25rem);
+	padding: 1.15rem 1.15rem 1rem;
+	border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+	border-radius: var(--radius-tail-2xl);
+	/* Opaque on purpose: the mascot stands behind this card, and a translucent
+	 * surface smeared its orange across the rows through the backdrop blur. */
+	background: var(--background);
+	box-shadow: var(--shadow-floating);
+}
+
+.head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0 0.35rem 0.85rem;
+}
+
+.label {
+	color: var(--muted);
+	font-size: var(--text-sm);
+	font-weight: var(--weight-black);
+	letter-spacing: 0.11em;
+	text-transform: uppercase;
+}
+
+/* The coin pill keeps its gold in both themes, the way the app's wallet does —
+ * a coin is a physical object in the fiction, not a themed surface. */
+.wallet {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.32rem;
+	padding: 0.3rem 0.62rem 0.3rem 0.5rem;
+	border: 1px solid var(--coin-line);
+	border-radius: var(--radius-pill);
+	background: linear-gradient(150deg, var(--coin-surface-soft), var(--coin-surface) 72%);
+	box-shadow: 0 0.18rem 0.5rem color-mix(in srgb, var(--coin-edge) 34%, transparent);
+	color: var(--coin-ink);
+	font-size: var(--text-md);
+	font-weight: var(--weight-black);
+	font-variant-numeric: tabular-nums;
+}
+
+.wallet svg {
+	width: 0.92rem;
+	height: 0.92rem;
+	stroke-width: 2.6;
+}
+
+/* Re-keyed on every coin, so the number pops instead of quietly swapping. */
+.wallet strong {
+	animation: coinLand 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.list {
+	display: grid;
+	margin: 0;
+	padding: 0;
+	gap: 0.34rem;
+	list-style: none;
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.42rem 0.5rem;
+	border-radius: var(--radius-tail-md);
+	transition: background var(--motion-standard);
+}
+
+.row:hover {
+	background: color-mix(in srgb, var(--icon-background) 74%, transparent);
+}
+
+.icon {
+	display: grid;
+	width: 2.2rem;
+	height: 2.2rem;
+	place-items: center;
+	border-radius: var(--radius-tail-round);
+	background: var(--icon-background);
+	font-size: var(--text-lg);
+	line-height: 1;
+}
+
+.name {
+	overflow: hidden;
+	color: var(--foreground);
+	font-size: var(--text-lg);
+	font-weight: var(--weight-strong);
+	letter-spacing: -0.012em;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* The landing parks a mascot on this card's bottom-right corner, so the note
+ * stops short of it instead of sliding underneath — a reserve rather than a
+ * shorter string, because the next string, or its translation, would collide
+ * all over again. The two-line floor means finishing the last promise swaps the
+ * wording without nudging the card's height. */
+.note {
+	min-height: calc(2 * 1.35 * var(--text-md));
+	margin: 0.7rem 0 0;
+	padding-inline: 0.35rem var(--check-in-corner-reserve, 0.35rem);
+	color: var(--muted);
+	font-size: var(--text-md);
+	font-weight: var(--weight-strong);
+	line-height: 1.35;
+	transition: color var(--motion-standard);
+}
+
+.note[data-complete="true"] {
+	color: var(--positive);
+}
+
+@keyframes coinLand {
+	0% {
+		transform: translateY(-0.4rem) scale(0.6);
+		opacity: 0.2;
+	}
+	58% {
+		transform: translateY(0.05rem) scale(1.22);
+		opacity: 1;
+	}
+	100% {
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wallet strong {
+		animation: none;
+	}
+
+	.row,
+	.note {
+		transition: none;
+	}
+}

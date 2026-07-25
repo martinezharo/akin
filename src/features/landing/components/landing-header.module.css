@@ -1,0 +1,97 @@
+.header {
+	position: sticky;
+	z-index: 10;
+	top: 0;
+	border-block-end: 1px solid transparent;
+	background: transparent;
+	transition:
+		background var(--motion-standard),
+		border-color var(--motion-standard),
+		backdrop-filter var(--motion-standard);
+}
+
+/* Only once the page is moving underneath does the bar need to separate itself
+ * from it. Before that it is just the logo standing on the hero. */
+.header[data-lifted] {
+	border-block-end-color: color-mix(in srgb, var(--line) 80%, transparent);
+	background: color-mix(in srgb, var(--background) 82%, transparent);
+	backdrop-filter: blur(18px) saturate(150%);
+}
+
+.inner {
+	display: flex;
+	width: min(100%, var(--landing-column));
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-inline: auto;
+	padding: 0.85rem var(--landing-gutter);
+}
+
+.brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	color: var(--foreground);
+	text-decoration: none;
+}
+
+.brand:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 0.3rem;
+	border-radius: var(--radius-sm);
+}
+
+.mark {
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: var(--radius-tail-sm);
+	box-shadow: 0 0.35rem 0.9rem rgb(120 52 20 / 22%);
+}
+
+.name {
+	font-size: var(--text-xl);
+	font-weight: var(--weight-black);
+	letter-spacing: -0.03em;
+}
+
+.action {
+	padding: 0.5rem 0.95rem;
+	border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+	border-radius: var(--radius-tail-pill);
+	background: color-mix(in srgb, var(--background) 70%, transparent);
+	box-shadow: 0 0.16rem 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
+	color: var(--foreground);
+	font-size: var(--text-md);
+	font-weight: var(--weight-black);
+	text-decoration: none;
+	backdrop-filter: blur(12px);
+	transition:
+		background var(--motion-standard),
+		box-shadow var(--motion-standard),
+		transform var(--motion-spring);
+}
+
+/* Pressing in, never popping out — same physics as the hero buttons. */
+.action:hover {
+	background: var(--icon-background);
+	box-shadow: 0 0.08rem 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
+	transform: translateY(0.08rem);
+}
+
+.action:active {
+	box-shadow: 0 0 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
+	transform: translateY(0.16rem);
+}
+
+.action:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 0.2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.header,
+	.action {
+		transition: none;
+	}
+}

@@ -23,7 +23,7 @@ export function AppNavigation({
 	onLockedPetClick,
 }: AppNavigationProps) {
 	const pathname = usePathname();
-	const homeHref = getExperiencePath(pathname, "/");
+	const homeHref = getExperiencePath(pathname, "home");
 	const petHref = getExperiencePath(pathname, "/pet");
 	const friendsHref = getExperiencePath(pathname, "/friends");
 	const meHref = getExperiencePath(pathname, "/me");

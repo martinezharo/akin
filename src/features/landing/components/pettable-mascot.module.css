@@ -1,0 +1,109 @@
+/* Zero specificity again: the hero positions its mascot absolutely through
+ * `className`, and that has to win over this default. It still anchors the
+ * speech bubble either way, since absolute is a positioned ancestor too. */
+:where(.mascot) {
+	position: relative;
+	display: block;
+}
+
+/* Layout defaults sit at zero specificity, so a caller passing `frameClassName`
+ * — the companion's cropped blob, say — replaces them without a fight. */
+:where(.button) {
+	display: block;
+	width: 100%;
+}
+
+.button {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	cursor: grab;
+	touch-action: manipulation;
+	transition: transform var(--motion-spring);
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.button:active {
+	cursor: grabbing;
+}
+
+.button:active,
+.button[data-interacting] {
+	transform: scale(0.95) translateY(0.18rem);
+}
+
+.button:focus-visible {
+	border-radius: var(--radius-round);
+	outline: var(--focus-ring);
+	outline-offset: 0.4rem;
+}
+
+:where(.artwork) {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.artwork {
+	pointer-events: none;
+}
+
+.button[data-interacting] .artwork {
+	animation: landingPetBounce 780ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The bubble is absolutely placed so it can pop outside the mascot's box
+ * without ever widening the layout around it. */
+.speech {
+	position: absolute;
+	z-index: 4;
+	top: 4%;
+	width: max-content;
+	max-width: 9rem;
+	padding: 0.45rem 0.68rem;
+	border-radius: var(--radius-tail-md);
+	background: var(--popover-background);
+	box-shadow: var(--popover-shadow);
+	color: var(--foreground);
+	font-size: var(--text-xs);
+	font-weight: var(--weight-strong);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(0.35rem) rotate(3deg) scale(0.92);
+	transition:
+		opacity 160ms ease,
+		transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
+	backdrop-filter: blur(14px);
+}
+
+.speech[data-placement="left"] {
+	right: 84%;
+}
+
+.speech[data-placement="right"] {
+	left: 84%;
+}
+
+.speech[data-visible] {
+	opacity: 1;
+	transform: rotate(3deg) scale(1);
+}
+
+@keyframes landingPetBounce {
+	0% { transform: scale(1) translateY(0); }
+	38% { transform: scale(1.07, 0.93) translateY(0.2rem); }
+	100% { transform: scale(1) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.button,
+	.speech {
+		transition: none;
+	}
+
+	.button[data-interacting] .artwork {
+		animation: none;
+	}
+}

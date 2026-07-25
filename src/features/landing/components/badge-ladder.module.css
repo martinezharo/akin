@@ -1,0 +1,82 @@
+.ladder {
+	display: grid;
+	margin: 0;
+	padding: 0;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 0.75rem;
+	list-style: none;
+	counter-reset: none;
+}
+
+.step {
+	display: grid;
+	padding: 1.35rem 1rem 1.15rem;
+	justify-items: center;
+	gap: 0.28rem;
+	border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+	border-radius: var(--radius-tail-xl);
+	background: color-mix(in srgb, var(--icon-background) 55%, transparent);
+	text-align: center;
+}
+
+/* The badges render at exactly the size the app gives them — no scaling, no
+ * forced width. Stretching them made the tiers look like different objects
+ * instead of the thing you will actually be looking at every day. The stage
+ * only reserves height so the four rungs line up, and leaves room for the god
+ * tier's glow to spill without clipping. */
+.stage {
+	display: grid;
+	height: 3rem;
+	place-items: center;
+}
+
+.name {
+	margin-top: 0.35rem;
+	color: var(--foreground);
+	font-size: var(--text-lg);
+	font-weight: var(--weight-black);
+	letter-spacing: -0.015em;
+}
+
+.note {
+	color: var(--muted);
+	font-size: var(--text-sm);
+	font-weight: var(--weight-body);
+	text-wrap: balance;
+}
+
+/* Where the browser can drive animation from scroll position, each rung lifts
+ * into place as the section arrives. Everywhere else the ladder is simply
+ * there, which is a perfectly good ladder. */
+@media (prefers-reduced-motion: no-preference) {
+	@supports (animation-timeline: view()) {
+		.step {
+			animation: rungRise linear both;
+			animation-timeline: view();
+			animation-range: entry 5% cover 26%;
+		}
+	}
+}
+
+@keyframes rungRise {
+	from {
+		opacity: 0;
+		transform: translateY(1.6rem) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (max-width: 46rem) {
+	.ladder {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 24rem) {
+	.step {
+		padding: 1.1rem 0.6rem 0.95rem;
+	}
+}

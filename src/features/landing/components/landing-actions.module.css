@@ -1,0 +1,113 @@
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.7rem;
+}
+
+/* Both doors share a shape; only their weight differs. The pinched corner is
+ * the same one every Akin card carries, so the buttons read as part of the app
+ * rather than as marketing furniture. */
+.primary,
+.secondary {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.92rem 1.5rem;
+	border: 0;
+	border-radius: var(--radius-tail-pill);
+	font-size: var(--text-lg);
+	font-weight: var(--weight-black);
+	letter-spacing: -0.01em;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		box-shadow var(--motion-standard),
+		filter var(--motion-standard),
+		transform var(--motion-spring);
+}
+
+/* A physical bottom edge that the press actually compresses. It is the one
+ * toy-like flourish on the page, and it earns its place on the door we want
+ * tapped. */
+.primary {
+	background: var(--accent);
+	box-shadow: 0 0.3rem 0 color-mix(in srgb, var(--accent) 55%, #2a0d04);
+	color: var(--accent-ink);
+}
+
+.secondary {
+	background: var(--icon-background);
+	box-shadow: 0 0.3rem 0 color-mix(in srgb, var(--line) 78%, var(--foreground));
+	color: var(--foreground);
+}
+
+.primary svg {
+	width: 1.1rem;
+	height: 1.1rem;
+	stroke-width: 2.9;
+	transition: transform var(--motion-spring);
+}
+
+/* A key travelling down its own edge: hovering takes up half the slack, the
+ * press takes the rest. Nothing ever rises off the page — these are buttons
+ * you push, not chips you lift. */
+.primary:hover,
+.secondary:hover {
+	filter: brightness(1.04);
+	transform: translateY(0.14rem);
+}
+
+.primary:hover {
+	box-shadow: 0 0.16rem 0 color-mix(in srgb, var(--accent) 55%, #2a0d04);
+}
+
+.secondary:hover {
+	box-shadow: 0 0.16rem 0 color-mix(in srgb, var(--line) 78%, var(--foreground));
+}
+
+.primary:hover svg {
+	transform: translateX(0.16rem);
+}
+
+.primary:active,
+.secondary:active {
+	filter: none;
+	transform: translateY(0.3rem);
+}
+
+.primary:active {
+	box-shadow: 0 0.04rem 0 color-mix(in srgb, var(--accent) 55%, #2a0d04);
+}
+
+.secondary:active {
+	box-shadow: 0 0.04rem 0 color-mix(in srgb, var(--line) 78%, var(--foreground));
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 0.3rem;
+}
+
+.hint {
+	flex-basis: 100%;
+	margin: 0.15rem 0 0;
+	color: var(--muted);
+	font-size: var(--text-md);
+	font-weight: var(--weight-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.primary,
+	.secondary,
+	.primary svg {
+		transition: none;
+	}
+
+	.primary:hover,
+	.secondary:hover {
+		transform: translateY(0.14rem);
+	}
+}
