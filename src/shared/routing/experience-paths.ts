@@ -16,8 +16,13 @@ export const DEMO_HOME_PATH = "/demo";
  */
 export type ExperienceDestination = "home" | "/friends" | "/pet" | "/me";
 
+/** True on every page of the account-free tour, `/demo` included. */
+export function isDemoExperience(pathname: string | null) {
+	return pathname === DEMO_HOME_PATH || (pathname?.startsWith(`${DEMO_HOME_PATH}/`) ?? false);
+}
+
 export function getExperiencePath(pathname: string | null, destination: ExperienceDestination) {
-	const inDemo = pathname === DEMO_HOME_PATH || pathname?.startsWith(`${DEMO_HOME_PATH}/`);
+	const inDemo = isDemoExperience(pathname);
 	if (destination === "home") return inDemo ? DEMO_HOME_PATH : APP_HOME_PATH;
 	return inDemo ? `${DEMO_HOME_PATH}${destination}` : destination;
 }

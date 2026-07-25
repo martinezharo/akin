@@ -1,0 +1,37 @@
+/*
+ * The top-left corner. Everything pinned there — the username badge, the demo's
+ * way back, a page's own action — lays itself out in here, so the corner can
+ * never stack two things on the same pixels.
+ *
+ * The container keeps clear of the wallet on the right, and lets clicks through
+ * the gaps between its children.
+ */
+.cornerStack {
+	position: fixed;
+	z-index: 45;
+	top: max(0.85rem, env(safe-area-inset-top));
+	left: max(0.85rem, env(safe-area-inset-left));
+	display: flex;
+	/* Stacked, only the top row shares its line with the wallet. */
+	max-width: calc(100vw - 1.7rem);
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.45rem;
+	pointer-events: none;
+}
+
+.cornerStack > * {
+	max-width: 100%;
+	pointer-events: auto;
+}
+
+/* Side by side once there is room for it. The badge leans, so the gap has to
+   clear its rotated corner rather than the box it would occupy flat. */
+@media (min-width: 30rem) {
+	.cornerStack {
+		max-width: calc(100vw - 11rem);
+		flex-direction: row;
+		align-items: center;
+		gap: 0.85rem;
+	}
+}

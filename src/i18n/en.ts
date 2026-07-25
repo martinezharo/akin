@@ -104,6 +104,8 @@ export const ui = {
 		dismiss: "Dismiss",
 	},
 	demo: {
+		exit: "Back",
+		exitLabel: "Leave the demo and go back to the landing page",
 		title: "Pocket time machine",
 		tomorrow: "+1 day",
 		threeDays: "+3 days",

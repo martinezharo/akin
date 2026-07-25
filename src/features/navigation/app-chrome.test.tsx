@@ -14,6 +14,11 @@ vi.mock("@/shared/ui/akin-mascot-artwork", () => ({
 
 afterEach(cleanup);
 
+function PresencePage() {
+	useAppChrome({ presence: { kind: "known", username: "demo" } });
+	return <p>page</p>;
+}
+
 function WalletPage() {
 	useAppChrome({ wallet: { kind: "account", balance: 12, xp: 3 } });
 	return <p>page</p>;
@@ -27,6 +32,24 @@ describe("AppChromeProvider", () => {
 
 		expect(screen.getByRole("navigation", { name: "Main navigation" })).not.toBeNull();
 		expect(screen.getByLabelText("12 coins, 3 XP")).not.toBeNull();
+	});
+
+	it("swaps the demo's name badge for the way back to the landing", () => {
+		mocks.pathname = "/demo/friends";
+
+		render(<AppChromeProvider><PresencePage /></AppChromeProvider>);
+
+		const exit = screen.getByRole("link", { name: "Leave the demo and go back to the landing page" });
+		expect(exit.getAttribute("href")).toBe("/");
+		expect(screen.queryByText("@demo")).toBeNull();
+	});
+
+	it("keeps the name badge outside the demo", () => {
+		mocks.pathname = "/streaks";
+
+		render(<AppChromeProvider><PresencePage /></AppChromeProvider>);
+
+		expect(screen.getByText("@demo")).not.toBeNull();
 	});
 
 	it("leaves the landing to paint its own frame", () => {

@@ -4,8 +4,10 @@ import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { AccountRewardsBalance, GuestRewardsBalance } from "@/features/account/components/account-rewards-balance";
 import { GuestUsernamePresence, RemoteUsernamePresence, UsernamePresence } from "@/features/account/components/username-setup-modal";
-import { hasAppChrome } from "@/shared/routing/experience-paths";
+import { hasAppChrome, isDemoExperience } from "@/shared/routing/experience-paths";
 import { AppNavigation, type AppNavigationProps } from "./app-navigation";
+import styles from "./app-chrome.module.css";
+import { ExitDemoLink } from "./exit-demo-link";
 
 /** The wallet pills: real balances, or the teaser a guest can tap to sign up. */
 export type WalletSlot =
@@ -34,6 +36,13 @@ export type PresenceSlot =
 export type AppChromeSlots = AppNavigationProps & {
 	wallet?: WalletSlot | null;
 	presence?: PresenceSlot | null;
+	/**
+	 * A page's own pinned action — the pet studio's "wear this", say. It joins
+	 * the presence badge in the top-left stack instead of being positioned by
+	 * the page, which is what used to make the two land on top of each other.
+	 * Unlike the slots above it is not sticky: leaving the page clears it.
+	 */
+	cornerAction?: ReactNode | null;
 };
 
 const EMPTY_SLOTS: AppChromeSlots = {};
@@ -45,6 +54,7 @@ function sameSlots(a: AppChromeSlots, b: AppChromeSlots) {
 		a.accountControl === b.accountControl
 		&& a.onLockedFriendsClick === b.onLockedFriendsClick
 		&& a.onLockedPetClick === b.onLockedPetClick
+		&& a.cornerAction === b.cornerAction
 		&& sameWallet(a.wallet, b.wallet)
 		&& samePresence(a.presence, b.presence)
 	);
@@ -74,7 +84,10 @@ export function AppChromeProvider({ children }: { children: ReactNode }) {
 	const [slots, setSlots] = useState<AppChromeSlots>(EMPTY_SLOTS);
 	// Routes decide this, not pages: the landing must render frameless on the
 	// server too, and a page opting out after mount would flash the bar first.
-	const showChrome = hasAppChrome(usePathname());
+	const pathname = usePathname();
+	const showChrome = hasAppChrome(pathname);
+	// The tour has no account, so its badge corner is spent on the way out.
+	const inDemo = isDemoExperience(pathname);
 
 	const publish = useCallback((next: AppChromeSlots) => {
 		setSlots((current) => {
@@ -87,7 +100,7 @@ export function AppChromeProvider({ children }: { children: ReactNode }) {
 		});
 	}, []);
 
-	const { wallet, presence, ...navigation } = slots;
+	const { wallet, presence, cornerAction, ...navigation } = slots;
 
 	return (
 		<AppChromeContext value={publish}>
@@ -99,13 +112,18 @@ export function AppChromeProvider({ children }: { children: ReactNode }) {
 							? <GuestRewardsBalance onRequestAccess={wallet.onRequestAccess} />
 							: <AccountRewardsBalance balance={wallet.balance} xp={wallet.xp} />
 					) : null}
-					{presence ? (
-						presence.kind === "guest"
-							? <GuestUsernamePresence onRequestAccess={presence.onRequestAccess} />
-							: presence.kind === "remote"
-								? <RemoteUsernamePresence today={presence.today} timeZone={presence.timeZone} />
-								: <UsernamePresence username={presence.username} today={presence.today} timeZone={presence.timeZone} />
-					) : null}
+					{/* One queue for the top-left corner: whatever is pinned there sits
+					    beside — or under, on a narrow screen — whatever came first. */}
+					<div className={styles.cornerStack}>
+						{inDemo ? <ExitDemoLink /> : presence ? (
+							presence.kind === "guest"
+								? <GuestUsernamePresence onRequestAccess={presence.onRequestAccess} />
+								: presence.kind === "remote"
+									? <RemoteUsernamePresence today={presence.today} timeZone={presence.timeZone} />
+									: <UsernamePresence username={presence.username} today={presence.today} timeZone={presence.timeZone} />
+						) : null}
+						{cornerAction}
+					</div>
 					<AppNavigation {...navigation} />
 				</>
 			) : null}
@@ -116,11 +134,11 @@ export function AppChromeProvider({ children }: { children: ReactNode }) {
 /** Publishes this page's chrome. Every page frame calls it, so nothing goes stale. */
 export function useAppChrome(slots: AppChromeSlots) {
 	const publish = useContext(AppChromeContext);
-	const { accountControl, onLockedFriendsClick, onLockedPetClick, wallet, presence } = slots;
+	const { accountControl, onLockedFriendsClick, onLockedPetClick, wallet, presence, cornerAction } = slots;
 
 	// Slot objects are rebuilt on every render, so the publisher — not a
 	// dependency list — is what decides whether anything actually changed.
 	useEffect(() => {
-		publish?.({ accountControl, onLockedFriendsClick, onLockedPetClick, wallet, presence });
+		publish?.({ accountControl, onLockedFriendsClick, onLockedPetClick, wallet, presence, cornerAction });
 	});
 }

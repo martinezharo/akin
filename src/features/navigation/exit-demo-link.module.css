@@ -1,0 +1,37 @@
+/* Takes the username badge's place in the corner stack, and its sticker slab. */
+.exit {
+	display: flex;
+	max-width: 14rem;
+	align-items: center;
+	gap: 0.34rem;
+	padding: 0.48rem 0.72rem 0.48rem 0.58rem;
+	border: 1px solid color-mix(in srgb, var(--line) 86%, transparent);
+	border-radius: 0.5rem 1rem 1rem 1rem;
+	background: color-mix(in srgb, var(--background) 88%, transparent);
+	box-shadow: 0 0.55rem 1.8rem rgb(27 29 23 / 9%), inset 0 1px 0 rgb(255 255 255 / 36%);
+	backdrop-filter: blur(16px) saturate(1.3);
+	color: var(--foreground);
+	transform: rotate(-1.5deg);
+	transition: transform var(--motion-spring), box-shadow var(--motion-standard);
+}
+
+.exit svg { width: 0.92rem; color: var(--accent); stroke-width: 2.8; }
+.exit strong { overflow: hidden; font-size: var(--text-md); font-weight: var(--weight-black); text-overflow: ellipsis; white-space: nowrap; }
+
+/* The arrow leans out of the badge on hover, towards the way back. */
+.exit:hover { box-shadow: 0 0.7rem 2rem rgb(27 29 23 / 13%), inset 0 1px 0 rgb(255 255 255 / 36%); transform: translateY(-1px) rotate(-2.5deg); }
+.exit:hover svg { transform: translateX(-0.14rem); }
+.exit:active { transform: scale(0.95) rotate(-1.5deg); }
+.exit:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+.exit svg { transition: transform var(--motion-spring); }
+
+@media (prefers-reduced-motion: reduce) {
+	.exit,
+	.exit svg { transition: none; }
+
+	.exit:hover,
+	.exit:active { transform: rotate(-1.5deg); }
+
+	.exit:hover svg { transform: none; }
+}

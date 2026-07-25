@@ -78,13 +78,10 @@
 	gap: 0.42rem;
 }
 
+/* Positioned by the chrome's top-left corner stack, not by itself. */
 .usernameBadge {
-	position: fixed;
-	z-index: 40;
-	top: max(0.85rem, env(safe-area-inset-top));
-	left: max(0.85rem, env(safe-area-inset-left));
 	display: flex;
-	max-width: min(14rem, calc(100vw - 1.7rem));
+	max-width: 14rem;
 	align-items: center;
 	gap: 0.34rem;
 	padding: 0.48rem 0.72rem 0.48rem 0.58rem;

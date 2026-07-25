@@ -108,23 +108,19 @@ export function PetStudio({
 			accountControl={isDemo ? undefined : isAuthenticated ? <AccountDock /> : <GuestAccountButton onClick={() => setAuthOpen(true)} />}
 			wallet={{ kind: "account", balance: coins, xp: xp }}
 			presence={isAuthenticated && !isDemo ? { kind: "remote", today, timeZone } : undefined}
-			backdrop={(
-				<>
-					<div className={styles.ambient} aria-hidden="true"><span /><span /></div>
-					{hasChanges ? (
-						<button
-							className={styles.apply}
-							type="button"
-							onClick={() => void applyLook()}
-							disabled={Boolean(pendingId)}
-							data-purchase={skinChanged && !skinIsOwned || undefined}
-						>
-							{skinChanged && !skinIsOwned ? <Coins aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
-							<span>{actionLabel}</span>
-						</button>
-					) : null}
-				</>
-			)}
+			cornerAction={hasChanges ? (
+				<button
+					className={styles.apply}
+					type="button"
+					onClick={() => void applyLook()}
+					disabled={Boolean(pendingId)}
+					data-purchase={skinChanged && !skinIsOwned || undefined}
+				>
+					{skinChanged && !skinIsOwned ? <Coins aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
+					<span>{actionLabel}</span>
+				</button>
+			) : null}
+			backdrop={<div className={styles.ambient} aria-hidden="true"><span /><span /></div>}
 			overlay={(
 				<>
 					{notice ? <div className={styles.notice} role="status"><Check aria-hidden="true" /> {notice}</div> : null}
