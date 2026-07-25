@@ -1,12 +1,61 @@
 "use client";
 
 import { Check, Clock3, Sparkles, UserPlus, X } from "lucide-react";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useState } from "react";
 import { getPetHair, getPetSkin } from "@/domain/pet/pet-catalog";
 import { ui } from "@/i18n/en";
 import { AkinMascotArtwork } from "@/shared/ui/akin-mascot-artwork";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import type { Friend, FriendContext, FriendshipActions } from "../model/friend-types";
 import styles from "../friends-page.module.css";
+
+function CancelRequestAction({
+	friend,
+	actions,
+	pending,
+}: {
+	friend: Friend;
+	actions: FriendshipActions;
+	pending: boolean;
+}) {
+	const [isConfirming, setIsConfirming] = useState(false);
+
+	return (
+		<>
+			<button
+				type="button"
+				className={styles.requested}
+				disabled={pending}
+				onClick={() => setIsConfirming(true)}
+			>
+				<Clock3 aria-hidden="true" /><span>{ui.friends.requested}</span>
+			</button>
+			{isConfirming ? (
+				<ConfirmDialog
+					danger
+					kicker={ui.friends.cancelRequestKicker}
+					title={ui.friends.cancelRequestTitle(friend.username)}
+					copy={ui.friends.cancelRequestCopy}
+					icon={<Clock3 aria-hidden="true" />}
+					confirmLabel={
+						<>
+							<X aria-hidden="true" />
+							{ui.friends.cancelRequestConfirm}
+						</>
+					}
+					dismissLabel={ui.friends.cancelRequestDismiss}
+					closeLabel={ui.friends.cancelRequestClose}
+					pending={pending}
+					onConfirm={() => {
+						setIsConfirming(false);
+						actions.cancel(friend.id);
+					}}
+					onDismiss={() => setIsConfirming(false)}
+				/>
+			) : null}
+		</>
+	);
+}
 
 function FriendAction({
 	friend,
@@ -44,11 +93,7 @@ function FriendAction({
 	}
 
 	if (context === "outgoing" || friend.relationship === "outgoing") {
-		return (
-			<button type="button" className={styles.requested} disabled={pending} onClick={() => actions.cancel(friend.id)}>
-				<Clock3 aria-hidden="true" /><span>{ui.friends.requested}</span>
-			</button>
-		);
+		return <CancelRequestAction friend={friend} actions={actions} pending={pending} />;
 	}
 
 	return (
