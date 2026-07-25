@@ -1,3 +1,4 @@
+import { MAX_REVIEW_GAP_DAYS } from "@/domain/streaks/review-window";
 import { APP_LOCALE } from "@/i18n/config";
 
 export type LocalDateKey = `${number}-${number}-${number}`;
@@ -31,12 +32,22 @@ export function addLocalDays(dateKey: LocalDateKey, amount: number): LocalDateKe
 	return getLocalDateKey(date);
 }
 
+/**
+ * Days between the last review and today, oldest first.
+ *
+ * The walk is capped at `MAX_REVIEW_GAP_DAYS`: `lastReviewedOn` comes from
+ * storage and an ancient value would otherwise spin for thousands of iterations
+ * and feed an equally large review flow. When the cap bites, the most recent
+ * days are the ones kept, since those are the ones the user can still recall.
+ */
 export function getUnreviewedDays(
 	lastReviewedOn: LocalDateKey,
 	today: LocalDateKey,
 ): LocalDateKey[] {
+	const earliestDay = addLocalDays(today, -MAX_REVIEW_GAP_DAYS);
 	const days: LocalDateKey[] = [];
 	let day = addLocalDays(lastReviewedOn, 1);
+	if (day < earliestDay) day = earliestDay;
 
 	while (day < today) {
 		days.push(day);

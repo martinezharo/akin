@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { MAX_REVIEW_GAP_DAYS } from "@/domain/streaks/review-window";
 import {
 	addLocalDays,
 	chunkLocalDates,
@@ -9,6 +10,22 @@ import {
 } from "./calendar";
 
 describe("streak calendar", () => {
+	it("caps an implausibly old review date instead of walking every day", () => {
+		const days = getUnreviewedDays("2000-01-01", "2026-07-23");
+
+		expect(days).toHaveLength(MAX_REVIEW_GAP_DAYS);
+		// The days kept are the most recent ones, ending the day before today.
+		expect(days.at(-1)).toBe("2026-07-22");
+		expect(days[0]).toBe(addLocalDays("2026-07-23", -MAX_REVIEW_GAP_DAYS));
+	});
+
+	it("leaves a gap inside the cap untouched", () => {
+		expect(getUnreviewedDays("2026-07-20", "2026-07-23")).toEqual([
+			"2026-07-21",
+			"2026-07-22",
+		]);
+	});
+
 	it("splits long review gaps without losing or duplicating days", () => {
 		const days = Array.from(
 			{ length: 401 },
