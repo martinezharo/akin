@@ -13,7 +13,11 @@ import styles from "./streak-review.module.css";
 type ReviewFlowProps = {
 	days: LocalDateKey[];
 	streaks: Streak[];
-	onResolveDay: (day: LocalDateKey, answers: ReviewAnswers) => void;
+	onResolveDay: (
+		day: LocalDateKey,
+		answers: ReviewAnswers,
+		options: { isFinalDay: boolean },
+	) => void;
 	onResolveGap: (days: LocalDateKey[], answers: ReviewAnswers) => void;
 	isCompletedOn: (streakId: string, day: LocalDateKey) => boolean;
 };
@@ -210,7 +214,9 @@ export function StreakReviewFlow({
 					page={initialDayCount - days.length + 1}
 					total={initialDayCount}
 					titleId={titleId}
-					onSubmit={(answers) => onResolveDay(day, answers)}
+					onSubmit={(answers) =>
+						onResolveDay(day, answers, { isFinalDay: days.length === 1 })
+					}
 				/>
 			)}
 		</ModalDialog>

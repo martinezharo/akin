@@ -12,7 +12,13 @@ import {
 	assertLocalDate,
 	assertLocalDates,
 } from "./lib/dates";
-import { findOwnedStreak, hasCheckIn, isRewardEligible, listActiveStreaks } from "./lib/streaks";
+import {
+	findOwnedStreak,
+	hasCheckIn,
+	isRewardEligible,
+	listActiveStreaks,
+	loadCheckInIndex,
+} from "./lib/streaks";
 import {
 	createUndoRecord,
 	type LegacyUndoSnapshot,
@@ -123,6 +129,7 @@ export const resolveDay = mutation({
 			throw new ConvexError({ code: "INVALID_REVIEW_DAY", message: "Review day is out of sequence" });
 		}
 		const answers = new Map(args.answers.map((item) => [item.streakId, item.completed]));
+		const checkedIn = await loadCheckInIndex(ctx, user._id, args.day, args.day);
 		const snapshot = await baseUndoSnapshot();
 		snapshot.profile = {
 			profileId: profile._id,
@@ -132,7 +139,7 @@ export const resolveDay = mutation({
 		let coinsAwarded = 0;
 
 		for (const streak of streaks) {
-			if (streak.createdOn > args.day || (await hasCheckIn(ctx, user._id, streak._id, args.day))) continue;
+			if (streak.createdOn > args.day || checkedIn.has(streak._id, args.day)) continue;
 			if (answers.get(streak.clientId) === true) {
 				snapshot.streaks.push({
 					streakId: streak._id,
@@ -144,7 +151,8 @@ export const resolveDay = mutation({
 					streakId: streak._id,
 					localDate: args.day,
 					source: "review",
-					awardCoin: isRewardEligible(streak),
+					awardCoin:
+						isRewardEligible(streak) && canRewardCompletion(streak.createdOn, args.day),
 				});
 				snapshot.checkInIds.push(created.checkInId);
 				if (created.ledgerId) {
@@ -216,6 +224,7 @@ export const resolveGap = mutation({
 			);
 		}
 		const answers = new Map(args.answers.map((item) => [item.streakId, item.completed]));
+		const checkedIn = await loadCheckInIndex(ctx, user._id, args.days[0]!, lastBatchDay);
 		const snapshot = await baseUndoSnapshot();
 		snapshot.profile = {
 			profileId: profile._id,
@@ -225,12 +234,9 @@ export const resolveGap = mutation({
 		let coinsAwarded = 0;
 
 		for (const streak of streaks) {
-			const unresolvedDays: string[] = [];
-			for (const day of args.days) {
-				if (streak.createdOn <= day && !(await hasCheckIn(ctx, user._id, streak._id, day))) {
-					unresolvedDays.push(day);
-				}
-			}
+			const unresolvedDays = args.days.filter(
+				(day) => streak.createdOn <= day && !checkedIn.has(streak._id, day),
+			);
 			if (unresolvedDays.length === 0) continue;
 			if (answers.get(streak.clientId) === true) {
 				snapshot.streaks.push({
@@ -242,6 +248,7 @@ export const resolveGap = mutation({
 				for (const day of unresolvedDays) {
 					const canAward =
 						isRewardEligible(streak) &&
+						canRewardCompletion(streak.createdOn, day) &&
 						streakCoins < rewardedDayLimit(args.days.length);
 					const created = await createCheckIn(ctx, {
 						userId: user._id,

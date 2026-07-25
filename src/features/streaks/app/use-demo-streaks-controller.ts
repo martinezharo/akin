@@ -27,7 +27,7 @@ function coinsForDay(
 	return controller.streaks.filter(
 		(streak) =>
 			eligibleIds.has(streak.id) &&
-			streak.createdOn <= day &&
+			canRewardCompletion(streak.createdOn, day) &&
 			answers[streak.id] === true &&
 			!controller.isCompletedOn(streak.id, day),
 	).length;
@@ -42,9 +42,10 @@ function coinsForGap(
 	const perStreakLimit = rewardedDayLimit(days.length);
 	return controller.streaks.reduce((total, streak) => {
 		if (!eligibleIds.has(streak.id) || answers[streak.id] !== true) return total;
+		// The creation day still advances the counter, it just never pays.
 		const unresolvedDays = days.filter(
 			(day) =>
-				streak.createdOn <= day &&
+				canRewardCompletion(streak.createdOn, day) &&
 				!controller.isCompletedOn(streak.id, day),
 		).length;
 		return total + Math.min(unresolvedDays, perStreakLimit);
@@ -142,12 +143,12 @@ export function useDemoStreaksController(base: StreaksController) {
 				showCoinReward(1, streakId);
 			}
 		},
-		resolveDay: (day, answers) => {
+		resolveDay: (day, answers, options) => {
 			rememberReviewUndo();
 			const reward = coinsForDay(base, eligibleIds(), day, answers);
-			base.resolveDay(day, answers);
+			base.resolveDay(day, answers, options);
 			awardCoins(reward);
-			collectReviewReward(reward, { isFinalDay: base.unreviewedDays.length === 1 });
+			collectReviewReward(reward, options);
 		},
 		resolveGap: (days, answers) => {
 			rememberReviewUndo();

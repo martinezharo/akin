@@ -10,11 +10,8 @@ import {
 	getStreakIconOptions,
 	type StreakIconValue,
 } from "../components/icon-picker/streak-icons";
-import {
-	getUnreviewedDays,
-	type LocalDateKey,
-} from "../model/calendar";
-import { hasStreakCheckIn, type StreakCheckIn } from "../model/check-in";
+import type { LocalDateKey } from "../model/calendar";
+import type { StreakCheckIn } from "../model/check-in";
 import type { ReviewAnswers } from "../model/progress";
 import { createStreak, type Streak } from "../model/streak";
 import {
@@ -26,8 +23,18 @@ import { useCoinRewardFeed } from "@/features/rewards/use-coin-reward-feed";
 import type { StreaksController, UndoToast } from "./use-streaks-controller";
 import { resolveReviewGapInBatches } from "./review-gap-batches";
 import { importLocalDataInBatches } from "./local-import";
+import { useStreakDerivations } from "./use-streak-derivations";
+import {
+	completeTodayOptimistically,
+	patchDashboardStreak,
+	removeStreakOptimistically,
+} from "./dashboard-optimistic";
 
 type RemoteUndo = UndoToast & { undoId: Id<"undoRecords"> };
+
+// Stable identities, so the derivations keep their memo while the dashboard loads.
+const EMPTY_STREAKS: Streak[] = [];
+const EMPTY_CHECK_INS: StreakCheckIn[] = [];
 
 function answersForServer(answers: ReviewAnswers) {
 	return Object.entries(answers).map(([streakId, completed]) => ({ streakId, completed }));
@@ -46,11 +53,26 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 	const finishLocalImport = useMutation(api.users.finishLocalImport);
 	const createRemote = useMutation(api.streaks.create);
 	const rememberRemoteIcon = useMutation(api.streaks.rememberIcon);
-	const updateRemoteIcon = useMutation(api.streaks.updateIcon);
-	const renameRemote = useMutation(api.streaks.rename);
-	const adjustRemoteDays = useMutation(api.streaks.adjustDays);
-	const removeRemote = useMutation(api.streaks.remove);
-	const completeRemoteToday = useMutation(api.progress.completeToday);
+	// Every edit below is a field the user is looking at while they change it, so
+	// each one paints locally first and lets Convex reconcile the server's answer.
+	const updateRemoteIcon = useMutation(api.streaks.updateIcon).withOptimisticUpdate(
+		(localStore, { streakId, icon }) =>
+			patchDashboardStreak(localStore, streakId, (streak) => ({ ...streak, icon })),
+	);
+	const renameRemote = useMutation(api.streaks.rename).withOptimisticUpdate(
+		(localStore, { streakId, name }) =>
+			patchDashboardStreak(localStore, streakId, (streak) => ({ ...streak, name })),
+	);
+	const adjustRemoteDays = useMutation(api.streaks.adjustDays).withOptimisticUpdate(
+		(localStore, { streakId, days }) =>
+			patchDashboardStreak(localStore, streakId, (streak) => ({ ...streak, days })),
+	);
+	const removeRemote = useMutation(api.streaks.remove).withOptimisticUpdate(
+		removeStreakOptimistically,
+	);
+	const completeRemoteToday = useMutation(api.progress.completeToday).withOptimisticUpdate(
+		completeTodayOptimistically,
+	);
 	const resolveRemoteDay = useMutation(api.progress.resolveDay);
 	const resolveRemoteGap = useMutation(api.progress.resolveGap);
 	const undoRemote = useMutation(api.progress.undo);
@@ -110,15 +132,13 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 		};
 	}, [dashboard]);
 
-	const unreviewedDays = data
-		? getUnreviewedDays(data.lastReviewedOn, today).filter((day) =>
-				data.streaks.some(
-					(streak) =>
-						streak.createdOn <= day && !hasStreakCheckIn(data.checkIns, streak.id, day),
-				),
-			)
-		: [];
-	const hasPendingReview = Boolean(data?.streaks.length && unreviewedDays.length);
+	const { checkInIndex, unreviewedDays, hasPendingReview, completedTodayStreakIds } =
+		useStreakDerivations({
+			streaks: data?.streaks ?? EMPTY_STREAKS,
+			checkIns: data?.checkIns ?? EMPTY_CHECK_INS,
+			lastReviewedOn: data?.lastReviewedOn ?? today,
+			today,
+		});
 
 	useEffect(() => {
 		if (!dashboard || hasPendingReview || !reviewUndoRef.current) return;
@@ -132,12 +152,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 		return reviewSessionRef.current;
 	}
 
-	const streaks = data?.streaks ?? [];
-	const completedTodayStreakIds = data
-		? streaks.flatMap((streak) =>
-				hasStreakCheckIn(data.checkIns, streak.id, today) ? [streak.id] : [],
-			)
-		: [];
+	const streaks = data?.streaks ?? EMPTY_STREAKS;
 
 	const controller: StreaksController = {
 		today,
@@ -187,9 +202,8 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 				})
 				.catch(report);
 		},
-		isCompletedOn: (streakId, day) =>
-			Boolean(data && hasStreakCheckIn(data.checkIns, streakId, day)),
-		resolveDay: (day, answers) => {
+		isCompletedOn: (streakId, day) => checkInIndex.has(streakId, day),
+		resolveDay: (day, answers, { isFinalDay }) => {
 			setUndoToast(null);
 			void resolveRemoteDay({
 				day,
@@ -198,9 +212,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 				reviewSessionId: reviewSessionId(),
 			})
 				.then((result) => {
-					collectReviewReward(result.coinsAwarded, {
-						isFinalDay: unreviewedDays.length === 1,
-					});
+					collectReviewReward(result.coinsAwarded, { isFinalDay });
 					toastKeyRef.current += 1;
 					const reviewUndo: RemoteUndo = {
 						key: toastKeyRef.current,
@@ -208,7 +220,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 						name: null,
 						undoId: result.undoId,
 					};
-					if (unreviewedDays.length === 1) {
+					if (isFinalDay) {
 						setUndoToast(reviewUndo);
 						reviewUndoRef.current = null;
 						reviewSessionRef.current = null;

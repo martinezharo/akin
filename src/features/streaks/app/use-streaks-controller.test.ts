@@ -121,20 +121,22 @@ describe("streaks controller undo", () => {
 		expect(result.current.unreviewedDays).toHaveLength(2);
 
 		act(() =>
-			result.current.resolveDay(addLocalDays(today, -2), {
-				read: true,
-				move: false,
-			}),
+			result.current.resolveDay(
+				addLocalDays(today, -2),
+				{ read: true, move: false },
+				{ isFinalDay: false },
+			),
 		);
 		// One day is still pending, so the toast must not appear yet.
 		expect(result.current.hasPendingReview).toBe(true);
 		expect(result.current.undoToast).toBeNull();
 
 		act(() =>
-			result.current.resolveDay(addLocalDays(today, -1), {
-				read: true,
-				move: true,
-			}),
+			result.current.resolveDay(
+				addLocalDays(today, -1),
+				{ read: true, move: true },
+				{ isFinalDay: true },
+			),
 		);
 		expect(result.current.hasPendingReview).toBe(false);
 		expect(result.current.undoToast).toMatchObject({ kind: "review", name: null });

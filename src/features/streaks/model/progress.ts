@@ -1,6 +1,7 @@
 import type { StreaksData } from "../persistence/storage";
 import type { LocalDateKey } from "./calendar";
 import {
+	createCheckInIndex,
 	createStreakCheckIn,
 	hasStreakCheckIn,
 } from "./check-in";
@@ -37,25 +38,22 @@ export function resolveSingleDay(
 	day: LocalDateKey,
 	answers: ReviewAnswers,
 ): StreaksData {
-	const newCheckIns = data.streaks.flatMap((streak) => {
-		if (
-			streak.createdOn > day ||
-			!answers[streak.id] ||
-			hasStreakCheckIn(data.checkIns, streak.id, day)
-		) {
-			return [];
-		}
+	const checkedIn = createCheckInIndex(data.checkIns);
+	const isUnresolved = (streak: StreaksData["streaks"][number]) =>
+		streak.createdOn <= day && !checkedIn.has(streak.id, day);
 
-		return [createStreakCheckIn(streak.id, day)];
-	});
+	const newCheckIns = data.streaks.flatMap((streak) =>
+		isUnresolved(streak) && answers[streak.id]
+			? [createStreakCheckIn(streak.id, day)]
+			: [],
+	);
 
 	return {
 		...data,
 		checkIns: [...data.checkIns, ...newCheckIns],
 		lastReviewedOn: day,
 		streaks: data.streaks.map((streak) => {
-			if (streak.createdOn > day) return streak;
-			if (hasStreakCheckIn(data.checkIns, streak.id, day)) return streak;
+			if (!isUnresolved(streak)) return streak;
 
 			return {
 				...streak,
@@ -72,31 +70,35 @@ export function resolveGap(
 ): StreaksData {
 	const lastDay = days.at(-1);
 	if (!lastDay) return data;
-	const newCheckIns = data.streaks.flatMap((streak) => {
-		if (!answers[streak.id]) return [];
 
-		return days.flatMap((day) =>
-			streak.createdOn <= day &&
-			!hasStreakCheckIn(data.checkIns, streak.id, day)
-				? [createStreakCheckIn(streak.id, day)]
-				: [],
-		);
-	});
+	const checkedIn = createCheckInIndex(data.checkIns);
+	// Each streak's unresolved days are needed twice — to mint the check-ins and
+	// to advance the counter — so the walk over days happens once per streak.
+	const unresolvedDaysByStreak = new Map(
+		data.streaks.map((streak) => [
+			streak.id,
+			days.filter(
+				(day) => streak.createdOn <= day && !checkedIn.has(streak.id, day),
+			),
+		]),
+	);
+
+	const newCheckIns = data.streaks.flatMap((streak) =>
+		answers[streak.id]
+			? (unresolvedDaysByStreak.get(streak.id) ?? []).map((day) =>
+					createStreakCheckIn(streak.id, day),
+				)
+			: [],
+	);
 
 	return {
 		...data,
 		checkIns: [...data.checkIns, ...newCheckIns],
 		lastReviewedOn: lastDay,
 		streaks: data.streaks.map((streak) => {
-			const unresolvedEligibleDayCount = days.reduce(
-				(count, day) =>
-					count +
-					Number(
-						streak.createdOn <= day &&
-							!hasStreakCheckIn(data.checkIns, streak.id, day),
-					),
-				0,
-			);
+			const unresolvedEligibleDayCount = (
+				unresolvedDaysByStreak.get(streak.id) ?? []
+			).length;
 			if (unresolvedEligibleDayCount === 0) return streak;
 
 			return {

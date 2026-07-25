@@ -8,8 +8,8 @@ import {
 	type StreakIconOption,
 	type StreakIconValue,
 } from "../components/icon-picker/streak-icons";
-import { addLocalDays, getUnreviewedDays, type LocalDateKey } from "../model/calendar";
-import { hasStreakCheckIn } from "../model/check-in";
+import { addLocalDays, type LocalDateKey } from "../model/calendar";
+import { useStreakDerivations } from "./use-streak-derivations";
 import {
 	completeStreakOn,
 	resolveGap,
@@ -62,7 +62,16 @@ export type StreaksController = {
 	remove: (streakId: string) => void;
 	completeToday: (streakId: string) => void;
 	isCompletedOn: (streakId: string, day: LocalDateKey) => boolean;
-	resolveDay: (day: LocalDateKey, answers: ReviewAnswers) => void;
+	/**
+	 * `isFinalDay` comes from the review flow, which owns the sequence of cards.
+	 * Re-deriving it from the controller's own day list would race the reactive
+	 * refresh that the day just resolved is about to trigger.
+	 */
+	resolveDay: (
+		day: LocalDateKey,
+		answers: ReviewAnswers,
+		options: { isFinalDay: boolean },
+	) => void;
 	resolveGap: (days: LocalDateKey[], answers: ReviewAnswers) => void;
 	undo: () => void;
 	dismissUndo: () => void;
@@ -99,17 +108,13 @@ export function useStreaksController({
 		saveStreaksData(storageKey, data);
 	}, [data, storageKey]);
 
-	const unreviewedDays = getUnreviewedDays(data.lastReviewedOn, today).filter((day) =>
-		data.streaks.some(
-			(streak) =>
-				streak.createdOn <= day &&
-				!hasStreakCheckIn(data.checkIns, streak.id, day),
-		),
-	);
-	const hasPendingReview = data.streaks.length > 0 && unreviewedDays.length > 0;
-	const completedTodayStreakIds = data.streaks.flatMap((streak) =>
-		hasStreakCheckIn(data.checkIns, streak.id, today) ? [streak.id] : [],
-	);
+	const { checkInIndex, unreviewedDays, hasPendingReview, completedTodayStreakIds } =
+		useStreakDerivations({
+			streaks: data.streaks,
+			checkIns: data.checkIns,
+			lastReviewedOn: data.lastReviewedOn,
+			today,
+		});
 
 	const openUndoToast = useCallback(
 		(toast: Omit<UndoToast, "key">, snapshot: StreaksData) => {
@@ -223,13 +228,14 @@ export function useStreaksController({
 		},
 		completeToday: (streakId) => {
 			const streak = data.streaks.find((candidate) => candidate.id === streakId);
-			if (!streak || hasStreakCheckIn(data.checkIns, streakId, today)) return;
+			if (!streak || checkInIndex.has(streakId, today)) return;
 
 			openUndoToast({ kind: "today", name: streak.name }, data);
 			setData((currentData) => completeStreakOn(currentData, streakId, today));
 		},
-		isCompletedOn: (streakId, day) =>
-			hasStreakCheckIn(data.checkIns, streakId, day),
+		isCompletedOn: (streakId, day) => checkInIndex.has(streakId, day),
+		// The local controller replays the whole session from one snapshot, so it
+		// has no use for `isFinalDay`; the toast is driven by `hasPendingReview`.
 		resolveDay: (day, answers) => {
 			captureReviewSnapshot();
 			setData((currentData) => resolveSingleDay(currentData, day, answers));

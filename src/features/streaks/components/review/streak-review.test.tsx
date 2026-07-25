@@ -50,7 +50,7 @@ describe("streak review", () => {
 
 		await user.click(screen.getByRole("checkbox", { name: "Did you complete Read?" }));
 		await user.click(screen.getByRole("button", { name: "All caught up" }));
-		expect(onResolveDay).toHaveBeenCalledWith("2026-07-15", { read: true });
+		expect(onResolveDay).toHaveBeenCalledWith("2026-07-15", { read: true }, { isFinalDay: true });
 	});
 
 	it("treats unchecked streaks as not completed", async () => {
@@ -67,7 +67,7 @@ describe("streak review", () => {
 		);
 
 		await user.click(await screen.findByRole("button", { name: "All caught up" }));
-		expect(onResolveDay).toHaveBeenCalledWith("2026-07-15", { read: false });
+		expect(onResolveDay).toHaveBeenCalledWith("2026-07-15", { read: false }, { isFinalDay: true });
 	});
 
 	it("reuses the checklist for gap reviews", async () => {

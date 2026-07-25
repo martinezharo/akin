@@ -1,6 +1,7 @@
 import { ConvexError } from "convex/values";
 import type { Id } from "../_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
+import { CheckInIndex } from "./app_rules";
 
 export { MAX_REWARD_STREAKS } from "./app_rules";
 
@@ -71,4 +72,28 @@ export async function hasCheckIn(
 				.eq("localDate", localDate),
 		)
 		.unique();
+}
+
+/**
+ * Loads every check-in in an inclusive day range as a constant-time lookup.
+ *
+ * Resolving a review asks about each streak on each day. Querying that one pair
+ * at a time costs `streaks × days` sequential round trips inside a single
+ * transaction; the `by_user_date` index answers the whole question in one scan.
+ */
+export async function loadCheckInIndex(
+	ctx: QueryCtx | MutationCtx,
+	userId: string,
+	fromDate: string,
+	toDate: string,
+): Promise<CheckInIndex> {
+	const checkIns = await ctx.db
+		.query("checkIns")
+		.withIndex("by_user_date", (query) =>
+			query.eq("userId", userId).gte("localDate", fromDate).lte("localDate", toDate),
+		)
+		.collect();
+	return new CheckInIndex(
+		checkIns.map((checkIn) => [checkIn.streakId, checkIn.localDate] as const),
+	);
 }

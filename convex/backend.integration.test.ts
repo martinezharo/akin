@@ -205,6 +205,33 @@ describe("critical Convex account flows", () => {
 		expect(state.checkIns).toHaveLength(401);
 	});
 
+	it("never pays for the day a streak was created, review or not", async () => {
+		const t = convexTest(schema, modules);
+		betterAuthTest.register(t);
+		const { user, asUser } = await createAuthenticatedTestUser(t, "Birthday");
+		const createdOn = addLocalDays(TODAY, -2);
+		await createReadyAccount(t, user._id, addLocalDays(createdOn, -1));
+		await createStreak(t, user._id, "birthday-streak", createdOn);
+
+		// The creation day itself, resolved through the review flow.
+		const creationDay = await asUser.mutation(api.progress.resolveDay, {
+			day: createdOn,
+			today: TODAY,
+			answers: [{ streakId: "birthday-streak", completed: true }],
+			reviewSessionId: "birthday-session",
+		});
+		// The day after, which is a genuinely kept promise.
+		const nextDay = await asUser.mutation(api.progress.resolveDay, {
+			day: addLocalDays(createdOn, 1),
+			today: TODAY,
+			answers: [{ streakId: "birthday-streak", completed: true }],
+			reviewSessionId: "birthday-session",
+		});
+
+		expect(creationDay.coinsAwarded).toBe(0);
+		expect(nextDay.coinsAwarded).toBe(1);
+	});
+
 	it("purges undo records once their window has passed", async () => {
 		const t = convexTest(schema, modules);
 		betterAuthTest.register(t);
