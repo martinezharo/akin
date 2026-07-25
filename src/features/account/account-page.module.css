@@ -112,7 +112,7 @@
 	background: var(--background);
 	box-shadow: 0 2rem 6rem rgb(0 0 0 / 18%);
 }
-.authMark { display: grid; width: 3.25rem; height: 3.25rem; place-items: center; margin-bottom: 1.2rem; border-radius: var(--radius-tail-md); background: var(--accent); box-shadow: 0.3rem 0.32rem 0 var(--selection); color: #fff; transform: rotate(-4deg); }
+.authMark { display: grid; width: 3.25rem; height: 3.25rem; place-items: center; margin-bottom: 1.2rem; border-radius: var(--radius-tail-md); background: var(--accent); box-shadow: 0.3rem 0.32rem 0 var(--selection); color: var(--accent-ink); transform: rotate(-4deg); }
 .authMark svg { width: 1.5rem; }
 .authCard h1 { max-width: 19rem; margin: 0; font-size: clamp(1.85rem, 8vw, 2.6rem); letter-spacing: -0.055em; line-height: 0.98; }
 .authCopy { margin: 0.9rem 0 1.35rem; color: var(--muted); font-size: var(--text-lg); font-weight: var(--weight-body); line-height: 1.5; }
@@ -123,7 +123,7 @@
 .githubSubmit:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
 .githubSubmit strong { font-size: var(--text-md); font-weight: var(--weight-black); }
 .githubSubmit > svg { width: 1.1rem; }
-.githubBadge { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border-radius: var(--radius-tail-sm); background: var(--accent); color: #fff; transform: rotate(-3deg); }
+.githubBadge { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border-radius: var(--radius-tail-sm); background: var(--accent); color: var(--accent-ink); transform: rotate(-3deg); }
 .githubBadge svg { width: 1.2rem; }
 .authFootnote { margin: 0.65rem 0 0; color: var(--muted); font-size: var(--text-sm); font-weight: var(--weight-body); text-align: center; }
 
