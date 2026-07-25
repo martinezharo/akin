@@ -5,10 +5,18 @@ export type Friend = {
 	username: string;
 	petSkin: string;
 	petHair: string;
+	/** Lifetime XP — kept for profile surfaces; the crew board ranks weekly. */
 	xp: number;
+	/** XP earned inside the rolling week, the number the crew is compared on. */
+	weeklyXp: number;
 	relationship?: FriendRelationship;
 	requestId?: string | null;
 };
+
+/** The crew board is a weekly contest, so it sorts on the week's XP. */
+export function byWeeklyXp(a: Friend, b: Friend) {
+	return b.weeklyXp - a.weeklyXp || a.username.localeCompare(b.username);
+}
 
 /** Where a card is being rendered — it decides which action the card offers. */
 export type FriendContext = "search" | "friends" | "incoming" | "outgoing";

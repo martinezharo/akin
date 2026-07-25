@@ -1,5 +1,12 @@
 export const MAX_REWARD_STREAKS = 10;
 
+/**
+ * How many local days the friends board compares over. A rolling week — today
+ * plus the six days before it — keeps the crew board about current effort: a
+ * lifetime total freezes the order and tells newcomers they already lost.
+ */
+export const WEEKLY_XP_WINDOW_DAYS = 7;
+
 /** Coins a single streak can earn while resolving one review gap. */
 export const MAX_REWARD_DAYS_PER_GAP = 3;
 

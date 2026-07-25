@@ -81,6 +81,7 @@ export default defineSchema({
 		createdAt: v.number(),
 	})
 		.index("by_user", ["userId"])
+		.index("by_user_and_local_date", ["userId", "localDate"])
 		.index("by_check_in", ["checkInId"]),
 
 	undoRecords: defineTable({

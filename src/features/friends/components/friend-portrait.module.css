@@ -1,0 +1,26 @@
+/* The pet bubble every friend surface shares. Size is driven by
+ * `--portrait-size` so each layout can scale it without redefining the shape. */
+.portrait {
+	--akin-skin-color: var(--friend-skin);
+	--akin-hair-color: var(--friend-hair);
+	position: relative;
+	display: block;
+	width: var(--portrait-size, 3.55rem);
+	aspect-ratio: 1;
+	overflow: hidden;
+	border: 0.13rem solid var(--background);
+	border-radius: 45% 55% 52% 48% / 58% 43% 57% 42%;
+	background: linear-gradient(145deg, color-mix(in srgb, var(--friend-hair) 55%, white), var(--friend-skin));
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--friend-skin) 58%, var(--line)),
+		0 0.5rem 1rem color-mix(in srgb, var(--friend-skin) 20%, transparent);
+}
+
+.pet {
+	position: absolute;
+	top: 8%;
+	left: -3%;
+	width: 106%;
+	height: 106%;
+	transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}

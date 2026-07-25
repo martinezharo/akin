@@ -1,12 +1,11 @@
 "use client";
 
-import { Check, Clock3, Sparkles, UserPlus, X } from "lucide-react";
-import { type CSSProperties, useState } from "react";
-import { getPetHair, getPetSkin } from "@/domain/pet/pet-catalog";
+import { Check, Clock3, Sparkles, UserPlus, UsersRound, X } from "lucide-react";
+import { useState } from "react";
 import { ui } from "@/i18n/en";
-import { AkinMascotArtwork } from "@/shared/ui/akin-mascot-artwork";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import type { Friend, FriendContext, FriendshipActions } from "../model/friend-types";
+import { FriendPortrait } from "./friend-portrait";
 import styles from "../friends-page.module.css";
 
 function CancelRequestAction({
@@ -68,9 +67,11 @@ function FriendAction({
 	actions: FriendshipActions;
 	pending: boolean;
 }) {
-	if (context === "incoming" || friend.relationship === "incoming") {
+	const relationship = context === "search" ? friend.relationship : context;
+
+	if (relationship === "incoming") {
 		return (
-			<div className={styles.requestActions}>
+			<div className={styles.rowActions}>
 				<button
 					type="button"
 					className={styles.accept}
@@ -92,8 +93,18 @@ function FriendAction({
 		);
 	}
 
-	if (context === "outgoing" || friend.relationship === "outgoing") {
+	if (relationship === "outgoing") {
 		return <CancelRequestAction friend={friend} actions={actions} pending={pending} />;
+	}
+
+	// Someone already in the crew keeps their badge instead of an action: there
+	// is nothing left to do from a search result.
+	if (relationship === "friends") {
+		return (
+			<span className={styles.alreadyFriends}>
+				<UsersRound aria-hidden="true" />{ui.friends.friendsAlready}
+			</span>
+		);
 	}
 
 	return (
@@ -103,61 +114,64 @@ function FriendAction({
 	);
 }
 
-export function FriendCards({
-	friends,
+/**
+ * One person in the roster. `medal` marks a podium place on the crew board —
+ * only the top three, because below that a number is noise rather than meaning.
+ */
+function WeeklyXp({ friend }: { friend: Friend }) {
+	if (friend.weeklyXp === 0) return <span className={styles.weekScoreEmpty}>{ui.friends.weeklyXpNone}</span>;
+	return (
+		<strong className={styles.weekScore}>
+			<Sparkles aria-hidden="true" />
+			{friend.weeklyXp.toLocaleString("en-US")}
+			<span>{ui.friends.xpUnit}</span>
+		</strong>
+	);
+}
+
+/**
+ * One person in the roster. `medal` marks a podium place on the crew board —
+ * only the top three, because below that a number is noise rather than meaning.
+ *
+ * The week's XP is the row's headline on the crew board, where it decides the
+ * order; everywhere else it sits under the name and the action takes the end.
+ */
+export function FriendRow({
+	friend,
 	context,
 	actions,
 	pendingId,
+	medal,
 }: {
-	friends: Friend[];
+	friend: Friend;
 	context: FriendContext;
 	actions: FriendshipActions;
 	pendingId: string | null;
+	medal?: number;
 }) {
-	return (
-		<div className={styles.grid}>
-			{friends.map((friend, index) => {
-				const skin = getPetSkin(friend.petSkin);
-				const hair = getPetHair(friend.petHair);
-				const isFriend = context === "friends" || friend.relationship === "friends";
-				const cardStyle = {
-					"--friend-skin": skin.color,
-					"--friend-hair": hair.color,
-					"--card-delay": `${index * 55}ms`,
-				} as CSSProperties;
+	const pending = Boolean(pendingId && (pendingId === friend.id || pendingId === friend.requestId));
+	const isCrew = context === "friends";
 
-				return (
-					<article className={styles.card} style={cardStyle} key={friend.id}>
-						<div className={styles.petPortrait}>
-							<AkinMascotArtwork className={styles.pet} viewBox="400 900 4216 3216" />
-						</div>
-						<div className={styles.cardInfo}>
-							<h2>@{friend.username}</h2>
-							{!isFriend ? (
-								<strong className={styles.xp}>
-									<Sparkles aria-hidden="true" />
-									{friend.xp.toLocaleString("en-US")} {ui.friends.xpUnit}
-								</strong>
-							) : null}
-						</div>
-						<div className={styles.cardEnd}>
-							{isFriend ? (
-								<strong className={styles.friendXp}>
-									<Sparkles aria-hidden="true" />
-									{friend.xp.toLocaleString("en-US")} <span>{ui.friends.xpUnit}</span>
-								</strong>
-							) : (
-								<FriendAction
-									friend={friend}
-									context={context}
-									actions={actions}
-									pending={Boolean(pendingId && (pendingId === friend.id || pendingId === friend.requestId))}
-								/>
-							)}
-						</div>
-					</article>
-				);
-			})}
-		</div>
+	return (
+		<li className={styles.row}>
+			<span className={styles.rowPet}>
+				<FriendPortrait friend={friend} size="2.9rem" petClassName={styles.pet} />
+				{medal ? <span className={styles.medal} data-medal={medal}>{medal}</span> : null}
+			</span>
+			<div className={styles.rowBody}>
+				<p className={styles.rowName}>@{friend.username}</p>
+				{isCrew ? null : (
+					<span className={styles.rowXp}>
+						<Sparkles aria-hidden="true" />
+						{friend.weeklyXp === 0
+							? ui.friends.weeklyXpNone
+							: `${friend.weeklyXp.toLocaleString("en-US")} ${ui.friends.weeklyXpUnit}`}
+					</span>
+				)}
+			</div>
+			{isCrew
+				? <WeeklyXp friend={friend} />
+				: <FriendAction friend={friend} context={context} actions={actions} pending={pending} />}
+		</li>
 	);
 }

@@ -13,7 +13,7 @@ import {
 	USERNAME_ERROR_CODES,
 	USERNAME_PATTERN,
 } from "./lib/users";
-import { getFriendship, getFriendshipState } from "./lib/friendships";
+import { getFriendship, getFriendshipState, getWeeklyXp } from "./lib/friendships";
 
 const localStreak = v.object({
 	clientId: v.string(),
@@ -70,8 +70,9 @@ export const identity = query({
 });
 
 export const searchByUsername = query({
-	args: { username: v.string() },
-	handler: async (ctx, { username: rawUsername }) => {
+	args: { username: v.string(), today: v.string() },
+	handler: async (ctx, { username: rawUsername, today }) => {
+		assertLocalDate(today);
 		const user = await requireAuthUser(ctx);
 		const username = normalizeUsername(rawUsername.replace(/^@/, ""));
 		if (username.length < 2) return [];
@@ -90,12 +91,13 @@ export const searchByUsername = query({
 			.slice(0, SEARCH_RESULT_LIMIT);
 		return await Promise.all(
 			matches.map(async (profile) => {
-				const [wallet, friendship] = await Promise.all([
+				const [wallet, friendship, weeklyXp] = await Promise.all([
 					ctx.db
 						.query("wallets")
 						.withIndex("by_user", (queryBuilder) => queryBuilder.eq("userId", profile.userId))
 						.unique(),
 					getFriendship(ctx, user._id, profile.userId),
+					getWeeklyXp(ctx, profile.userId, today),
 				]);
 				return {
 					id: profile._id,
@@ -103,6 +105,7 @@ export const searchByUsername = query({
 					petSkin: profile.petSkin ?? "ember",
 					petHair: profile.petHair ?? "honey",
 					xp: wallet?.xp ?? 0,
+					weeklyXp,
 					relationship: getFriendshipState(friendship, user._id),
 					requestId: friendship?._id ?? null,
 				};

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { assertLocalDate } from "./lib/dates";
 import {
 	friendshipPairKey,
 	getFriendProfile,
@@ -7,8 +8,11 @@ import {
 import { requireAuthUser } from "./lib/users";
 
 export const list = query({
-	args: {},
-	handler: async (ctx) => {
+	// The crew board ranks by XP earned this week, and a query must not read the
+	// wall clock — it would not rerun as the day turns. The client owns `today`.
+	args: { today: v.string() },
+	handler: async (ctx, { today }) => {
+		assertLocalDate(today);
 		const user = await requireAuthUser(ctx);
 		const [incoming, outgoing, acceptedAsRequester, acceptedAsRecipient] =
 			await Promise.all([
@@ -39,7 +43,7 @@ export const list = query({
 			]);
 
 		const hydrate = async (friendship: (typeof incoming)[number], otherUserId: string) => {
-			const profile = await getFriendProfile(ctx, otherUserId);
+			const profile = await getFriendProfile(ctx, otherUserId, today);
 			return profile ? { ...profile, requestId: friendship._id } : null;
 		};
 		const compact = <T>(values: (T | null)[]): T[] =>

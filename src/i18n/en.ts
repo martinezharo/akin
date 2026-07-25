@@ -166,9 +166,20 @@ export const ui = {
 	},
 	friends: {
 		kicker: "The Akin crew",
+		title: "Friends",
 		titleStart: "Find your",
 		titleAccent: "people",
 		intro: "Search by username and meet the companion cheering on every little win.",
+		// The tabs need labels that survive a third of a phone column; the section
+		// titles above are written for headings and truncate into nonsense there.
+		tabCrew: "Crew",
+		tabRequests: "Hellos",
+		tabDiscover: "Find",
+		weeklyXpUnit: "XP this week",
+		weeklyXpNone: "No XP yet this week",
+		crewSort: "Ranked by XP earned this week",
+		noHellosTitle: "No hellos waiting",
+		noHellosCopy: "When someone asks to join your crew, it lands right here.",
 		searchLabel: "Find friends",
 		searchPlaceholder: "username",
 		searchHint: "Type at least 2 characters",

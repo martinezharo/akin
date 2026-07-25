@@ -5,6 +5,7 @@ import { useState } from "react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { AccountDock } from "@/features/account/components/account-dock";
+import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
 import { ui } from "@/i18n/en";
 import { FriendsView } from "../components/friends-view";
@@ -25,14 +26,17 @@ export function RegisteredFriends() {
 	// query instead of the whole dashboard, which would re-send every streak and
 	// check-in on each completion.
 	const identity = useQuery(api.users.identity);
-	const connections = useQuery(api.friendships.list);
+	// The crew board ranks by the current week's XP, so the queries carry the
+	// local day: the hook re-renders at midnight and the window rolls with it.
+	const today = useLocalDay();
+	const connections = useQuery(api.friendships.list, { today });
 	const sendRequest = useMutation(api.friendships.send);
 	const cancelRequest = useMutation(api.friendships.cancel);
 	const respondToRequest = useMutation(api.friendships.respond);
 	const normalizedQuery = normalizeUsernameQuery(query);
 	const debouncedQuery = useDebouncedValue(normalizedQuery, SEARCH_DEBOUNCE_MS);
 	const canSearch = debouncedQuery.length >= MIN_SEARCH_LENGTH;
-	const results = useQuery(api.users.searchByUsername, canSearch ? { username: debouncedQuery } : "skip");
+	const results = useQuery(api.users.searchByUsername, canSearch ? { username: debouncedQuery, today } : "skip");
 
 	const runAction = (id: string, action: () => Promise<unknown>) => {
 		setPendingId(id);
