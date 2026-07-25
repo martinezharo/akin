@@ -426,6 +426,7 @@ export const ui = {
 		closingTitle: "Day one is the expensive one.",
 		closingCopy: "Every day after is just not breaking it.",
 		footer: "Capybara approved 🥺",
+		githubLabel: "Akin on GitHub",
 	},
 	metadata: {
 		title: "Akin",

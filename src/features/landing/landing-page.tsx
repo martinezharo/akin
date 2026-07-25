@@ -4,6 +4,7 @@ import { petLookStyle } from "@/shared/ui/pet-look";
 import { BadgeLadder } from "./components/badge-ladder";
 import { CompanionPreview } from "./components/companion-preview";
 import { CrewPreview } from "./components/crew-preview";
+import { GithubLink } from "./components/github-link";
 import { LandingActions } from "./components/landing-actions";
 import { LandingHeader } from "./components/landing-header";
 import { LiveCheckIn } from "./components/live-check-in";
@@ -105,6 +106,8 @@ export function LandingPage() {
 				<span className={styles.brandName}>{ui.metadata.title}</span>
 				<span>{copy.footer}</span>
 			</footer>
+
+			<GithubLink />
 		</div>
 	);
 }

@@ -1,0 +1,53 @@
+.link {
+	position: fixed;
+	z-index: 20;
+	right: calc(var(--landing-gutter) * 0.85);
+	bottom: calc(var(--landing-gutter) * 0.85);
+	display: inline-flex;
+	width: 2.9rem;
+	height: 2.9rem;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+	border-radius: var(--radius-tail-pill);
+	background: color-mix(in srgb, var(--background) 78%, transparent);
+	box-shadow: 0 0.18rem 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
+	color: var(--foreground);
+	backdrop-filter: blur(14px) saturate(150%);
+	transition:
+		transform var(--motion-standard),
+		background var(--motion-standard),
+		box-shadow var(--motion-standard);
+}
+
+.link:hover {
+	background: var(--background);
+	transform: translateY(-0.12rem);
+}
+
+/* Presses down onto its own shadow, the way the app's other tappables do. */
+.link:active {
+	box-shadow: 0 0 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
+	transform: translateY(0.18rem);
+}
+
+.link:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 0.25rem;
+}
+
+.mark {
+	width: 1.45rem;
+	height: 1.45rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.link {
+		transition: none;
+	}
+
+	.link:hover,
+	.link:active {
+		transform: none;
+	}
+}
