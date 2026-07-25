@@ -4,9 +4,10 @@
 import betterAuthTest from "@convex-dev/better-auth/test";
 import { convexTest } from "convex-test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { api, components } from "./_generated/api";
+import { api, components, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { addLocalDays } from "./lib/dates";
+import { UNDO_WINDOW_MS } from "./lib/undo";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -202,6 +203,28 @@ describe("critical Convex account flows", () => {
 		expect(state.profile?.lastReviewedOn).toBe(addLocalDays(TODAY, -1));
 		expect(state.streak?.days).toBe(401);
 		expect(state.checkIns).toHaveLength(401);
+	});
+
+	it("purges undo records once their window has passed", async () => {
+		const t = convexTest(schema, modules);
+		betterAuthTest.register(t);
+		const { user, asUser } = await createAuthenticatedTestUser(t, "Purge");
+		await createReadyAccount(t, user._id);
+		await createStreak(t, user._id, "purge-streak", addLocalDays(TODAY, -2));
+		await asUser.mutation(api.progress.completeToday, {
+			streakId: "purge-streak",
+			today: TODAY,
+		});
+
+		expect(await t.run((ctx) => ctx.db.query("undoRecords").collect())).toHaveLength(1);
+
+		// Still inside the undo window: the record has to survive.
+		await t.mutation(internal.crons.purgeExpiredUndoRecords, {});
+		expect(await t.run((ctx) => ctx.db.query("undoRecords").collect())).toHaveLength(1);
+
+		vi.setSystemTime(new Date(Date.now() + UNDO_WINDOW_MS + 1));
+		await t.mutation(internal.crons.purgeExpiredUndoRecords, {});
+		expect(await t.run((ctx) => ctx.db.query("undoRecords").collect())).toEqual([]);
 	});
 
 	it("returns only check-ins that can affect the current dashboard", async () => {

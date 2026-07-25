@@ -96,5 +96,6 @@ export default defineSchema({
 		usedAt: v.optional(v.number()),
 	})
 		.index("by_user", ["userId"])
-		.index("by_user_session", ["userId", "sessionId"]),
+		.index("by_user_session", ["userId", "sessionId"])
+		.index("by_expires_at", ["expiresAt"]),
 });
