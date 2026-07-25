@@ -3,7 +3,6 @@
 import { UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ui } from "@/i18n/en";
-import { GuestRewardsBalance } from "../components/account-rewards-balance";
 import { AuthModal } from "../components/auth-modal";
 import styles from "../account.module.css";
 
@@ -51,12 +50,13 @@ export function useGuestAccess({
 	}
 
 	return {
-		navProps: {
+		chrome: {
 			onLockedFriendsClick: requestAccess,
 			onLockedPetClick: requestAccess,
 			accountControl: <GuestAccountButton onClick={requestAccess} />,
+			wallet: showRewards ? ({ kind: "guest", onRequestAccess: requestAccess } as const) : null,
+			presence: null,
 		},
-		rewards: showRewards ? <GuestRewardsBalance onRequestAccess={requestAccess} /> : null,
 		authModal: authOpen ? <AuthModal onDismiss={dismissAuth} callbackURL={authCallbackUrl} /> : null,
 	};
 }

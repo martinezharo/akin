@@ -4,8 +4,6 @@ import { Coins, Sparkles } from "lucide-react";
 import { type ReactNode, useId } from "react";
 import { AppShell } from "@/features/navigation/app-shell";
 import { ui } from "@/i18n/en";
-import { AccountRewardsBalance } from "./account-rewards-balance";
-import { UsernamePresence } from "./username-setup-modal";
 import type { AccountDashboardView } from "../model/account-types";
 import { RewardStreakSettings } from "./reward-streak-settings";
 import styles from "../account-page.module.css";
@@ -26,8 +24,8 @@ export function AccountPageView({ dashboard, onToggleRewardEligible, eyebrow = u
 	return (
 		<AppShell
 			variant="column"
-			backdrop={<AccountRewardsBalance balance={dashboard.wallet.balance} xp={dashboard.wallet.xp} />}
-			overlay={<UsernamePresence username={dashboard.user.username} />}
+			wallet={{ kind: "account", balance: dashboard.wallet.balance, xp: dashboard.wallet.xp }}
+			presence={{ kind: "known", username: dashboard.user.username }}
 		>
 			<section className={styles.profileHero} aria-labelledby={titleId}>
 				<div className={styles.bigAvatar} aria-hidden="true">{initial}</div>

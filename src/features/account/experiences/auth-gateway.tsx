@@ -27,7 +27,7 @@ function HomeLoading({ message }: { message: string }) {
 
 function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: boolean }) {
 	const [friendAuthRequest, setFriendAuthRequest] = useState(false);
-	const { navProps, rewards, authModal } = useGuestAccess({
+	const { chrome, authModal } = useGuestAccess({
 		initialAuthOpen: friendAuthRequest,
 		authCallbackUrl: friendAuthRequest ? "/friends" : undefined,
 		showRewards: !backendUnavailable,
@@ -42,7 +42,7 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 	}, []);
 
 	return (
-		<AppShell variant="hero" {...navProps} backdrop={rewards} overlay={authModal}>
+		<AppShell variant="hero" {...chrome} overlay={authModal}>
 			<StreaksApp />
 			{backendUnavailable ? (
 				<div className={styles.guestDock} data-offline>

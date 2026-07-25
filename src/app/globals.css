@@ -139,6 +139,10 @@
 html {
 	min-height: 100%;
 	background: var(--background);
+	/* Reserve the scrollbar track on every route. The pet studio is a
+	 * non-scrolling canvas, so without this the viewport widens on entry and
+	 * the centred navigation slides sideways with it. */
+	scrollbar-gutter: stable;
 	-webkit-text-size-adjust: 100%;
 }
 

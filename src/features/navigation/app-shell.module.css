@@ -25,6 +25,21 @@
 	overflow: hidden;
 }
 
+/* Page changes swap the frame underneath a navigation that never moves, so the
+ * new page eases in on its own instead of snapping into place. */
+@media (prefers-reduced-motion: no-preference) {
+	.main {
+		animation: pageEnter 190ms ease-out both;
+	}
+}
+
+/* A pure crossfade: nothing travels. The navigation is translucent, so any
+ * movement underneath it reads as the bar itself shifting. */
+@keyframes pageEnter {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
 .hero > .content,
 .column > .content {
 	width: min(100%, var(--page-column));

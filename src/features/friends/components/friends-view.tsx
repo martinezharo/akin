@@ -2,8 +2,6 @@
 
 import { Search, UserRoundSearch, X } from "lucide-react";
 import { type ReactNode, useId } from "react";
-import { AccountRewardsBalance } from "@/features/account/components/account-rewards-balance";
-import { UsernamePresence } from "@/features/account/components/username-setup-modal";
 import { AppShell } from "@/features/navigation/app-shell";
 import { ui } from "@/i18n/en";
 import {
@@ -96,8 +94,8 @@ export function FriendsView({
 		<AppShell
 			variant="column"
 			accountControl={accountControl}
-			backdrop={identity ? <AccountRewardsBalance balance={identity.balance} xp={identity.xp} /> : null}
-			overlay={identity ? <UsernamePresence username={identity.username} /> : null}
+			wallet={identity ? { kind: "account", balance: identity.balance, xp: identity.xp } : undefined}
+			presence={identity ? { kind: "known", username: identity.username } : undefined}
 		>
 			<header className={styles.hero}>
 				<span className={styles.titleMark} aria-hidden="true"><span>•ᴗ•</span></span>

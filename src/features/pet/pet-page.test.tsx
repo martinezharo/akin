@@ -1,8 +1,9 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithChrome as render } from "@/shared/testing/render-with-chrome";
 import { PetPage } from "./pet-page";
 
 const mocks = vi.hoisted(() => ({

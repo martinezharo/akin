@@ -3,9 +3,7 @@
 import { Check, Coins, RotateCcw, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AccountDock } from "@/features/account/components/account-dock";
-import { AccountRewardsBalance } from "@/features/account/components/account-rewards-balance";
 import { AuthModal } from "@/features/account/components/auth-modal";
-import { RemoteUsernamePresence } from "@/features/account/components/username-setup-modal";
 import { GuestAccountButton } from "@/features/account/model/use-guest-access";
 import { ui } from "@/i18n/en";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
@@ -104,6 +102,8 @@ export function PetStudio({
 		<AppShell
 			variant="canvas"
 			accountControl={isDemo ? undefined : isAuthenticated ? <AccountDock /> : <GuestAccountButton onClick={() => setAuthOpen(true)} />}
+			wallet={{ kind: "account", balance: coins, xp: xp }}
+			presence={isAuthenticated && !isDemo ? { kind: "remote", today, timeZone } : undefined}
 			backdrop={(
 				<>
 					<div className={styles.ambient} aria-hidden="true"><span /><span /></div>
@@ -123,13 +123,11 @@ export function PetStudio({
 			)}
 			overlay={(
 				<>
-					{isAuthenticated && !isDemo ? <RemoteUsernamePresence today={today} timeZone={timeZone} /> : null}
 					{notice ? <div className={styles.notice} role="status"><Check aria-hidden="true" /> {notice}</div> : null}
 					{authOpen && !isAuthenticated ? <AuthModal onDismiss={() => setAuthOpen(false)} /> : null}
 				</>
 			)}
 		>
-			<AccountRewardsBalance balance={coins} xp={xp} />
 				<PetCompanionStage skinColor={draftSkin.color} hairColor={draftHair.color} />
 
 				<section className={styles.studio} aria-labelledby="studio-title">

@@ -5,6 +5,7 @@ import { APP_LANGUAGE } from "@/i18n/config";
 import { ui } from "@/i18n/en";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import { PetCustomizationProvider } from "@/features/pet/model/pet-customization-provider";
+import { AppChromeProvider } from "@/features/navigation/app-chrome";
 import "./globals.css";
 
 const preferencesBootScript = `
@@ -66,7 +67,9 @@ export default function RootLayout({
 			</head>
 			<body>
 				<ConvexClientProvider>
-					<PetCustomizationProvider>{children}</PetCustomizationProvider>
+					<PetCustomizationProvider>
+						<AppChromeProvider>{children}</AppChromeProvider>
+					</PetCustomizationProvider>
 				</ConvexClientProvider>
 			</body>
 		</html>

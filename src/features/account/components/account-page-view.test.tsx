@@ -1,7 +1,8 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithChrome as render } from "@/shared/testing/render-with-chrome";
 import { AccountPageView } from "./account-page-view";
 
 vi.mock("@/features/preferences/app-preferences", () => ({ AppPreferences: () => null }));

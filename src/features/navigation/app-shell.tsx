@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { AppNavigation, type AppNavigationProps } from "./app-navigation";
+import { useAppChrome, type AppChromeSlots } from "./app-chrome";
 import styles from "./app-shell.module.css";
 
 /**
@@ -11,7 +11,7 @@ import styles from "./app-shell.module.css";
  */
 export type AppShellVariant = "hero" | "column" | "canvas";
 
-type AppShellProps = AppNavigationProps & {
+type AppShellProps = AppChromeSlots & {
 	variant?: AppShellVariant;
 	/** Rendered before the content column: ambient art, floating actions, overlays. */
 	backdrop?: ReactNode;
@@ -25,13 +25,16 @@ export function AppShell({
 	backdrop,
 	overlay,
 	children,
-	...navigation
+	...chrome
 }: AppShellProps) {
+	// Navigation, wallet and presence live above the router: the page publishes
+	// what they should show instead of mounting its own copies.
+	useAppChrome(chrome);
+
 	return (
 		<main className={`${styles.main} ${styles[variant]}`}>
 			{backdrop}
 			<div className={styles.content}>{children}</div>
-			<AppNavigation {...navigation} />
 			{overlay}
 		</main>
 	);

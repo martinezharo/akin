@@ -9,13 +9,13 @@ import { useGuestAccess } from "../model/use-guest-access";
  * stay visible behind the auth modal so the app never feels like a dead end.
  */
 export function GuestAuthGate({ onDismiss }: { onDismiss: () => void }) {
-	const { navProps, rewards, authModal } = useGuestAccess({
+	const { chrome, authModal } = useGuestAccess({
 		initialAuthOpen: true,
 		onAuthDismiss: onDismiss,
 	});
 
 	return (
-		<AppShell variant="hero" {...navProps} backdrop={rewards} overlay={authModal}>
+		<AppShell variant="hero" {...chrome} overlay={authModal}>
 			<StreaksApp />
 		</AppShell>
 	);

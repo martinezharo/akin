@@ -1,8 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { AccountRewardsBalance } from "@/features/account/components/account-rewards-balance";
-import { UsernamePresence } from "@/features/account/components/username-setup-modal";
 import { AppShell } from "@/features/navigation/app-shell";
 import { StreaksView } from "./streaks-view";
 import type { StreaksController } from "./use-streaks-controller";
@@ -32,13 +30,9 @@ export function StreaksHomeShell({
 		<AppShell
 			variant="hero"
 			accountControl={accountControl}
-			backdrop={<AccountRewardsBalance balance={wallet.balance} xp={wallet.xp} />}
-			overlay={(
-				<>
-					<UsernamePresence username={username} />
-					{overlay}
-				</>
-			)}
+			wallet={{ kind: "account", balance: wallet.balance, xp: wallet.xp }}
+			presence={{ kind: "known", username }}
+			overlay={overlay}
 		>
 			<StreaksView controller={controller} />
 			{children}
