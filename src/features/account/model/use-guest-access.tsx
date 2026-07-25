@@ -55,7 +55,7 @@ export function useGuestAccess({
 			onLockedPetClick: requestAccess,
 			accountControl: <GuestAccountButton onClick={requestAccess} />,
 			wallet: showRewards ? ({ kind: "guest", onRequestAccess: requestAccess } as const) : null,
-			presence: null,
+			presence: { kind: "guest", onRequestAccess: requestAccess } as const,
 		},
 		authModal: authOpen ? <AuthModal onDismiss={dismissAuth} callbackURL={authCallbackUrl} /> : null,
 	};

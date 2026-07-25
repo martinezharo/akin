@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { AccountRewardsBalance, GuestRewardsBalance } from "@/features/account/components/account-rewards-balance";
-import { RemoteUsernamePresence, UsernamePresence } from "@/features/account/components/username-setup-modal";
+import { GuestUsernamePresence, RemoteUsernamePresence, UsernamePresence } from "@/features/account/components/username-setup-modal";
 import { AppNavigation, type AppNavigationProps } from "./app-navigation";
 
 /** The wallet pills: real balances, or the teaser a guest can tap to sign up. */
@@ -13,11 +13,13 @@ export type WalletSlot =
 /**
  * The username badge — or the setup modal when a signed-in account has no
  * username yet. `remote` lets a page defer to the identity query instead of
- * threading the value down itself.
+ * threading the value down itself, and `guest` swaps the badge for the sign-in
+ * button visitors get instead of a name.
  */
 export type PresenceSlot =
 	| { kind: "known"; username: string | null | undefined; today?: string; timeZone?: string }
-	| { kind: "remote"; today?: string; timeZone?: string };
+	| { kind: "remote"; today?: string; timeZone?: string }
+	| { kind: "guest"; onRequestAccess: () => void };
 
 /**
  * Everything that frames a page but must not blink when the page changes.
@@ -55,6 +57,8 @@ function sameWallet(a: WalletSlot | null | undefined, b: WalletSlot | null | und
 function samePresence(a: PresenceSlot | null | undefined, b: PresenceSlot | null | undefined) {
 	if (!a || !b) return a === b;
 	if (a.kind !== b.kind) return false;
+	if (a.kind === "guest") return true;
+	if (b.kind === "guest") return false;
 	if (a.today !== b.today || a.timeZone !== b.timeZone) return false;
 	return a.kind === "remote" || (b.kind === "known" && a.username === b.username);
 }
@@ -89,9 +93,11 @@ export function AppChromeProvider({ children }: { children: ReactNode }) {
 					: <AccountRewardsBalance balance={wallet.balance} xp={wallet.xp} />
 			) : null}
 			{presence ? (
-				presence.kind === "remote"
-					? <RemoteUsernamePresence today={presence.today} timeZone={presence.timeZone} />
-					: <UsernamePresence username={presence.username} today={presence.today} timeZone={presence.timeZone} />
+				presence.kind === "guest"
+					? <GuestUsernamePresence onRequestAccess={presence.onRequestAccess} />
+					: presence.kind === "remote"
+						? <RemoteUsernamePresence today={presence.today} timeZone={presence.timeZone} />
+						: <UsernamePresence username={presence.username} today={presence.today} timeZone={presence.timeZone} />
 			) : null}
 			<AppNavigation {...navigation} />
 		</AppChromeContext>

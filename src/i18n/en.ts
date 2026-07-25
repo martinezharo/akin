@@ -246,6 +246,8 @@ export const ui = {
 			profileNotReadyError: "Your Akin profile is still waking up. Give it a second, then try again.",
 			saveFailed: "We couldn't save that username. Check your connection and try again.",
 			signedInAs: (username: string) => `Signed in as @${username}`,
+			guestBadge: "Sign in",
+			guestBadgeLabel: "Sign in to claim your streaks",
 		},
 		page: {
 			defaultEyebrow: "Your Akin",

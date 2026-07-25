@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, ArrowRight, AtSign, Sparkles } from "lucide-react";
+import { AlertCircle, ArrowRight, AtSign, LogIn, Sparkles } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
@@ -150,6 +150,21 @@ export function UsernamePresence({ username, today, timeZone }: { username?: str
 			<AtSign aria-hidden="true" />
 			<strong>@{username}</strong>
 		</div>
+	);
+}
+
+/** The guest stand-in for the username badge: same shape, but it opens auth. */
+export function GuestUsernamePresence({ onRequestAccess }: { onRequestAccess: () => void }) {
+	return (
+		<button
+			className={`${styles.usernameBadge} ${styles.guestUsernameBadge}`}
+			type="button"
+			onClick={onRequestAccess}
+			aria-label={ui.account.username.guestBadgeLabel}
+		>
+			<LogIn aria-hidden="true" />
+			<strong>{ui.account.username.guestBadge}</strong>
+		</button>
 	);
 }
 

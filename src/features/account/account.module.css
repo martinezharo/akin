@@ -99,6 +99,10 @@
 .usernameBadge svg { width: 0.92rem; color: var(--accent); stroke-width: 2.8; }
 .usernameBadge strong { overflow: hidden; font-size: var(--text-md); font-weight: var(--weight-black); text-overflow: ellipsis; white-space: nowrap; }
 
+.guestUsernameBadge { cursor: pointer; transition: transform var(--motion-spring), box-shadow var(--motion-standard); }
+.guestUsernameBadge:hover { box-shadow: 0 0.7rem 2rem rgb(27 29 23 / 13%), inset 0 1px 0 rgb(255 255 255 / 36%); transform: translateY(-1px) rotate(-2.5deg); }
+.guestUsernameBadge:active { transform: scale(0.95) rotate(-1.5deg); }
+
 .coinPill,
 .xpPill {
 	display: flex;
