@@ -334,6 +334,76 @@ describe("critical Convex account flows", () => {
 		expect(state.checkIns).toHaveLength(1);
 	});
 
+	it("keeps importing when a local record is unusable", async () => {
+		const t = convexTest(schema, modules);
+		betterAuthTest.register(t);
+		const { user, asUser } = await createAuthenticatedTestUser(t, "Broken import");
+
+		await asUser.mutation(api.users.prepareLocalImport, {
+			today: TODAY,
+			timeZone: TIME_ZONE,
+			streaks: [
+				{
+					clientId: "nameless",
+					name: "   ",
+					icon: "📚",
+					days: 3,
+					createdOn: addLocalDays(TODAY, -3),
+				},
+				{
+					clientId: "undated",
+					name: "Undated",
+					icon: "📚",
+					days: 3,
+					createdOn: "not-a-date",
+				},
+				{
+					clientId: "iconless",
+					name: "  Too   much   space  ",
+					icon: "  ",
+					days: 4,
+					createdOn: addLocalDays(TODAY, -4),
+				},
+			],
+		});
+		await asUser.mutation(api.users.importLocalCheckIns, {
+			today: TODAY,
+			timeZone: TIME_ZONE,
+			checkIns: [
+				{ streakId: "iconless", completedOn: "13-13-13" },
+				{ streakId: "iconless", completedOn: addLocalDays(TODAY, -1) },
+			],
+		});
+		await asUser.mutation(api.users.finishLocalImport, {
+			today: TODAY,
+			timeZone: TIME_ZONE,
+			lastReviewedOn: "not-a-date",
+			recentIcons: ["📚", "  "],
+		});
+
+		const state = await t.run(async (ctx) => ({
+			streaks: await ctx.db.query("streaks").collect(),
+			checkIns: await ctx.db.query("checkIns").collect(),
+			profile: await ctx.db
+				.query("profiles")
+				.withIndex("by_user", (query) => query.eq("userId", user._id))
+				.unique(),
+		}));
+		expect(state.streaks).toHaveLength(1);
+		expect(state.streaks[0]).toMatchObject({
+			clientId: "iconless",
+			name: "Too much space",
+			icon: "✨",
+			days: 4,
+		});
+		expect(state.checkIns.map((checkIn) => checkIn.localDate)).toEqual([
+			addLocalDays(TODAY, -1),
+		]);
+		expect(state.profile?.recentIcons).toEqual(["📚"]);
+		expect(state.profile?.lastReviewedOn).toBe(TODAY);
+		expect(state.profile?.importedLocalDataAt).toBeTypeOf("number");
+	});
+
 	it("charges an authenticated pet skin once", async () => {
 		const t = convexTest(schema, modules);
 		betterAuthTest.register(t);

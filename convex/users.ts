@@ -1,8 +1,8 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { assertCurrentLocalDate, assertLocalDate } from "./lib/dates";
+import { assertCurrentLocalDate, assertLocalDate, isLocalDate } from "./lib/dates";
 import { MAX_REWARD_STREAKS } from "./lib/app_rules";
-import { normalizeIcon, normalizeStreakName } from "./lib/streaks";
+import { sanitizeImportedIcon, sanitizeImportedStreakName } from "./lib/streaks";
 import {
 	advanceFullyCheckedDays,
 	ensureUserState,
@@ -172,7 +172,12 @@ export const prepareLocalImport = mutation({
 
 		const now = Date.now();
 		for (const [index, streak] of args.streaks.entries()) {
-			assertLocalDate(streak.createdOn);
+			// One unusable record from `localStorage` must not cost the user the rest
+			// of their history, so broken streaks are dropped instead of thrown on:
+			// an import that throws is retried from scratch on every sign-in, since
+			// only `finishLocalImport` marks the account as imported.
+			const name = sanitizeImportedStreakName(streak.name);
+			if (name === null || !isLocalDate(streak.createdOn)) continue;
 			const existing = await ctx.db
 				.query("streaks")
 				.withIndex("by_user_client", (queryBuilder) =>
@@ -186,9 +191,11 @@ export const prepareLocalImport = mutation({
 			await ctx.db.insert("streaks", {
 				userId: user._id,
 				clientId: streak.clientId,
-				name: normalizeStreakName(streak.name),
-				icon: normalizeIcon(streak.icon),
-				days: Math.max(0, Math.min(1_000_000, Math.floor(streak.days))),
+				name,
+				icon: sanitizeImportedIcon(streak.icon) ?? "✨",
+				days: Number.isFinite(streak.days)
+					? Math.max(0, Math.min(1_000_000, Math.floor(streak.days)))
+					: 0,
 				createdOn: streak.createdOn,
 				rewardEligible: index < MAX_REWARD_STREAKS,
 				sortOrder: index,
@@ -234,10 +241,10 @@ export const importLocalCheckIns = mutation({
 		const now = Date.now();
 		let imported = 0;
 		for (const checkIn of args.checkIns) {
-			assertLocalDate(checkIn.completedOn);
 			const streak = streaksByClientId.get(checkIn.streakId);
 			if (
 				!streak ||
+				!isLocalDate(checkIn.completedOn) ||
 				checkIn.completedOn < streak.createdOn ||
 				checkIn.completedOn > args.today
 			) continue;
@@ -274,17 +281,26 @@ export const finishLocalImport = mutation({
 	},
 	handler: async (ctx, args) => {
 		assertCurrentLocalDate(args.today, args.timeZone);
-		assertLocalDate(args.lastReviewedOn);
 		const user = await requireAuthUser(ctx);
 		const profile = await getProfile(ctx, user._id);
 		if (!profile || profile.importedLocalDataAt !== undefined) {
 			return { imported: false };
 		}
+		// A malformed review marker only costs the user a review prompt, so it
+		// falls back to today instead of stranding the import: this is the call
+		// that marks the account as imported, and a throw here would replay the
+		// whole run on every single sign-in.
+		const reviewedOn =
+			isLocalDate(args.lastReviewedOn) && args.lastReviewedOn <= args.today
+				? args.lastReviewedOn
+				: args.today;
 		const now = Date.now();
 		await ctx.db.patch(profile._id, {
-			lastReviewedOn: args.lastReviewedOn <= args.today ? args.lastReviewedOn : args.today,
+			lastReviewedOn: reviewedOn,
 			timeZone: args.timeZone,
-			recentIcons: args.recentIcons.slice(0, 8).map(normalizeIcon),
+			recentIcons: args.recentIcons
+				.slice(0, 8)
+				.flatMap((icon) => sanitizeImportedIcon(icon) ?? []),
 			importedLocalDataAt: now,
 			updatedAt: now,
 		});

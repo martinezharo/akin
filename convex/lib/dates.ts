@@ -17,6 +17,15 @@ export function assertLocalDate(value: string): void {
 	}
 }
 
+export function isLocalDate(value: string): boolean {
+	try {
+		assertLocalDate(value);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 export function addLocalDays(value: string, amount: number): string {
 	assertLocalDate(value);
 	const [year, month, day] = value.split("-").map(Number);

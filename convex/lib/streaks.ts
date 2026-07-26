@@ -30,6 +30,25 @@ export function normalizeIcon(icon: string): string {
 	return normalized;
 }
 
+/**
+ * Repairs a name coming from a guest browser instead of rejecting it.
+ *
+ * `localStorage` is beyond our reach — an old build, a half-written record or a
+ * hand-edited key can hold something the strict normalisers refuse. During an
+ * import a single throw would abort the whole run and, since the account is
+ * only marked as imported at the end, it would fail again on every sign-in.
+ * Returns `null` only when there is nothing left worth storing.
+ */
+export function sanitizeImportedStreakName(name: string): string | null {
+	const normalized = name.trim().replace(/\s+/g, " ").slice(0, 80);
+	return normalized.length === 0 ? null : normalized;
+}
+
+export function sanitizeImportedIcon(icon: string): string | null {
+	const normalized = icon.trim().slice(0, 32);
+	return normalized.length === 0 ? null : normalized;
+}
+
 export async function listActiveStreaks(ctx: QueryCtx | MutationCtx, userId: string) {
 	const streaks = await ctx.db
 		.query("streaks")
