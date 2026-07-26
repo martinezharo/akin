@@ -189,14 +189,24 @@
 	white-space: nowrap;
 }
 
-.rowActions { display: flex; gap: 0.3rem; }
+/*
+ * Row actions are sized off one variable so the icon-only variants stay square:
+ * on a touch screen they grow to a comfortable thumb target, on a mouse they
+ * stay compact next to the name.
+ */
+.row { --row-action: 2.05rem; }
+@media (pointer: coarse) {
+	.row { --row-action: 2.75rem; }
+}
+
+.rowActions { display: flex; gap: 0.45rem; }
 .accept,
 .decline,
 .addFriend,
 .requested,
 .alreadyFriends {
 	display: inline-flex;
-	min-height: 2.05rem;
+	min-height: var(--row-action);
 	align-items: center;
 	justify-content: center;
 	gap: 0.28rem;
@@ -213,7 +223,13 @@
 .decline svg,
 .addFriend svg,
 .requested svg,
-.alreadyFriends svg { width: 0.7rem; height: 0.7rem; stroke-width: 3; }
+.alreadyFriends svg { width: 0.7rem; height: 0.7rem; flex: none; stroke-width: 3; }
+@media (pointer: coarse) {
+	.accept svg,
+	.decline svg,
+	.addFriend svg,
+	.requested svg { width: 0.95rem; height: 0.95rem; }
+}
 .accept {
 	background: var(--foreground);
 	box-shadow: inset 0 -0.15rem 0 color-mix(in srgb, var(--accent) 55%, transparent);
@@ -221,7 +237,7 @@
 }
 .accept:hover,
 .addFriend:hover { transform: translateY(-0.08rem) rotate(-1deg); }
-.decline { width: 2.05rem; padding: 0; background: var(--icon-background); color: var(--muted); }
+.decline { width: var(--row-action); padding: 0; background: var(--icon-background); color: var(--muted); }
 .decline:hover { background: color-mix(in srgb, var(--accent) 12%, var(--background)); color: var(--accent); }
 .addFriend {
 	background: var(--accent);
@@ -379,7 +395,7 @@
 	.accept span { display: none; }
 	.addFriend,
 	.requested,
-	.accept { width: 2.05rem; padding: 0; }
+	.accept { width: var(--row-action); padding: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

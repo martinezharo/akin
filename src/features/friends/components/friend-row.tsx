@@ -77,6 +77,7 @@ function FriendAction({
 					className={styles.accept}
 					disabled={pending}
 					onClick={() => friend.requestId && actions.respond(friend.requestId, true)}
+					aria-label={`${ui.friends.acceptRequest} @${friend.username}`}
 				>
 					<Check aria-hidden="true" /><span>{ui.friends.acceptRequest}</span>
 				</button>
