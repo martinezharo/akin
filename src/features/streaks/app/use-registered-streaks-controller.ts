@@ -10,11 +10,12 @@ import {
 	getStreakIconOptions,
 	type StreakIconValue,
 } from "../components/icon-picker/streak-icons";
-import type { LocalDateKey } from "../model/calendar";
+import { getLocalDateKey, type LocalDateKey } from "../model/calendar";
 import type { StreakCheckIn } from "../model/check-in";
 import type { ReviewAnswers } from "../model/progress";
 import { createStreak, type Streak } from "../model/streak";
 import {
+	clearStreaksData,
 	createEmptyStreaksData,
 	loadStreaksData,
 	STREAKS_STORAGE_KEY,
@@ -80,6 +81,7 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 	const [notice, setNotice] = useState<string | null>(null);
 	const { coinReward, show: showCoinReward, collectReviewReward, reset: resetCoinRewards } =
 		useCoinRewardFeed();
+	const [importFailed, setImportFailed] = useState(false);
 	const initializedUserRef = useRef<string | null>(null);
 	const importStartedRef = useRef<string | null>(null);
 	const reviewSessionRef = useRef<string | null>(null);
@@ -109,17 +111,25 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 		const local = loadStreaksData(STREAKS_STORAGE_KEY, createEmptyStreaksData(today));
 		void importLocalDataInBatches({
 			data: local,
-			today,
+			resolveToday: getLocalDateKey,
 			timeZone,
 			operations: {
 				prepare: prepareLocalImport,
 				importCheckIns: importLocalCheckIns,
 				finish: finishLocalImport,
 			},
-		}).catch((error) => {
-			importStartedRef.current = null;
-			report(error);
-		});
+		})
+			.then((result) => {
+				// A `false` here means the account was imported from another browser
+				// while this run was in flight; that copy stays on this device
+				// untouched rather than being merged in behind the user's back.
+				if (result.imported) clearStreaksData(STREAKS_STORAGE_KEY);
+			})
+			.catch((error) => {
+				importStartedRef.current = null;
+				setImportFailed(true);
+				report(error);
+			});
 	}, [finishLocalImport, importLocalCheckIns, prepareLocalImport, report, timeZone, today, user]);
 
 	const data = useMemo(() => {
@@ -274,11 +284,19 @@ export function useRegisteredStreaksController(today: LocalDateKey) {
 		coinReward,
 	};
 
+	// The dashboard is live from the moment the profile exists, so without this
+	// gate the import would paint a half-filled board — streaks with no history,
+	// then a review backlog appearing out of nowhere once it finishes. The flag
+	// is the server's own, so a reload mid-import keeps waiting; a failed import
+	// releases the gate instead of locking the user out of their streaks.
+	const isImporting = user?.isReady === true && user.needsLocalImport && !importFailed;
+
 	return {
 		user,
 		controller,
 		dashboard,
 		isLoading: user === undefined || dashboard === undefined || dashboard === null,
+		isImporting,
 		notice,
 		dismissNotice: () => setNotice(null),
 	};

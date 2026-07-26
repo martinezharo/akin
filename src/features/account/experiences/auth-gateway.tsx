@@ -76,13 +76,15 @@ function LoadingExperience() {
 
 function RegisteredExperience() {
 	const today = useLocalDay();
-	const { controller, dashboard, isLoading, notice, dismissNotice, user } =
+	const { controller, dashboard, isLoading, isImporting, notice, dismissNotice, user } =
 		useRegisteredStreaksController(today);
 
-	if (isLoading || !dashboard) {
+	if (isLoading || isImporting || !dashboard) {
 		return (
 			<AppShell variant="hero">
-				<HomeLoading message={ui.account.loading.gathering} />
+				<HomeLoading
+					message={isImporting ? ui.account.loading.importing : ui.account.loading.gathering}
+				/>
 			</AppShell>
 		);
 	}

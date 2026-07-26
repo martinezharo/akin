@@ -217,6 +217,7 @@ export const ui = {
 		loading: {
 			wakingUp: "Waking up your streaks…",
 			gathering: "Gathering your little wins…",
+			importing: "Packing your streaks for the cloud…",
 		},
 		offline: {
 			kicker: "Convex is taking a nap",

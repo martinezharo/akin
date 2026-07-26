@@ -109,6 +109,21 @@ export function saveStreaksData(storageKey: string, data: StreaksData): void {
 	}
 }
 
+/**
+ * Drops a guest browser's streaks once the account owns them.
+ *
+ * Leaving the copy behind would resurrect it as guest data after a sign-out,
+ * and — on a shared browser — hand it to whoever signs in next, since a fresh
+ * account imports whatever this key holds.
+ */
+export function clearStreaksData(storageKey: string): void {
+	try {
+		localStorage.removeItem(storageKey);
+	} catch {
+		// The account already holds the data; a stale local copy is not fatal.
+	}
+}
+
 export function loadDemoDate(fallback: LocalDateKey): LocalDateKey {
 	try {
 		const storedDate = localStorage.getItem(DEMO_CLOCK_STORAGE_KEY);
