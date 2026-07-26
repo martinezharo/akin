@@ -9,7 +9,7 @@ import {
 	PET_SKIN_PRICES,
 	type PetSkinId,
 } from "./lib/app_rules";
-import { getProfile, getWallet, requireAuthUser } from "./lib/users";
+import { getOptionalAuthUser, getProfile, getWallet, requireAuthUser } from "./lib/users";
 
 function getOwnedSkins(profile: { petSkin?: string; ownedPetSkins?: string[] } | null): PetSkinId[] {
 	// Legacy pet profiles only stored the equipped skin, so their exact purchase
@@ -23,10 +23,16 @@ function getOwnedSkins(profile: { petSkin?: string; ownedPetSkins?: string[] } |
 	return [...new Set<PetSkinId>([DEFAULT_PET_SKIN_ID, ...equippedSkin, ...storedSkins])];
 }
 
+/**
+ * The pet's look is painted app-wide, so this subscription is still open the
+ * moment a sign-out revokes the session. It answers `null` rather than throwing
+ * so the visitor gets the default mascot on their way out.
+ */
 export const get = query({
 	args: {},
 	handler: async (ctx) => {
-		const user = await requireAuthUser(ctx);
+		const user = await getOptionalAuthUser(ctx);
+		if (!user) return null;
 		const [profile, wallet] = await Promise.all([getProfile(ctx, user._id), getWallet(ctx, user._id)]);
 		return {
 			skinId: profile?.petSkin && isPetSkinId(profile.petSkin) ? profile.petSkin : DEFAULT_PET_SKIN_ID,

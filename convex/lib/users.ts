@@ -12,6 +12,16 @@ export async function requireAuthUser(ctx: QueryCtx | MutationCtx) {
 	return await authComponent.getAuthUser(ctx);
 }
 
+/**
+ * For reads whose subscription outlives the session — anything mounted app-wide
+ * rather than behind an auth boundary. Signing out revokes the session before
+ * the client stops asking, so those queries re-run once with no identity and
+ * must answer "nobody" instead of throwing at a visitor who is already leaving.
+ */
+export async function getOptionalAuthUser(ctx: QueryCtx | MutationCtx) {
+	return await authComponent.safeGetAuthUser(ctx);
+}
+
 export async function getProfile(ctx: QueryCtx | MutationCtx, userId: string) {
 	return await ctx.db
 		.query("profiles")
