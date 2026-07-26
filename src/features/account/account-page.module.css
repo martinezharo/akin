@@ -97,7 +97,8 @@
 .signOut,
 .demoReset { display: inline-flex; align-items: center; gap: 0.42rem; padding: 0.62rem 0.76rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: transparent; color: var(--muted); font-size: var(--text-sm); font-weight: var(--weight-strong); cursor: pointer; transition: color var(--motion-standard), border-color var(--motion-standard), transform var(--motion-spring); }
 .signOut { margin-inline: auto; border: 0; }
-.signOut:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); transform: translateY(-1px); }
+.signOut:hover:not(:disabled) { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); transform: translateY(-1px); }
+.signOut:disabled { opacity: 0.6; cursor: wait; }
 .demoReset { width: 100%; justify-content: center; border-style: dashed; color: var(--accent); }
 .demoReset:hover { border-color: var(--accent); transform: translateY(-1px); }
 .signOut svg, .demoReset svg { width: 0.95rem; }
