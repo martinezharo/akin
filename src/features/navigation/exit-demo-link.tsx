@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { LANDING_PATH } from "@/shared/routing/experience-paths";
 import styles from "./exit-demo-link.module.css";
 

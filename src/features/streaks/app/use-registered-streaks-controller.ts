@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@convex/_generated/api";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { MAX_REWARD_STREAKS } from "@/domain/rewards/reward-rules";
 import type { Id } from "@convex/_generated/dataModel";
 import {

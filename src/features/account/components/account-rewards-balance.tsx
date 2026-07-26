@@ -1,5 +1,5 @@
 import { Coins, Sparkles } from "lucide-react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "../account.module.css";
 
 export function AccountRewardsBalance({ balance, xp }: { balance: number; xp: number }) {

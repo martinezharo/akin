@@ -7,7 +7,7 @@ import type { Id } from "@convex/_generated/dataModel";
 import { AccountDock } from "@/features/account/components/account-dock";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import { useDebouncedValue } from "@/shared/hooks/use-debounced-value";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { FriendsView } from "../components/friends-view";
 import {
 	type FriendshipActions,

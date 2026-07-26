@@ -3,11 +3,11 @@
 import { Plus } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { usePopover } from "@/shared/hooks/use-popover";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { parseSingleEmoji } from "./emoji";
 import {
 	IconPickerIcon,
-	STREAK_ICON_OPTIONS,
+	streakIconOptions,
 	StreakIcon,
 	type StreakIconOption,
 	type StreakIconValue,
@@ -163,7 +163,7 @@ type PublicIconPickerProps = {
 export function ComposerIconPicker({
 	value,
 	onChange,
-	options = STREAK_ICON_OPTIONS,
+	options = streakIconOptions(),
 }: PublicIconPickerProps) {
 	return (
 		<SharedIconPicker
@@ -181,7 +181,7 @@ export function StreakIconPicker({
 	value,
 	onChange,
 	triggerLabel,
-	options = STREAK_ICON_OPTIONS,
+	options = streakIconOptions(),
 }: PublicIconPickerProps & { triggerLabel: string }) {
 	return (
 		<SharedIconPicker

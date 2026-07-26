@@ -2,7 +2,7 @@
 
 import { ArrowRight, ChevronDown, Clock3, RotateCcw, Sparkles } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { formatLocalDate, type LocalDateKey } from "../../model/calendar";
 import styles from "./demo-time-controls.module.css";
 

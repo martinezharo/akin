@@ -1,7 +1,7 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { STREAK_NAME_MAX_LENGTH } from "../../model/streak";
 import { ComposerIconPicker } from "../icon-picker/icon-picker";
 import {

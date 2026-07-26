@@ -4,7 +4,7 @@ import { Coins, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { MAX_REWARD_STREAKS } from "@/domain/rewards/reward-rules";
 import { StreakIcon } from "@/features/streaks/components/icon-picker/streak-icons";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import type { AccountDashboardView } from "../model/account-types";
 import styles from "../account-page.module.css";

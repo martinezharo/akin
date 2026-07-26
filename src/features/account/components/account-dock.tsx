@@ -4,7 +4,7 @@ import { UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "../account.module.css";
 
 /**

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { CoinReward } from "@/features/rewards/coin-reward";
 import {
 	getStreakIconOptions,
-	STREAK_ICON_OPTIONS,
+	STREAK_ICON_COUNT,
 	type StreakIconOption,
 	type StreakIconValue,
 } from "../components/icon-picker/streak-icons";
@@ -85,7 +85,7 @@ function withRememberedIcon(data: StreaksData, icon: StreakIconValue): StreaksDa
 		...data,
 		recentIcons: [icon, ...data.recentIcons.filter((recentIcon) => recentIcon !== icon)].slice(
 			0,
-			STREAK_ICON_OPTIONS.length,
+			STREAK_ICON_COUNT,
 		),
 	};
 }

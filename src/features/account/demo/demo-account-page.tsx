@@ -1,7 +1,7 @@
 "use client";
 
 import { FlaskConical } from "lucide-react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { AccountPageView } from "../components/account-page-view";
 import type { AccountDashboardView } from "../model/account-types";
 import styles from "../account-page.module.css";

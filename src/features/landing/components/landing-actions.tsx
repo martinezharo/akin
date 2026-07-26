@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { APP_HOME_PATH, DEMO_HOME_PATH } from "@/shared/routing/experience-paths";
 import styles from "./landing-actions.module.css";
 

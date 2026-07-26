@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { STREAK_BADGE_TIERS, StreakBadge } from "@/features/streaks/components/badge/streak-badge";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "./badge-ladder.module.css";
 
 /**

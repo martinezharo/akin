@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "../account-page.module.css";
 
 export function AccountLoading() {

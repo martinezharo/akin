@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { usePetting } from "@/features/pet/model/use-petting";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { AkinMascotArtwork } from "@/shared/ui/akin-mascot-artwork";
 import motionStyles from "@/shared/ui/akin-mascot-motion.module.css";
 import styles from "./pettable-mascot.module.css";

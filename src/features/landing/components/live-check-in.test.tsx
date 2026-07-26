@@ -3,8 +3,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
-import { ui } from "@/i18n/en";
-import { DEMO_PROMISES } from "@/features/streaks/model/demo-promises";
+import { ui } from "@/i18n";
+import { demoPromises } from "@/features/streaks/model/demo-promises";
 import { LiveCheckIn } from "./live-check-in";
 
 afterEach(cleanup);
@@ -12,7 +12,7 @@ afterEach(cleanup);
 describe("LiveCheckIn", () => {
 	it("lets a visitor keep a promise before they have an account", async () => {
 		const user = userEvent.setup();
-		const [promise] = DEMO_PROMISES;
+		const [promise] = demoPromises();
 
 		render(<LiveCheckIn />);
 
@@ -41,7 +41,7 @@ describe("LiveCheckIn", () => {
 		expect(wallet.textContent).toBe("0");
 		expect(screen.getByText(ui.landing.checkIn.prompt)).not.toBeNull();
 
-		for (const [index, promise] of DEMO_PROMISES.entries()) {
+		for (const [index, promise] of demoPromises().entries()) {
 			await user.click(
 				screen.getByRole("button", {
 					name: `Complete ${promise.name} for today. Current streak: ${promise.days}`,
@@ -49,11 +49,11 @@ describe("LiveCheckIn", () => {
 			);
 
 			// The tally counts down for real rather than repeating one fixed line.
-			const left = DEMO_PROMISES.length - index - 1;
+			const left = demoPromises().length - index - 1;
 			if (left > 0) expect(screen.getByText(ui.landing.checkIn.midway(left))).not.toBeNull();
 		}
 
-		expect(wallet.textContent).toBe(String(DEMO_PROMISES.length));
+		expect(wallet.textContent).toBe(String(demoPromises().length));
 		expect(screen.getByText(ui.landing.checkIn.done)).not.toBeNull();
 	});
 });

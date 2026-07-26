@@ -3,8 +3,8 @@
 import { Coins } from "lucide-react";
 import { useEffect, useState } from "react";
 import { StreakBadge } from "@/features/streaks/components/badge/streak-badge";
-import { DEMO_PROMISES } from "@/features/streaks/model/demo-promises";
-import { ui } from "@/i18n/en";
+import { DEMO_PROMISE_COUNT, demoPromises } from "@/features/streaks/model/demo-promises";
+import { ui } from "@/i18n";
 import styles from "./live-check-in.module.css";
 
 const CELEBRATION_MS = 900;
@@ -34,7 +34,7 @@ export function LiveCheckIn({ className }: { className?: string }) {
 	}
 
 	const coins = keptIds.length;
-	const left = DEMO_PROMISES.length - coins;
+	const left = DEMO_PROMISE_COUNT - coins;
 	const note =
 		coins === 0
 			? ui.landing.checkIn.prompt
@@ -53,7 +53,7 @@ export function LiveCheckIn({ className }: { className?: string }) {
 			</header>
 
 			<ul className={styles.list}>
-				{DEMO_PROMISES.map((promise) => {
+				{demoPromises().map((promise) => {
 					const kept = keptIds.includes(promise.id);
 					// Keeping a promise is what advances the count, so the badge shows
 					// tomorrow's number the moment it is tapped — exactly as in the app.
@@ -77,7 +77,7 @@ export function LiveCheckIn({ className }: { className?: string }) {
 				})}
 			</ul>
 
-			<p className={styles.note} data-complete={coins === DEMO_PROMISES.length} aria-live="polite">
+			<p className={styles.note} data-complete={coins === DEMO_PROMISE_COUNT} aria-live="polite">
 				{note}
 			</p>
 		</div>

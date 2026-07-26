@@ -13,7 +13,7 @@ import {
 	USERNAME_ERROR_CODES,
 	type UsernameValidationError,
 } from "@/domain/account/username";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import styles from "../account.module.css";
 

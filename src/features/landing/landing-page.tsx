@@ -1,5 +1,7 @@
+"use client";
+
 import { DEFAULT_PET_HAIR_ID, DEFAULT_PET_SKIN_ID } from "@/domain/pet/pet-catalog";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { petLookStyle } from "@/shared/ui/pet-look";
 import { BadgeLadder } from "./components/badge-ladder";
 import { CompanionPreview } from "./components/companion-preview";

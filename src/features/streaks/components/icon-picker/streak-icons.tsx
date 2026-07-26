@@ -1,5 +1,5 @@
 import { Goal, SmilePlus } from "lucide-react";
-import { ui } from "@/i18n/en";
+import { ui, type Ui } from "@/i18n";
 import styles from "./streak-icons.module.css";
 
 export type StreakIconValue = string | null;
@@ -11,33 +11,43 @@ export type StreakIconOption = {
 
 export const DEFAULT_STREAK_ICON: StreakIconValue = null;
 
-export const STREAK_ICON_OPTIONS = [
-	{ value: "💪", label: ui.streaks.iconLabels.strength },
-	{ value: "🧠", label: ui.streaks.iconLabels.learning },
-	{ value: "📚", label: ui.streaks.iconLabels.reading },
-	{ value: "🏃", label: ui.streaks.iconLabels.running },
-	{ value: "🧘", label: ui.streaks.iconLabels.meditation },
-	{ value: "💧", label: ui.streaks.iconLabels.hydration },
-	{ value: "🥗", label: ui.streaks.iconLabels.healthyFood },
-	{ value: "😴", label: ui.streaks.iconLabels.sleep },
-	{ value: "✍️", label: ui.streaks.iconLabels.writing },
-	{ value: "🎨", label: ui.streaks.iconLabels.creativity },
-	{ value: "🎸", label: ui.streaks.iconLabels.music },
-	{ value: "🌱", label: ui.streaks.iconLabels.growth },
-	{ value: "🧹", label: ui.streaks.iconLabels.tidying },
-	{ value: "💸", label: ui.streaks.iconLabels.saving },
-	{ value: "❤️", label: ui.streaks.iconLabels.wellbeing },
-	{ value: "☀️", label: ui.streaks.iconLabels.morning },
-	{ value: "🌙", label: ui.streaks.iconLabels.evening },
-	{ value: "✅", label: ui.streaks.iconLabels.dailyGoal },
-	{ value: "✨", label: ui.streaks.iconLabels.somethingSpecial },
-] as const satisfies ReadonlyArray<StreakIconOption>;
+/**
+ * The emoji never change; their labels do. Keeping the catalog key here instead
+ * of the translated label means the list can be built in whichever language is
+ * active when it is rendered.
+ */
+const STREAK_ICONS = [
+	{ value: "💪", labelKey: "strength" },
+	{ value: "🧠", labelKey: "learning" },
+	{ value: "📚", labelKey: "reading" },
+	{ value: "🏃", labelKey: "running" },
+	{ value: "🧘", labelKey: "meditation" },
+	{ value: "💧", labelKey: "hydration" },
+	{ value: "🥗", labelKey: "healthyFood" },
+	{ value: "😴", labelKey: "sleep" },
+	{ value: "✍️", labelKey: "writing" },
+	{ value: "🎨", labelKey: "creativity" },
+	{ value: "🎸", labelKey: "music" },
+	{ value: "🌱", labelKey: "growth" },
+	{ value: "🧹", labelKey: "tidying" },
+	{ value: "💸", labelKey: "saving" },
+	{ value: "❤️", labelKey: "wellbeing" },
+	{ value: "☀️", labelKey: "morning" },
+	{ value: "🌙", labelKey: "evening" },
+	{ value: "✅", labelKey: "dailyGoal" },
+	{ value: "✨", labelKey: "somethingSpecial" },
+] as const satisfies ReadonlyArray<{ value: string; labelKey: keyof Ui["streaks"]["iconLabels"] }>;
 
-const STREAK_ICON_OPTION_BY_VALUE = new Map<string, StreakIconOption>(
-	STREAK_ICON_OPTIONS.map((option) => [option.value, option]),
-);
+export const STREAK_ICON_COUNT = STREAK_ICONS.length;
+
+/** Call while rendering: the labels resolve in the language on screen. */
+export function streakIconOptions(): StreakIconOption[] {
+	return STREAK_ICONS.map(({ value, labelKey }) => ({ value, label: ui.streaks.iconLabels[labelKey] }));
+}
 
 export function getStreakIconOptions(recentIcons: readonly string[]): StreakIconOption[] {
+	const catalogOptions = streakIconOptions();
+	const optionByValue = new Map(catalogOptions.map((option) => [option.value, option]));
 	const seenIcons = new Set<string>();
 	const options: StreakIconOption[] = [];
 
@@ -46,21 +56,21 @@ export function getStreakIconOptions(recentIcons: readonly string[]): StreakIcon
 
 		seenIcons.add(value);
 		options.push(
-			STREAK_ICON_OPTION_BY_VALUE.get(value) ?? {
+			optionByValue.get(value) ?? {
 				value,
 				label: ui.streaks.recentlyUsedEmoji(value),
 			},
 		);
 	}
 
-	for (const option of STREAK_ICON_OPTIONS) {
+	for (const option of catalogOptions) {
 		if (seenIcons.has(option.value)) continue;
 
 		seenIcons.add(option.value);
 		options.push(option);
 	}
 
-	return options.slice(0, STREAK_ICON_OPTIONS.length);
+	return options.slice(0, STREAK_ICON_COUNT);
 }
 
 export function IconPickerIcon({ value }: { value: StreakIconValue }) {

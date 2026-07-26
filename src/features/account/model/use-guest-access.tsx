@@ -2,7 +2,7 @@
 
 import { UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { AuthModal } from "../components/auth-modal";
 import styles from "../account.module.css";
 

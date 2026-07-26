@@ -1,5 +1,5 @@
 import { MAX_REVIEW_GAP_DAYS } from "@/domain/streaks/review-window";
-import { APP_LOCALE } from "@/i18n/config";
+import { getLocale } from "@/i18n";
 
 export type LocalDateKey = `${number}-${number}-${number}`;
 
@@ -71,7 +71,7 @@ export function chunkLocalDates(
 	return batches;
 }
 
-export function formatLocalDate(dateKey: LocalDateKey, locale = APP_LOCALE): string {
+export function formatLocalDate(dateKey: LocalDateKey, locale = getLocale()): string {
 	return new Intl.DateTimeFormat(locale, {
 		weekday: "long",
 		month: "long",

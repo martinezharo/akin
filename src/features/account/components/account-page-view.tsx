@@ -3,7 +3,7 @@
 import { Coins, Sparkles } from "lucide-react";
 import { type ReactNode, useId } from "react";
 import { AppShell } from "@/features/navigation/app-shell";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import type { AccountDashboardView } from "../model/account-types";
 import { RewardStreakSettings } from "./reward-streak-settings";
 import styles from "../account-page.module.css";

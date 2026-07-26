@@ -3,7 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import type { Streak } from "../../model/streak";
 import { StreakActions } from "./streak-actions";
 

@@ -2,7 +2,7 @@
 
 import { Check, ChevronRight, HeartHandshake } from "lucide-react";
 import { useId, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import { formatLocalDate, type LocalDateKey } from "../../model/calendar";
 import type { ReviewAnswers } from "../../model/progress";

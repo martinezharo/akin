@@ -1,9 +1,8 @@
 "use client";
 
 import { type MouseEvent, type PointerEvent, useEffect, useRef, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 
-const PETTING_MESSAGES = [...ui.pet.stage.messages];
 const PETTING_REACTION_DURATION = 780;
 const PETTING_MESSAGE_DURATION = 2200;
 /** A mouse dragged across the companion keeps petting it, but not frantically. */
@@ -38,9 +37,10 @@ export type Petting = {
  * — since that differs per surface. Only the reaction is shared.
  */
 export function usePetting(): Petting {
+	const pettingMessages = ui.pet.stage.messages;
 	const [petting, setPetting] = useState(false);
 	const [sequence, setSequence] = useState(0);
-	const [message, setMessage] = useState(PETTING_MESSAGES[0]);
+	const [message, setMessage] = useState(pettingMessages[0]);
 	const [isMessageVisible, setIsMessageVisible] = useState(false);
 	const reactionTimer = useRef<number | undefined>(undefined);
 	const messageTimer = useRef<number | undefined>(undefined);
@@ -63,7 +63,7 @@ export function usePetting(): Petting {
 		if (event) event.currentTarget.setPointerCapture?.(event.pointerId);
 		playReaction();
 		window.clearTimeout(messageTimer.current);
-		setMessage(PETTING_MESSAGES[Math.floor(Math.random() * PETTING_MESSAGES.length)]);
+		setMessage(pettingMessages[Math.floor(Math.random() * pettingMessages.length)]);
 		setIsMessageVisible(true);
 		messageTimer.current = window.setTimeout(() => setIsMessageVisible(false), PETTING_MESSAGE_DURATION);
 	}

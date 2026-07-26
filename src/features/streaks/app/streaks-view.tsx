@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { UndoToast } from "@/shared/ui/undo-toast";
 import { CoinRewardFeedback } from "@/features/rewards/coin-reward-feedback";
 import { primeRewardSound } from "@/features/rewards/reward-sound-preference";

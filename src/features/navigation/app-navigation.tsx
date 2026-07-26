@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppPreferences } from "@/features/preferences/app-preferences";
 import { getExperiencePath } from "@/shared/routing/experience-paths";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { AkinMascotArtwork } from "@/shared/ui/akin-mascot-artwork";
 import motionStyles from "@/shared/ui/akin-mascot-motion.module.css";
 import styles from "./app-navigation.module.css";

@@ -1,4 +1,4 @@
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "./hosted-by.module.css";
 
 /** Where Akin actually runs. */

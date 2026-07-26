@@ -12,7 +12,7 @@ import { useRegisteredStreaksController } from "@/features/streaks/app/use-regis
 import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 import { AccountDock } from "../components/account-dock";
 import { useGuestAccess } from "../model/use-guest-access";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "../account.module.css";
 
 function HomeLoading({ message }: { message: string }) {

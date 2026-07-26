@@ -1,4 +1,4 @@
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "./github-link.module.css";
 
 /** The one place Akin's source actually lives. */

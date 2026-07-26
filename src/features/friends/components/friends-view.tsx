@@ -3,7 +3,7 @@
 import { Inbox, Search, UserRoundSearch, UsersRound, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { AppShell } from "@/features/navigation/app-shell";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import {
 	byWeeklyXp,
 	EMPTY_CONNECTIONS,
@@ -20,11 +20,16 @@ import styles from "../friends-page.module.css";
 /** The page does three separate jobs; one control decides which is on screen. */
 type Panel = "crew" | "requests" | "discover";
 
-const PANELS: { id: Panel; label: string; title: string; icon: ReactNode }[] = [
-	{ id: "crew", label: ui.friends.tabCrew, title: ui.friends.yourCrew, icon: <UsersRound aria-hidden="true" /> },
-	{ id: "requests", label: ui.friends.tabRequests, title: ui.friends.requests, icon: <Inbox aria-hidden="true" /> },
-	{ id: "discover", label: ui.friends.tabDiscover, title: ui.friends.searchLabel, icon: <Search aria-hidden="true" /> },
-];
+const PANEL_ORDER: Panel[] = ["crew", "requests", "discover"];
+
+/** Built per render so the tabs follow the active language. */
+function panels(): { id: Panel; label: string; title: string; icon: ReactNode }[] {
+	return [
+		{ id: "crew", label: ui.friends.tabCrew, title: ui.friends.yourCrew, icon: <UsersRound aria-hidden="true" /> },
+		{ id: "requests", label: ui.friends.tabRequests, title: ui.friends.requests, icon: <Inbox aria-hidden="true" /> },
+		{ id: "discover", label: ui.friends.tabDiscover, title: ui.friends.searchLabel, icon: <Search aria-hidden="true" /> },
+	];
+}
 
 export function FriendsLoading() {
 	return (
@@ -109,12 +114,12 @@ export function FriendsView({
 
 			<div
 				className={styles.tabs}
-				style={{ "--panel-index": PANELS.findIndex((entry) => entry.id === panel) } as React.CSSProperties}
+				style={{ "--panel-index": PANEL_ORDER.indexOf(panel) } as React.CSSProperties}
 				role="tablist"
 				aria-label={ui.friends.title}
 			>
 				<span className={styles.tabIndicator} aria-hidden="true" />
-				{PANELS.map((entry) => (
+				{panels().map((entry) => (
 					<button
 						key={entry.id}
 						type="button"

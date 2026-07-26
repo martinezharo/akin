@@ -2,7 +2,7 @@
 
 import { Check, Coins } from "lucide-react";
 import type { CSSProperties } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "../pet-page.module.css";
 
 export function ColorRail({ options, selectedId, equippedId, ownedIds, onSelect, label }: {

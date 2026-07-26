@@ -1,7 +1,7 @@
 "use client";
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import type { Streak } from "../../model/streak";
 import { StreakBadge } from "../badge/streak-badge";
 import { StreakIconPicker } from "../icon-picker/icon-picker";
@@ -9,11 +9,14 @@ import type { StreakIconOption, StreakIconValue } from "../icon-picker/streak-ic
 import { StreakActions } from "../streak-actions/streak-actions";
 import styles from "./streak-list.module.css";
 
-const EMPTY_STREAK_PREVIEW = [
-	{ icon: "💧", name: ui.streaks.emptyExamples.hydration, days: 9 },
-	{ icon: "📚", name: ui.streaks.emptyExamples.reading, days: 23 },
-	{ icon: "🌱", name: ui.streaks.emptyExamples.progress, days: 25 },
-] as const;
+/** Built per render so the sample names follow the active language. */
+function emptyStreakPreview() {
+	return [
+		{ icon: "💧", name: ui.streaks.emptyExamples.hydration, days: 9 },
+		{ icon: "📚", name: ui.streaks.emptyExamples.reading, days: 23 },
+		{ icon: "🌱", name: ui.streaks.emptyExamples.progress, days: 25 },
+	];
+}
 
 type StreakNameStyle = CSSProperties & {
 	"--streak-name-distance": string;
@@ -73,7 +76,7 @@ function OverflowingStreakName({ name }: { name: string }) {
 function EmptyStreakPreview() {
 	return (
 		<>
-			{EMPTY_STREAK_PREVIEW.map((streak) => (
+			{emptyStreakPreview().map((streak) => (
 				<li
 					className={`${styles.row} ${styles.emptyRow}`}
 					key={streak.name}

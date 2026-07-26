@@ -3,7 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { getStreakBadgeTier, STREAK_BADGE_TIERS } from "@/features/streaks/components/badge/streak-badge";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { BadgeLadder } from "./badge-ladder";
 
 afterEach(cleanup);

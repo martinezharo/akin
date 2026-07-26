@@ -2,7 +2,7 @@
 
 import { Check, Clock3, Sparkles, UserPlus, UsersRound, X } from "lucide-react";
 import { useState } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import type { Friend, FriendContext, FriendshipActions } from "../model/friend-types";
 import { FriendPortrait } from "./friend-portrait";

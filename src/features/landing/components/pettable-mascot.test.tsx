@@ -2,7 +2,7 @@
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { PettableMascot } from "./pettable-mascot";
 
 afterEach(() => {

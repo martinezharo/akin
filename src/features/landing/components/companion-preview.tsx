@@ -9,7 +9,7 @@ import {
 	PET_SKINS,
 	type PetSkinId,
 } from "@/domain/pet/pet-catalog";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { petLookStyle } from "@/shared/ui/pet-look";
 import { PettableMascot } from "./pettable-mascot";
 import styles from "./companion-preview.module.css";

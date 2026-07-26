@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useSyncExternalStore } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "./streaks-shell.module.css";
 
 const subscribeToHydration = () => () => {};

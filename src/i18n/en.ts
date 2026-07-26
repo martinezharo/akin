@@ -1,3 +1,4 @@
+/** The complete catalog. Every other language is a partial overlay on top of it. */
 export const ui = {
 	streaks: {
 		title: "Streaks",
@@ -152,9 +153,15 @@ export const ui = {
 		themeHint: "Pick the light that feels right.",
 		light: "Light",
 		dark: "Dark",
+		switchToLight: "Switch to light",
+		switchToDark: "Switch to dark",
 		language: "Language",
-		languageHint: "More languages are on their way.",
+		languageCode: "EN",
+		closeLanguage: "Close the language picker",
+		languageHint: "Choose the language that feels most like home.",
 		english: "English",
+		spanish: "Español",
+		ukrainian: "Українська",
 		installTitle: "Install Akin",
 		newInstall: "New",
 		installCopy: "Keep your streaks one tap away.",
@@ -163,8 +170,7 @@ export const ui = {
 		intro: "A few small choices, just the way you like them.",
 		rewardSound: "Reward sound",
 		rewardSoundHint: "A tiny chime when coins land.",
-		languageCode: "EN",
-		languageSoon: "More languages on the way",
+		languageSoon: "Available languages — more languages on the way",
 	},
 	friends: {
 		kicker: "The Akin crew",
@@ -439,4 +445,4 @@ export const ui = {
 		title: "Akin",
 		description: "Build playful streaks for the promises that matter to you.",
 	},
-} as const;
+};

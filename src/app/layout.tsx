@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
-import Script from "next/script";
 import { APP_LANGUAGE } from "@/i18n/config";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
+import { I18nProvider } from "@/i18n/i18n-provider";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import { PetCustomizationProvider } from "@/features/pet/model/pet-customization-provider";
 import { AppChromeProvider } from "@/features/navigation/app-chrome";
@@ -15,7 +15,6 @@ try {
 		? stored.theme
 		: (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 	document.documentElement.dataset.theme = theme;
-	if (stored?.language === "en") document.documentElement.lang = stored.language;
 } catch {
 	document.documentElement.dataset.theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
@@ -61,14 +60,14 @@ export default function RootLayout({
 	return (
 		<html lang={APP_LANGUAGE} className={nunito.variable} suppressHydrationWarning>
 			<head>
-				<Script id="akin-preferences" strategy="beforeInteractive">
-					{preferencesBootScript}
-				</Script>
+				<script id="akin-preferences" dangerouslySetInnerHTML={{ __html: preferencesBootScript }} />
 			</head>
 			<body>
 				<ConvexClientProvider>
 					<PetCustomizationProvider>
+					<I18nProvider>
 						<AppChromeProvider>{children}</AppChromeProvider>
+					</I18nProvider>
 					</PetCustomizationProvider>
 				</ConvexClientProvider>
 			</body>

@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 import styles from "./streak-badge.module.css";
-import { APP_LOCALE } from "@/i18n/config";
+import { getLocale } from "@/i18n";
 
 export type StreakBadgeTier = "glass" | "silver" | "fire" | "god";
 
@@ -27,7 +27,18 @@ export const STREAK_BADGE_TIERS = [
 	{ tier: "god", minDays: GOD_STREAK_MIN_DAYS },
 ] as const satisfies readonly { tier: StreakBadgeTier; minDays: number }[];
 
-const streakCountFormatter = new Intl.NumberFormat(APP_LOCALE);
+const streakCountFormatters = new Map<string, Intl.NumberFormat>();
+
+/** Cached per locale: the count has to follow whichever language is on screen. */
+function formatStreakCount(days: number): string {
+	const locale = getLocale();
+	let formatter = streakCountFormatters.get(locale);
+	if (!formatter) {
+		formatter = new Intl.NumberFormat(locale);
+		streakCountFormatters.set(locale, formatter);
+	}
+	return formatter.format(days);
+}
 const COMPLETION_BURST_RAYS = Array.from({ length: 8 }, (_, index) => index);
 
 export function getStreakBadgeTier(days: number): StreakBadgeTier {
@@ -60,7 +71,7 @@ export function StreakBadge({
 	if (!onComplete) {
 		return (
 			<span className={className} data-tier={tier} aria-label={ariaLabel}>
-				<span className={styles.value}>{streakCountFormatter.format(days)}</span>
+				<span className={styles.value}>{formatStreakCount(days)}</span>
 			</span>
 		);
 	}
@@ -79,7 +90,7 @@ export function StreakBadge({
 		>
 			<span className={styles.pendingVeil} aria-hidden="true" />
 			<span className={styles.value} data-celebrating={celebrating}>
-				{streakCountFormatter.format(days)}
+				{formatStreakCount(days)}
 			</span>
 			<span className={styles.completionSeal} aria-hidden="true">
 				<Check />

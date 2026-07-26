@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 
 export default function manifest(): MetadataRoute.Manifest {

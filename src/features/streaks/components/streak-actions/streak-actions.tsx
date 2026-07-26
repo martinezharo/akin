@@ -16,7 +16,7 @@ import {
 	useId,
 	useState,
 } from "react";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { usePausableTimeout } from "@/shared/hooks/use-pausable-timeout";
 import {
 	useAdaptivePopoverPlacement,

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { GuestAuthGate } from "@/features/account/experiences/guest-auth-gate";
 import { AppShell } from "@/features/navigation/app-shell";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 import styles from "../pet-page.module.css";
 

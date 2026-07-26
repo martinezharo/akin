@@ -1,7 +1,7 @@
 import { FriendPortrait } from "@/features/friends/components/friend-portrait";
 import { DEMO_FRIENDS } from "@/features/friends/demo/demo-friends-fixture";
 import { byWeeklyXp } from "@/features/friends/model/friend-types";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import styles from "./crew-preview.module.css";
 
 /** The demo crew, sorted the way the real board sorts it. */

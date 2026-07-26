@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AccountDock } from "@/features/account/components/account-dock";
 import { AuthModal } from "@/features/account/components/auth-modal";
 import { GuestAccountButton } from "@/features/account/model/use-guest-access";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { useLocalDay } from "@/features/streaks/app/use-local-day";
 import {
 	getPetHair,

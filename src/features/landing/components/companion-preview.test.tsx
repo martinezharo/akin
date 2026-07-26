@@ -4,7 +4,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
 import { PET_SKINS } from "@/domain/pet/pet-catalog";
-import { ui } from "@/i18n/en";
+import { ui } from "@/i18n";
 import { CompanionPreview } from "./companion-preview";
 
 afterEach(cleanup);
