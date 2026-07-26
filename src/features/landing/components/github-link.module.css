@@ -15,17 +15,19 @@
 	color: var(--foreground);
 	backdrop-filter: blur(14px) saturate(150%);
 	transition:
-		transform var(--motion-standard),
+		transform var(--motion-spring),
 		background var(--motion-standard),
 		box-shadow var(--motion-standard);
 }
 
+/* Presses down onto its own shadow, the way the app's other tappables do —
+   never popping out to meet the cursor. */
 .link:hover {
 	background: var(--background);
-	transform: translateY(-0.12rem);
+	box-shadow: 0 0.08rem 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
+	transform: translateY(0.1rem);
 }
 
-/* Presses down onto its own shadow, the way the app's other tappables do. */
 .link:active {
 	box-shadow: 0 0 0 color-mix(in srgb, var(--line) 80%, var(--foreground));
 	transform: translateY(0.18rem);

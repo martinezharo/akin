@@ -156,7 +156,6 @@ export const ui = {
 		switchToLight: "Switch to light",
 		switchToDark: "Switch to dark",
 		language: "Language",
-		languageCode: "EN",
 		closeLanguage: "Close the language picker",
 		languageHint: "Choose the language that feels most like home.",
 		english: "English",
@@ -170,7 +169,6 @@ export const ui = {
 		intro: "A few small choices, just the way you like them.",
 		rewardSound: "Reward sound",
 		rewardSoundHint: "A tiny chime when coins land.",
-		languageSoon: "Available languages — more languages on the way",
 	},
 	friends: {
 		kicker: "The Akin crew",

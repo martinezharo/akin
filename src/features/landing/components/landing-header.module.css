@@ -55,7 +55,16 @@
 	letter-spacing: -0.03em;
 }
 
+.controls {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+/* The hero repeats this call to action a thumb below, so on a phone the bar
+ * spends its width on the settings instead. */
 .action {
+	display: none;
 	padding: 0.5rem 0.95rem;
 	border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
 	border-radius: var(--radius-tail-pill);
@@ -87,6 +96,12 @@
 .action:focus-visible {
 	outline: var(--focus-ring);
 	outline-offset: 0.2rem;
+}
+
+@media (min-width: 48rem) {
+	.action {
+		display: inline-block;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {

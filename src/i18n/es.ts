@@ -152,7 +152,6 @@ export const overrides: LocaleOverrides<typeof en> = {
 		switchToLight: "Cambiar al modo claro",
 		switchToDark: "Cambiar al modo oscuro",
 		language: "Idioma",
-		languageCode: "ES",
 		closeLanguage: "Cerrar el selector de idioma",
 		languageHint: "Elige el idioma que más se parezca a tu casa.",
 		// Each language is listed in its own words, so it reads the same whichever
@@ -168,7 +167,6 @@ export const overrides: LocaleOverrides<typeof en> = {
 		intro: "Pequeñas decisiones, a tu manera.",
 		rewardSound: "Sonido de recompensa",
 		rewardSoundHint: "Un pequeño tintineo cuando llegan las monedas.",
-		languageSoon: "Idiomas disponibles — pronto habrá más",
 	},
 	friends: {
 		kicker: "El grupo de Akin",

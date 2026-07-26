@@ -3,8 +3,6 @@
 import {
 	ArrowLeft,
 	ArrowRight,
-	Check,
-	ChevronDown,
 	Download,
 	Ellipsis,
 	Moon,
@@ -15,56 +13,22 @@ import {
 	X,
 } from "lucide-react";
 import { flushSync } from "react-dom";
-import { type FocusEvent, type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useInstallApp } from "@/features/pwa/use-install-app";
-import { ui } from "@/i18n/en";
+import { setRuntimeLanguage, ui } from "@/i18n";
+import type { Language } from "@/i18n/config";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
 import { isRewardSoundEnabled, setRewardSoundEnabled } from "@/features/rewards/reward-sound-preference";
+import { LanguageMenu } from "./language-menu";
+import {
+	activeLanguage,
+	readStoredPreferences,
+	runThemeTransition,
+	savePreferences,
+	selectLanguage,
+	type Theme,
+} from "@/shared/preferences/preferences-storage";
 import styles from "./app-preferences.module.css";
-
-const PREFERENCES_KEY = "akin.preferences.v1";
-
-type Theme = "light" | "dark";
-type Language = "en";
-
-type StoredPreferences = {
-	theme: Theme;
-	language: Language;
-};
-
-type ViewTransitionDocument = Document & {
-	startViewTransition?: (updateCallback: () => void) => { finished: Promise<void> };
-};
-
-function readStoredPreferences(): StoredPreferences {
-	try {
-		const stored = JSON.parse(window.localStorage.getItem(PREFERENCES_KEY) ?? "null") as Partial<StoredPreferences> | null;
-		return {
-			theme:
-				stored?.theme === "light" || stored?.theme === "dark"
-					? stored.theme
-					: window.matchMedia("(prefers-color-scheme: dark)").matches
-						? "dark"
-						: "light",
-			language: "en",
-		};
-	} catch {
-		return {
-			theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-			language: "en",
-		};
-	}
-}
-
-function savePreferences(preferences: StoredPreferences) {
-	try {
-		window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
-	} catch {
-		// The visual preference should still apply when storage is unavailable.
-	}
-	document.documentElement.dataset.theme = preferences.theme;
-	document.documentElement.lang = preferences.language;
-}
 
 export function AppPreferences({ placement = "floating" }: { placement?: "floating" | "navigation" }) {
 	const [open, setOpen] = useState(false);
@@ -72,6 +36,7 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 	const [showInstallNotice, setShowInstallNotice] = useState(false);
 	const [theme, setTheme] = useState<Theme>("light");
 	const [language, setLanguage] = useState<Language>("en");
+	const [languageChosen, setLanguageChosen] = useState(false);
 	const [rewardSound, setRewardSound] = useState(true);
 	const [themeAnimation, setThemeAnimation] = useState<Theme | null>(null);
 	const { shouldOfferInstall, shouldHighlightInstall, dismissInstallHighlight, requestInstall } = useInstallApp();
@@ -84,7 +49,8 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 	function showPreferences() {
 		const stored = readStoredPreferences();
 		setTheme(stored.theme);
-		setLanguage(stored.language);
+		setLanguage(activeLanguage(stored));
+		setLanguageChosen(stored.language !== undefined);
 		setRewardSound(isRewardSoundEnabled());
 		setShowInstallNotice(shouldHighlightInstall);
 		setOpen(true);
@@ -98,30 +64,17 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 		setThemeAnimation(nextTheme);
 		themeAnimationTimer.current = window.setTimeout(() => setThemeAnimation(null), 560);
 
-		const applyTheme = () => {
+		runThemeTransition(() => {
 			flushSync(() => setTheme(nextTheme));
-			savePreferences({ theme: nextTheme, language });
-		};
-		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		const transitionDocument = document as ViewTransitionDocument;
-
-		if (prefersReducedMotion || !transitionDocument.startViewTransition) {
-			applyTheme();
-			return;
-		}
-
-		const origin = document.activeElement instanceof HTMLElement ? document.activeElement.getBoundingClientRect() : null;
-		if (origin) {
-			document.documentElement.style.setProperty("--theme-transition-x", `${origin.left + origin.width / 2}px`);
-			document.documentElement.style.setProperty("--theme-transition-y", `${origin.top + origin.height / 2}px`);
-		}
-
-		void transitionDocument.startViewTransition(applyTheme).finished.catch(() => undefined);
+			savePreferences({ theme: nextTheme, language: languageChosen ? language : undefined });
+		});
 	}
 
 	function chooseLanguage(nextLanguage: Language) {
 		setLanguage(nextLanguage);
-		savePreferences({ theme, language: nextLanguage });
+		setLanguageChosen(true);
+		setRuntimeLanguage(nextLanguage);
+		selectLanguage(nextLanguage);
 	}
 
 	function toggleRewardSound() {
@@ -192,7 +145,7 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 
 									<section className={styles.setting} aria-labelledby={`${titleId}-language-label`}>
 										<div className={styles.settingCopy}><strong id={`${titleId}-language-label`}>{ui.preferences.language}</strong><small>{ui.preferences.languageHint}</small></div>
-										<LanguagePicker id={`${titleId}-language`} labelledBy={`${titleId}-language-label`} value={language} onChange={chooseLanguage} />
+										<LanguageMenu id={`${titleId}-language`} labelledBy={`${titleId}-language-label`} value={language} onChange={chooseLanguage} />
 									</section>
 
 									<section className={styles.setting} aria-labelledby={`${titleId}-sound`}>
@@ -229,80 +182,6 @@ function ThemeButton({ icon, label, selected, animating, onClick }: { icon: Reac
 			{icon}
 			<strong>{label}</strong>
 		</button>
-	);
-}
-
-function LanguagePicker({ id, labelledBy, value, onChange }: { id: string; labelledBy: string; value: Language; onChange: (language: Language) => void }) {
-	const [open, setOpen] = useState(false);
-	const triggerRef = useRef<HTMLButtonElement>(null);
-	const optionRef = useRef<HTMLButtonElement>(null);
-
-	function openPicker() {
-		setOpen(true);
-		window.requestAnimationFrame(() => optionRef.current?.focus());
-	}
-
-	function closePicker({ restoreFocus = false } = {}) {
-		setOpen(false);
-		if (restoreFocus) window.requestAnimationFrame(() => triggerRef.current?.focus());
-	}
-
-	function handleTriggerKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-		if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-		event.preventDefault();
-		openPicker();
-	}
-
-	function handlePickerBlur(event: FocusEvent<HTMLDivElement>) {
-		if (!event.currentTarget.contains(event.relatedTarget)) closePicker();
-	}
-
-	return (
-		<div className={styles.languagePicker} onBlur={handlePickerBlur}>
-			<button
-				id={id}
-				ref={triggerRef}
-				className={styles.languageTrigger}
-				type="button"
-				data-open={open}
-				aria-haspopup="menu"
-				aria-expanded={open}
-				aria-controls={`${id}-menu`}
-				aria-labelledby={`${labelledBy} ${id}-value`}
-				onClick={() => open ? closePicker() : openPicker()}
-				onKeyDown={handleTriggerKeyDown}
-			>
-<span className={styles.languageCode} aria-hidden="true">{ui.preferences.languageCode}</span>
-		<strong id={`${id}-value`}>{ui.preferences.english}</strong>
-				<span className={styles.languageChevron} aria-hidden="true" data-open={open}>
-					<ChevronDown />
-				</span>
-			</button>
-
-			{open ? (
-				<div className={styles.languageMenu} id={`${id}-menu`} role="menu" aria-label={ui.preferences.language}>
-					<button
-						ref={optionRef}
-						type="button"
-						role="menuitemradio"
-						aria-checked={value === "en"}
-						data-selected={value === "en"}
-						onClick={() => { onChange("en"); closePicker({ restoreFocus: true }); }}
-						onKeyDown={(event) => {
-							if (event.key === "Escape") {
-								event.preventDefault();
-								closePicker({ restoreFocus: true });
-							}
-						}}
-					>
-				<span className={styles.languageCode} aria-hidden="true">{ui.preferences.languageCode}</span>
-						<strong>{ui.preferences.english}</strong>
-						{value === "en" ? <Check aria-hidden="true" /> : <span className={styles.languageCheckSlot} aria-hidden="true" />}
-					</button>
-					<p className={styles.languageSoon}>{ui.preferences.languageSoon}</p>
-				</div>
-			) : null}
-		</div>
 	);
 }
 

@@ -152,7 +152,6 @@ export const overrides: LocaleOverrides<typeof en> = {
 		switchToLight: "Перемкнути на світлу тему",
 		switchToDark: "Перемкнути на темну тему",
 		language: "Мова",
-		languageCode: "UK",
 		closeLanguage: "Закрити вибір мови",
 		languageHint: "Оберіть мову, яка відчувається рідною.",
 		// Each language is listed in its own words, so it reads the same whichever
@@ -168,7 +167,6 @@ export const overrides: LocaleOverrides<typeof en> = {
 		intro: "Кілька маленьких рішень — саме для вас.",
 		rewardSound: "Звук нагороди",
 		rewardSoundHint: "Маленький дзвін, коли приходять монети.",
-		languageSoon: "Доступні мови — скоро буде більше",
 	},
 	friends: {
 		kicker: "Команда Akin",

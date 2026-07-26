@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ui } from "@/i18n/en";
+import { LanguageControl } from "@/features/preferences/language-control";
+import { ThemeToggle } from "@/features/preferences/theme-toggle";
+import { ui } from "@/i18n";
 import { APP_HOME_PATH } from "@/shared/routing/experience-paths";
 import styles from "./landing-header.module.css";
 
@@ -42,9 +44,15 @@ export function LandingHeader() {
 					/>
 					<span className={styles.name}>{ui.metadata.title}</span>
 				</Link>
-				<Link className={styles.action} href={APP_HOME_PATH}>
-					{ui.landing.enterAction}
-				</Link>
+				{/* On a phone the hero's own call to action is a thumb away, so the bar
+				    gives its room to the two settings instead. */}
+				<div className={styles.controls}>
+					<ThemeToggle />
+					<LanguageControl />
+					<Link className={styles.action} href={APP_HOME_PATH}>
+						{ui.landing.enterAction}
+					</Link>
+				</div>
 			</div>
 		</header>
 	);

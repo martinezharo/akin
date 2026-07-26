@@ -68,7 +68,6 @@ describe("AppPreferences", () => {
 		await user.click(screen.getByRole("button", { name: /open preferences/i }));
 		await user.click(screen.getByRole("button", { name: "Dark" }));
 		await user.click(screen.getByRole("button", { name: /language english/i }));
-		expect(screen.getByText(/more languages on the way/i)).toBeTruthy();
 		await user.click(screen.getByRole("menuitemradio", { name: /english/i }));
 
 		expect(document.documentElement.dataset.theme).toBe("dark");
@@ -76,6 +75,16 @@ describe("AppPreferences", () => {
 			theme: "dark",
 			language: "en",
 		});
+	});
+
+	it("keeps following the browser language when only the theme changes", async () => {
+		const user = userEvent.setup();
+		render(<AppPreferences />);
+
+		await user.click(screen.getByRole("button", { name: /open preferences/i }));
+		await user.click(screen.getByRole("button", { name: "Dark" }));
+
+		expect(JSON.parse(window.localStorage.getItem("akin.preferences.v1") ?? "null")).toEqual({ theme: "dark" });
 	});
 
 	it("keeps install available when the browser has no direct prompt", async () => {

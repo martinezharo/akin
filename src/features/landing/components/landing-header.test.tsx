@@ -1,8 +1,23 @@
 /** @vitest-environment jsdom */
 
 import { act, cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LandingHeader } from "./landing-header";
+
+beforeEach(() => {
+	window.localStorage.clear();
+	Object.defineProperty(window, "matchMedia", {
+		configurable: true,
+		value: vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+	});
+	HTMLDialogElement.prototype.showModal = function showModal() {
+		this.open = true;
+	};
+	HTMLDialogElement.prototype.close = function close() {
+		this.open = false;
+	};
+});
 
 afterEach(cleanup);
 
@@ -34,5 +49,17 @@ describe("LandingHeader", () => {
 
 		scrollTo(4);
 		expect(header.dataset.lifted).toBeUndefined();
+	});
+
+	it("carries the appearance and language settings", async () => {
+		const user = userEvent.setup();
+		render(<LandingHeader />);
+
+		await user.click(screen.getByRole("button", { name: /switch to dark/i }));
+		expect(document.documentElement.dataset.theme).toBe("dark");
+		expect(JSON.parse(window.localStorage.getItem("akin.preferences.v1") ?? "null")).toEqual({ theme: "dark" });
+
+		await user.click(screen.getByRole("button", { name: /language: english/i }));
+		expect(screen.getByRole("menuitemradio", { name: /español/i })).toBeTruthy();
 	});
 });
