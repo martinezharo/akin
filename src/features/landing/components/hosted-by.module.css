@@ -1,0 +1,40 @@
+.credit {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	color: var(--muted);
+	font-size: var(--text-sm);
+	font-weight: var(--weight-strong);
+}
+
+.prefix {
+	opacity: 0.75;
+}
+
+/* Underlined from the start so it reads as a link even in a quiet footer, and
+   lifts to full contrast on hover like the rest of Akin's inline links. */
+.link {
+	border-block-end: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
+	color: var(--foreground);
+	font-weight: var(--weight-black);
+	letter-spacing: -0.01em;
+	transition:
+		color var(--motion-standard),
+		border-color var(--motion-standard);
+}
+
+.link:hover {
+	border-block-end-color: currentColor;
+}
+
+.link:focus-visible {
+	border-radius: 0.2rem;
+	outline: var(--focus-ring);
+	outline-offset: 0.2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.link {
+		transition: none;
+	}
+}

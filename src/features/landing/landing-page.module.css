@@ -354,6 +354,8 @@
 	color: var(--muted);
 	font-size: var(--text-md);
 	font-weight: var(--weight-strong);
+	/* Leaves room for the pinned GitHub badge instead of sitting under it. */
+	padding-block-end: 5rem;
 }
 
 /* ── Layout shifts ──────────────────────────────────────────────────────── */

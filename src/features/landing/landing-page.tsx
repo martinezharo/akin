@@ -5,6 +5,7 @@ import { BadgeLadder } from "./components/badge-ladder";
 import { CompanionPreview } from "./components/companion-preview";
 import { CrewPreview } from "./components/crew-preview";
 import { GithubLink } from "./components/github-link";
+import { HostedBy } from "./components/hosted-by";
 import { LandingActions } from "./components/landing-actions";
 import { LandingHeader } from "./components/landing-header";
 import { LiveCheckIn } from "./components/live-check-in";
@@ -104,7 +105,7 @@ export function LandingPage() {
 
 			<footer className={styles.footer}>
 				<span className={styles.brandName}>{ui.metadata.title}</span>
-				<span>{copy.footer}</span>
+				<HostedBy />
 			</footer>
 
 			<GithubLink />
