@@ -309,7 +309,7 @@
 	outline: 0;
 	background: transparent;
 	color: var(--foreground);
-	font-size: var(--text-lg);
+	font-size: max(var(--text-lg), var(--text-field-min));
 	font-weight: var(--weight-black);
 }
 .searchField input::placeholder { color: color-mix(in srgb, var(--muted) 62%, transparent); }

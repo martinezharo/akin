@@ -34,6 +34,10 @@
 	--text-3xl: 1.7rem;
 	--text-4xl: 1.95rem;
 	--text-5xl: 2.25rem;
+	/* iOS Safari auto-zooms into any focused field typed below 16px. Every
+	 * control that accepts typing must floor its font size at this token:
+	 * `font-size: max(var(--text-lg), var(--text-field-min))`. */
+	--text-field-min: 1rem;
 	--weight-body: 700;
 	--weight-strong: 850;
 	--weight-black: 950;
