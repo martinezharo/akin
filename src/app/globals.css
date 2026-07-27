@@ -148,11 +148,15 @@ html {
 	 * the centred navigation slides sideways with it. */
 	scrollbar-gutter: stable;
 	-webkit-text-size-adjust: 100%;
+	/* Kill the browser's pull-to-refresh and rubber-band overscroll so dragging
+	 * past the top of a page feels like a native app instead of a web page. */
+	overscroll-behavior: none;
 }
 
 body {
 	min-height: 100dvh;
 	margin: 0;
+	overscroll-behavior: none;
 	background: var(--background);
 	color: var(--foreground);
 	font-family: var(--font-nunito), sans-serif;
