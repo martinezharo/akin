@@ -409,10 +409,8 @@ export const overrides: LocaleOverrides<typeof en> = {
 		},
 		closingTitle: "El primer día es el caro.",
 		closingCopy: "Después solo hay que no romper la racha.",
+		footer: "Aprobado por el capibara 🥺",
 		githubLabel: "Akin en GitHub",
-		poweredBy: "Creado con",
-		hostLabel: "Cubepath",
-		hostLinkLabel: "Cubepath, donde se aloja Akin",
 	},
 	metadata: {
 		title: "Akin",

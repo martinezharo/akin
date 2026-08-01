@@ -358,6 +358,13 @@
 	padding-block-end: 5rem;
 }
 
+.footerNote {
+	margin-inline-start: auto;
+	font-size: var(--text-sm);
+	font-weight: var(--weight-strong);
+	text-align: end;
+}
+
 /* ── Layout shifts ──────────────────────────────────────────────────────── */
 
 @media (min-width: 62rem) {

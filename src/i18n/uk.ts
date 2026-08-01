@@ -409,10 +409,8 @@ export const overrides: LocaleOverrides<typeof en> = {
 		},
 		closingTitle: "Перший день найдорожчий.",
 		closingCopy: "Далі потрібно лише не переривати серію.",
+		footer: "Схвалено капібарою 🥺",
 		githubLabel: "Akin на GitHub",
-		poweredBy: "Створено на",
-		hostLabel: "Cubepath",
-		hostLinkLabel: "Cubepath, де розміщено Akin",
 	},
 	metadata: {
 		title: "Akin",

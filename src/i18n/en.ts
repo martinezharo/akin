@@ -432,12 +432,8 @@ export const ui = {
 		},
 		closingTitle: "Day one is the expensive one.",
 		closingCopy: "Every day after is just not breaking it.",
-		// Parked while the footer only has room for the brand and the host.
-		// footer: "Capybara approved 🥺",
+		footer: "Capybara approved 🥺",
 		githubLabel: "Akin on GitHub",
-		poweredBy: "Powered by",
-		hostLabel: "Cubepath",
-		hostLinkLabel: "Cubepath, where Akin is hosted",
 	},
 	metadata: {
 		title: "Akin",

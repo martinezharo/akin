@@ -1,90 +1,91 @@
 # Akin
 
-Akin es una app de rachas para móvil hecha con tecnologías web. Marcas el día, la
-racha crece, tu mascota se pone contenta y tus amigos lo ven. Nada de tablas
-grises ni de checkboxes tristes: la idea es que abrir Akin apetezca.
+Akin is a mobile-first streak app built with web technologies. Check in for the
+day, watch the streak grow, make your pet happy, and let your friends see it. No
+grey tables or joyless checkboxes: opening Akin should feel like a treat.
 
-## Qué hace
+## What it does
 
-- **Rachas.** Objetivos con nombre e icono, check-in diario y una ventana de
-  revisión para ponerte al día sin falsear fechas.
-- **Deshacer.** Cualquier check-in o borrado se revierte desde el toast, con las
-  monedas que hubiera repartido.
-- **Monedas.** Una por check-in válido, máximo tres por racha al revisar, y sólo
-  diez rachas a la vez pueden generarlas.
-- **Mascota.** Se acaricia, reacciona y se viste con pieles y peinados que
-  compras con las monedas.
-- **Amigos.** Solicitudes por nombre de usuario y un muro de actividad.
-- **Instalable.** En el móvil se comporta como una app, no como una pestaña.
+- **Streaks.** Goals with a name and icon, daily check-ins, and a review window
+  that lets you catch up without falsifying dates.
+- **Undo.** Every check-in or deletion can be reversed from its toast, including
+  any coins it awarded.
+- **Coins.** One per valid check-in, up to three per streak during review, with
+  no more than ten streaks earning coins at once.
+- **Pet.** Pet it, watch it react, and dress it in skins and hairstyles bought
+  with your coins.
+- **Friends.** Send requests by username and follow a shared activity feed.
+- **Installable.** On mobile it behaves like an app, not another browser tab.
 
-Rutas: `/` landing · `/streaks` la app · `/pet` mascota y tienda · `/friends`
-amigos · `/me` cuenta · `/demo` recorrido sin cuenta.
+Routes: `/` landing page · `/streaks` app · `/pet` pet and shop · `/friends`
+friends · `/me` account · `/demo` account-free tour.
 
-## Datos
+## Data
 
-Sin cuenta, las rachas viven en `localStorage` y todo lo básico funciona. Con
-cuenta, Convex guarda perfil, rachas, check-ins, monedas y amistades en tiempo
-real, e importa una sola vez lo que tuvieras en local sin pagar monedas
-retroactivas.
+Without an account, streaks live in `localStorage` and all the essentials still
+work. With an account, Convex stores the profile, streaks, check-ins, coins, and
+friendships in real time. Existing local data is imported once, without awarding
+coins retroactively.
 
-El identificador del usuario nunca llega desde el cliente: sale de la sesión
-firmada. Los check-ins y el libro mayor de monedas se validan en el servidor, con
-fechas reales y coherentes con la zona horaria de la cuenta.
+The user identifier never comes from the client; it is derived from the signed
+session. Check-ins and the coin ledger are validated on the server against real
+dates in the account's time zone.
 
 ## Stack
 
 Next.js 16 · React 19 · CSS Modules · Convex · Better Auth · TypeScript · Vitest
-· pnpm. Sin librería de componentes: menús, diálogos y toasts son propios, porque
-el aspecto es parte del producto.
+· pnpm. There is no component library: menus, dialogs, and toasts are custom
+built because the look and feel are part of the product.
 
-## Desarrollo
+## Development
 
 ```bash
 pnpm install
-pnpm dev          # Convex + Next.js juntos, en http://localhost:3000
+pnpm dev          # Convex + Next.js together at http://localhost:3000
 ```
 
-La primera ejecución te deja iniciar sesión en Convex o crear un deployment local
-anónimo, y escribe las variables públicas en `.env.local`. Para depurar por
-separado hay `pnpm dev:backend` y `pnpm dev:web`, pero no lances `dev:backend` si
-ya estás usando `pnpm dev`: pelearían por el mismo deployment.
+The first run lets you sign in to Convex or create an anonymous local deployment,
+then writes the public variables to `.env.local`. Use `pnpm dev:backend` and
+`pnpm dev:web` to debug each side separately, but do not run `dev:backend` while
+`pnpm dev` is active: both would compete for the same deployment.
 
-Better Auth y el acceso con GitHub necesitan estas variables **en el deployment
-de Convex**, no en Next.js:
+Better Auth and GitHub sign-in require these variables **in the Convex
+deployment**, not in Next.js:
 
 ```bash
-pnpm exec convex env set BETTER_AUTH_SECRET   # aleatorio y largo
+pnpm exec convex env set BETTER_AUTH_SECRET   # long and random
 pnpm exec convex env set SITE_URL http://localhost:3000
 pnpm exec convex env set GITHUB_CLIENT_ID
 pnpm exec convex env set GITHUB_CLIENT_SECRET
 ```
 
-La OAuth App local usa `http://localhost:3000/api/auth/callback/github` como
-callback. En producción, `SITE_URL` y la callback apuntan a la URL pública real,
-con credenciales distintas.
+The local OAuth App uses `http://localhost:3000/api/auth/callback/github` as its
+callback. In production, `SITE_URL` and the callback point to the real public
+URL and use separate credentials.
 
-Antes de dar algo por bueno: `pnpm lint`, `pnpm test` y `pnpm build`.
+Before calling a change done, run `pnpm lint`, `pnpm test`, and `pnpm build`.
 
-## Despliegue
+## Deployment
 
-Akin se aloja en un VPS de [Cubepath](https://cubepath.com/), gestionado con
-[Coolify](https://coolify.io/). Coolify se encarga del build desde el repositorio,
-del certificado HTTPS y del proxy hacia el contenedor, así que desplegar es un
-push a `main`.
+Akin runs as a Next.js application on Cloudflare Workers through OpenNext.
+Wrangler publishes both the Worker and its static assets:
 
-En Coolify, la aplicación se define así:
+```bash
+pnpm install --frozen-lockfile
+pnpm run deploy
+```
 
-- **Origen:** este repositorio, rama `main`, build con Nixpacks o Dockerfile.
-- **Comandos:** `pnpm install --frozen-lockfile`, `pnpm build`, `pnpm start`.
-- **Puerto:** `3000`.
-- **Dominio:** el público de Akin, con HTTPS automático desde Coolify.
-- **Variables:** `NEXT_PUBLIC_CONVEX_URL` y `NEXT_PUBLIC_CONVEX_SITE_URL`, que
-  hacen falta **en tiempo de build**, no sólo en ejecución.
+Sign in once with `pnpm exec wrangler login` before deploying locally. The
+`NEXT_PUBLIC_CONVEX_URL` and `NEXT_PUBLIC_CONVEX_SITE_URL` variables must be
+available at build time. In Workers Builds, configure them as build variables;
+for a local deployment they can live in `.env.local`.
 
-El backend sigue en Convex y se publica aparte con `pnpm convex:deploy`. En el
-deployment de producción hay que configurar `BETTER_AUTH_SECRET` y `SITE_URL` con
-el dominio público real, y registrar la callback de GitHub contra ese mismo
-dominio.
+Connect the `akin` Worker to this repository's `main` branch through Workers
+Builds to build and deploy every push automatically. Use `pnpm run preview` to
+test the exact Workers artifact locally. The Worker name, assets, observability,
+and bindings are defined in `wrangler.jsonc`.
 
-La configuración de OpenNext/Cloudflare (`pnpm deploy`, `pnpm preview`) sigue en
-el repo, pero Cubepath + Coolify es el camino oficial.
+The backend remains on Convex and is deployed separately with
+`pnpm convex:deploy`. The production deployment needs `BETTER_AUTH_SECRET` and
+`SITE_URL` configured with the real public domain, and the GitHub callback must
+use that same domain.
