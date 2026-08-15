@@ -121,7 +121,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.16rem;
-	color: var(--muted);
+	color: var(--landing-muted-readable);
 	font-size: var(--text-2xs);
 	font-weight: var(--weight-black);
 	font-variant-numeric: tabular-nums;

@@ -298,7 +298,8 @@
 
 .customControl > span {
 	margin-right: 0.35rem;
-	color: rgb(21 22 18 / 48%);
+	/* Keep the compact unit readable against the pale input surface. */
+	color: rgb(21 22 18 / 70%);
 	font-size: var(--text-2xs);
 	font-weight: var(--weight-strong);
 }
