@@ -1,9 +1,11 @@
-# Pre-approve build scripts for the packages C3 itself installs that need
-# them: `workerd` downloads the platform binary; `esbuild`, `sharp`, and
-# `unrs-resolver` download/build native bindings. Without these, pnpm 11+
-# aborts the install with ERR_PNPM_IGNORED_BUILDS.
-allowBuilds:
-  esbuild: true
-  sharp: true
-  unrs-resolver: true
-  workerd: true
+packages:
+  - "."
+
+# These packages install platform-specific binaries required by the build.
+# Keep this in pnpm 10-compatible workspace syntax so local, CI, and
+# Cloudflare installs use the same allowlist.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver
+  - workerd

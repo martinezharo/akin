@@ -2,6 +2,7 @@
 	"name": "akin",
 	"version": "0.1.0",
 	"private": true,
+	"packageManager": "pnpm@10.11.1",
 	"license": "GPL-3.0-only",
 	"author": "Oliver Martinez Haro",
 	"scripts": {
