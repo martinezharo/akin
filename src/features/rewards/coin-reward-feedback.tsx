@@ -4,7 +4,7 @@ import { Coins } from "lucide-react";
 import { type CSSProperties, useEffect, useLayoutEffect, useState } from "react";
 import type { CoinReward } from "./coin-reward";
 import { ui } from "@/i18n";
-import { playRewardSound, warmRewardSound } from "./reward-sound-preference";
+import { playRewardSound } from "./reward-sound-preference";
 import styles from "./coin-reward-feedback.module.css";
 
 type Point = { x: number; y: number };
@@ -17,10 +17,6 @@ function centerOf(element: Element): Point {
 
 export function CoinRewardFeedback({ reward }: { reward: CoinReward | null }) {
 	const [flight, setFlight] = useState<Flight | null>(null);
-
-	useEffect(() => {
-		warmRewardSound();
-	}, []);
 
 	useLayoutEffect(() => {
 		if (!reward) return;

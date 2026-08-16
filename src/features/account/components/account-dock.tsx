@@ -16,7 +16,7 @@ export function AccountDock({ avatarBadge }: { avatarBadge?: string }) {
 	const meHref = getExperiencePath(pathname, "/me");
 
 	return (
-		<Link className={styles.accountButton} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label={ui.account.dockLabel}>
+		<Link className={styles.accountButton} href={meHref} aria-current={pathname === meHref ? "page" : undefined} aria-label={`${ui.account.me}: ${ui.account.dockLabel}`}>
 			<UserRound aria-hidden="true" />
 			<span>{ui.account.me}</span>
 			{avatarBadge ? <small>{avatarBadge}</small> : null}

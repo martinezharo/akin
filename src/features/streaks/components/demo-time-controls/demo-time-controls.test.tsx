@@ -22,12 +22,12 @@ describe("demo time controls", () => {
 		const title = screen.getByText("Pocket time machine");
 		const panel = document.querySelector("#demo-clock-panel");
 
-		await user.click(screen.getByRole("button", { name: "Collapse time controls" }));
+		await user.click(screen.getByRole("button", { name: /^Collapse time controls:/ }));
 
 		expect(title.parentElement?.getAttribute("aria-hidden")).toBe("true");
 		expect(panel?.getAttribute("aria-hidden")).toBe("true");
 		expect(panel?.hasAttribute("inert")).toBe(true);
-		expect(screen.getByRole("button", { name: "Expand time controls" })).toBeTruthy();
+		expect(screen.getByRole("button", { name: /^Expand time controls:/ })).toBeTruthy();
 	});
 
 	it("advances by a custom number of days", async () => {
@@ -79,7 +79,7 @@ describe("demo time controls", () => {
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: "Expand time controls" }));
+		await user.click(screen.getByRole("button", { name: /^Expand time controls:/ }));
 
 		expect(
 			(screen.getByRole("spinbutton", { name: "Days to skip" }) as HTMLInputElement).disabled,

@@ -43,6 +43,8 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 	const titleId = useId();
 	const descriptionId = useId();
 	const themeAnimationTimer = useRef<number | undefined>(undefined);
+	const openLabel = shouldHighlightInstall ? `${ui.preferences.open}. ${ui.preferences.installNotice}` : ui.preferences.open;
+	const triggerLabel = placement === "navigation" ? `${ui.preferences.triggerLabel}: ${openLabel}` : openLabel;
 
 	useEffect(() => () => window.clearTimeout(themeAnimationTimer.current), []);
 
@@ -104,7 +106,7 @@ export function AppPreferences({ placement = "floating" }: { placement?: "floati
 				data-placement={placement}
 				type="button"
 				onClick={showPreferences}
-				aria-label={shouldHighlightInstall ? `${ui.preferences.open}. ${ui.preferences.installNotice}` : ui.preferences.open}
+				aria-label={triggerLabel}
 			>
 				<Settings2 aria-hidden="true" />
 				{placement === "navigation" ? <span>{ui.preferences.triggerLabel}</span> : null}
