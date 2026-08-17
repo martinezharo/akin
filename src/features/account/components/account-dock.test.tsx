@@ -10,7 +10,7 @@ describe("account navigation", () => {
 	it("takes the user to the standalone Me page", () => {
 		render(<AccountDock />);
 
-		const link = screen.getByRole("link", { name: "Open account and reward settings" });
+		const link = screen.getByRole("link", { name: /Me: Open account and reward settings/ });
 		expect(link.getAttribute("href")).toBe("/me");
 		expect(screen.queryByRole("dialog")).toBeNull();
 	});

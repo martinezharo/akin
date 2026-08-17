@@ -17,23 +17,23 @@ describe("CompanionPreview", () => {
 		const { container } = render(<CompanionPreview />);
 		const stage = container.firstElementChild as HTMLElement;
 
-		expect(screen.getByRole("button", { name: `Try ${ui.pet.skinNames[firstSkin.id]}` }).getAttribute("aria-pressed")).toBe("true");
+		expect(screen.getByRole("button", { name: new RegExp(`^Try ${ui.pet.skinNames[firstSkin.id]}\\b`) }).getAttribute("aria-pressed")).toBe("true");
 		expect(stage.style.getPropertyValue("--akin-skin-color")).toBe(firstSkin.color);
 
-		await user.click(screen.getByRole("button", { name: `Try ${ui.pet.skinNames[secondSkin.id]}` }));
+		await user.click(screen.getByRole("button", { name: new RegExp(`^Try ${ui.pet.skinNames[secondSkin.id]}\\b`) }));
 
 		expect(stage.style.getPropertyValue("--akin-skin-color")).toBe(secondSkin.color);
-		expect(screen.getByRole("button", { name: `Try ${ui.pet.skinNames[secondSkin.id]}` }).getAttribute("aria-pressed")).toBe("true");
-		expect(screen.getByRole("button", { name: `Try ${ui.pet.skinNames[firstSkin.id]}` }).getAttribute("aria-pressed")).toBe("false");
+		expect(screen.getByRole("button", { name: new RegExp(`^Try ${ui.pet.skinNames[secondSkin.id]}\\b`) }).getAttribute("aria-pressed")).toBe("true");
+		expect(screen.getByRole("button", { name: new RegExp(`^Try ${ui.pet.skinNames[firstSkin.id]}\\b`) }).getAttribute("aria-pressed")).toBe("false");
 	});
 
 	it("quotes the price the catalog actually charges", () => {
 		render(<CompanionPreview />);
 
 		// The starter skin is free, so it is labelled rather than priced.
-		expect(screen.getByRole("button", { name: `Try ${ui.pet.skinNames[PET_SKINS[0].id]}` }).textContent).toContain(ui.pet.colorRail.ownedLabel);
+		expect(screen.getByRole("button", { name: new RegExp(`^Try ${ui.pet.skinNames[PET_SKINS[0].id]}\\b`) }).textContent).toContain(ui.pet.colorRail.ownedLabel);
 		for (const skin of PET_SKINS.filter((option) => option.price > 0)) {
-			expect(screen.getByRole("button", { name: `Try ${ui.pet.skinNames[skin.id]}` }).textContent).toContain(String(skin.price));
+			expect(screen.getByRole("button", { name: new RegExp(`^Try ${ui.pet.skinNames[skin.id]}\\b`) }).textContent).toContain(String(skin.price));
 		}
 	});
 });

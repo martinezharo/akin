@@ -50,7 +50,7 @@ export function DemoTimeControls({
 				type="button"
 				aria-expanded={!isCollapsed}
 				aria-controls="demo-clock-panel"
-				aria-label={isCollapsed ? ui.demo.expand : ui.demo.collapse}
+				aria-label={`${isCollapsed ? ui.demo.expand : ui.demo.collapse}: ${ui.demo.title}, ${formatLocalDate(today)}`}
 				onClick={() => setIsCollapsed((currentValue) => !currentValue)}
 			>
 				<span className={styles.icon}>

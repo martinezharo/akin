@@ -60,7 +60,7 @@ export function AppNavigation({
 					</span>
 				</button>
 			) : (
-				<Link className={`${styles.item} ${styles.akinItem}`} href={petHref} aria-current={pathname === petHref ? "page" : undefined}>
+				<Link className={`${styles.item} ${styles.akinItem}`} href={petHref} aria-current={pathname === petHref ? "page" : undefined} aria-label={ui.pet.stage.label}>
 					<span className={`${styles.akinIcon} ${motionStyles.interactive}`} aria-hidden="true">
 						<AkinMascotArtwork className={`${styles.akinArtwork} ${motionStyles.animated}`} viewBox="400 900 4216 3216" />
 					</span>

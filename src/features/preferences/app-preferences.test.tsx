@@ -33,6 +33,12 @@ afterEach(() => {
 });
 
 describe("AppPreferences", () => {
+	it("includes the visible navigation label in the accessible name", () => {
+		render(<AppPreferences placement="navigation" />);
+
+		expect(screen.getByRole("button", { name: /^settings: open preferences$/i })).toBeTruthy();
+	});
+
 	it("shows the install notice once on a mobile device", async () => {
 		const user = userEvent.setup();
 		Object.defineProperty(window.navigator, "userAgent", {

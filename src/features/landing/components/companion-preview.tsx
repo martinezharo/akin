@@ -49,7 +49,7 @@ export function CompanionPreview() {
 								className={styles.swatch}
 								type="button"
 								aria-pressed={worn}
-								aria-label={ui.landing.companion.tryLabel(ui.pet.skinNames[option.id])}
+								aria-label={`${ui.landing.companion.tryLabel(ui.pet.skinNames[option.id])} — ${option.price === 0 ? ui.pet.colorRail.ownedLabel : option.price}`}
 								onClick={() => setSkinId(option.id)}
 							>
 								<span className={styles.chip} aria-hidden="true">
