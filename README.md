@@ -1,8 +1,10 @@
 # Akin
 
-Akin is a mobile-first streak tracker for daily goals. It combines check-ins,
-missed-day review, rewards, a customizable companion, and an optional friends
-board in an installable web app.
+Akin is a mobile-first streak tracker for daily goals. Check in for the day,
+keep your streaks moving, earn rewards, and make your companion happy along the
+way. It keeps the practical parts of habit tracking without turning them into a
+wall of grey tables and joyless checkboxes: opening Akin should feel like a
+treat.
 
 Guests keep their streak data in the browser. Signed-in accounts use Convex for
 the profile, streaks, check-ins, coins, pet customisation, and friendships.
