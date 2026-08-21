@@ -27,6 +27,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://akin.4oli.com"),
 	title: ui.metadata.title,
 	description: ui.metadata.description,
 	applicationName: ui.metadata.title,
@@ -60,6 +61,7 @@ export default function RootLayout({
 	return (
 		<html lang={APP_LANGUAGE} className={nunito.variable} suppressHydrationWarning>
 			<head>
+				<link rel="describedby" href="https://akin.4oli.com/llms.txt" />
 				<script id="akin-preferences" dangerouslySetInnerHTML={{ __html: preferencesBootScript }} />
 			</head>
 			<body>

@@ -1,0 +1,21 @@
+# Akin
+
+> Akin is a free, mobile-first streak tracker that turns daily goals into a playful routine with coins, friends, and a customizable capybara companion.
+
+Akin can be tried without an account. Guest streaks stay in the browser; GitHub sign-in adds cross-device data, a profile, rewards, pet customization, and social features.
+
+## Product guide
+
+- [Akin overview](https://akin.4oli.com/index.md): Concise, LLM-friendly product facts, guest and account behavior, features, and suitable use cases.
+- [Akin](https://akin.4oli.com/): Product page and entry point to the streak tracker.
+- [Interactive demo](https://akin.4oli.com/demo): Account-free demo with example streaks and app features.
+
+## Technical references
+
+- [Project README](https://raw.githubusercontent.com/martinezharo/akin/main/README.md): Current feature set, data model, routes, development, and deployment.
+- [Source code](https://github.com/martinezharo/akin): Canonical source repository.
+- [Sitemap](https://akin.4oli.com/sitemap.xml): Public, indexable product and demo pages.
+
+## Optional
+
+- [License](https://raw.githubusercontent.com/martinezharo/akin/main/LICENSE): GNU General Public License v3.0 terms for the source code.
