@@ -6,6 +6,10 @@ import { ui } from "@/i18n";
 export const metadata: Metadata = {
 	title: ui.landing.metadata.title,
 	description: ui.landing.metadata.description,
+	alternates: {
+		canonical: "/",
+		types: { "text/markdown": "/index.md" },
+	},
 	openGraph: {
 		title: ui.landing.metadata.title,
 		description: ui.landing.metadata.description,
