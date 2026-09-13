@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronRight, HeartHandshake } from "lucide-react";
+import { Check, ChevronRight, Heart, HeartHandshake } from "lucide-react";
 import { useId, useState } from "react";
 import { ui } from "@/i18n";
 import { ModalDialog } from "@/shared/ui/modal-dialog";
@@ -158,7 +158,10 @@ function GapReview({
 				{ui.review.gapTitle}
 			</h2>
 			<p className={`${styles.copy} ${styles.gapCopy}`}>{ui.review.gapCopy(days.length)}</p>
-			<p className={styles.honestyNote}>{ui.review.honestyNote}</p>
+			<p className={styles.honestyNote}>
+				<Heart className={styles.honestyIcon} aria-hidden="true" />
+				{ui.review.honestyNote}
+			</p>
 
 			<StreakChecklist
 				streaks={streaks}

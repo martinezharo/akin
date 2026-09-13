@@ -384,13 +384,16 @@
 	line-height: 1.4;
 }
 
-.honestyNote::before {
+/* The heart lives in the markup, not in `content`: a bundled stylesheet is
+ * served without a charset, so a literal glyph here decodes as mojibake
+ * wherever the browser falls back to a legacy encoding. */
+.honestyIcon {
 	position: absolute;
-	top: 0.72rem;
-	left: 0.8rem;
-	content: "♡";
-	font-size: var(--text-xl);
-	font-weight: var(--weight-black);
+	top: 0.85rem;
+	left: 0.78rem;
+	width: 1.05rem;
+	height: 1.05rem;
+	stroke-width: 2.4;
 }
 
 @keyframes cardArrive {
