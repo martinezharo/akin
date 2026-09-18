@@ -6,6 +6,9 @@ const nextConfig = (phase: string): NextConfig => ({
 	// Keep development artifacts separate so `next build` cannot invalidate a
 	// running development server by cleaning its output directory.
 	distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
+	typescript: {
+		tsconfigPath: "tsconfig.next.json",
+	},
 });
 
 export default nextConfig;

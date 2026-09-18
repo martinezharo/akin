@@ -38,7 +38,6 @@ function GuestExperience({ backendUnavailable = false }: { backendUnavailable?: 
 		const url = new URL(window.location.href);
 		if (url.searchParams.get("auth") !== "friends") return;
 		window.history.replaceState(window.history.state, "", APP_HOME_PATH);
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setFriendAuthRequest(true);
 	}, []);
 

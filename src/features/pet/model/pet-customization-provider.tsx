@@ -83,7 +83,6 @@ export function PetCustomizationProvider({ children }: { children: ReactNode }) 
 
 	useEffect(() => {
 		// localStorage is only available after hydration; reconcile it once.
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setDemoState(loadDemoPetState());
 		setLocalStateHydrated(true);
 	}, []);

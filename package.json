@@ -27,12 +27,13 @@
 		"convex": "^1.42.3",
 		"emoji-regex": "^10.6.0",
 		"lucide-react": "^1.24.0",
-		"next": "16.2.6",
+		"next": "15.5.18",
 		"react": "^19.1.7",
 		"react-dom": "^19.1.7"
 	},
 	"devDependencies": {
 		"@edge-runtime/vm": "^5.0.0",
+		"@eslint/eslintrc": "^3.3.7",
 		"@testing-library/react": "^16.3.2",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/node": "^20",
@@ -40,7 +41,7 @@
 		"@types/react-dom": "^19.1.7",
 		"convex-test": "0.0.54",
 		"eslint": "^9",
-		"eslint-config-next": "16.2.6",
+		"eslint-config-next": "15.5.18",
 		"jsdom": "^29.1.1",
 		"typescript": "^5.7.4",
 		"vite": "8.1.5",

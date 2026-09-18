@@ -40,7 +40,6 @@ export function useGuestAccess({
 	useEffect(() => {
 		if (!initialAuthOpen) return;
 		// This option also handles auth requests that arrive after a client-side redirect.
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setAuthOpen(true);
 	}, [initialAuthOpen]);
 
