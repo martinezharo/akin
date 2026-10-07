@@ -96,10 +96,10 @@ export function AuthModal({
 					onClick={() => void continueWithGitHub()}
 				>
 					<span className={styles.githubBadge} aria-hidden="true">
-						{pending ? <GitHubSpinner /> : <GitHubMark />}
+						<GitHubMark />
 					</span>
 					<strong>{pending ? ui.account.auth.buttonLoading : ui.account.auth.buttonIdle}</strong>
-					<ArrowRight aria-hidden="true" />
+					{pending ? <GitHubSpinner /> : <ArrowRight aria-hidden="true" />}
 				</button>
 				<span className="sr-only" role="status">
 					{pending ? ui.account.auth.buttonLoading : ""}
