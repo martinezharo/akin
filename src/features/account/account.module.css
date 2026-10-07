@@ -311,8 +311,11 @@
 .githubSubmit > svg { width: 1.15rem; }
 .githubBadge { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: var(--radius-tail-sm); background: var(--accent); color: #11120f; transform: rotate(-3deg); }
 .githubBadge svg { width: 1.25rem; }
+.githubSpinner svg { width: 1.3rem; height: 1.3rem; animation: githubSpinnerSpin 900ms linear infinite; }
+.githubSpinnerTrack { stroke: color-mix(in srgb, currentColor 30%, transparent); stroke-width: 3; }
+.githubSpinnerArc { stroke: currentColor; stroke-dasharray: 28 54; stroke-linecap: round; stroke-width: 3; }
 .githubSubmit:hover { box-shadow: 0 0.75rem 1.5rem rgb(15 16 13 / 18%); transform: translateY(-2px) rotate(-0.4deg); }
-.githubSubmit:disabled { opacity: 0.6; cursor: wait; }
+.githubSubmit:disabled { opacity: 0.78; cursor: wait; }
 .authFootnote { margin: 0.65rem 0 0; color: var(--muted); font-size: var(--text-sm); font-weight: var(--weight-body); text-align: center; }
 
 .loading { position: fixed; inset: 0; display: grid; place-content: center; place-items: center; gap: 0.8rem; color: var(--muted); }
@@ -336,6 +339,10 @@
 @keyframes logoWake {
 	from { transform: translateY(0.16rem) rotate(-3deg) scale(0.96); }
 	to { transform: translateY(-0.14rem) rotate(1.5deg) scale(1.03); }
+}
+
+@keyframes githubSpinnerSpin {
+	to { transform: rotate(360deg); }
 }
 
 @media (max-width: 30rem) {

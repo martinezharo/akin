@@ -19,6 +19,17 @@ function GitHubMark() {
 	);
 }
 
+function GitHubSpinner() {
+	return (
+		<span className={styles.githubSpinner} aria-hidden="true">
+			<svg fill="none" viewBox="0 0 24 24">
+				<circle className={styles.githubSpinnerTrack} cx="12" cy="12" r="8.5" />
+				<circle className={styles.githubSpinnerArc} cx="12" cy="12" r="8.5" />
+			</svg>
+		</span>
+	);
+}
+
 export function AuthModal({
 	onDismiss,
 	callbackURL = APP_HOME_PATH,
@@ -77,11 +88,22 @@ export function AuthModal({
 				</ul>
 
 				{error ? <p className={styles.authError} role="alert">{error}</p> : null}
-				<button className={styles.githubSubmit} type="button" disabled={pending} onClick={() => void continueWithGitHub()}>
-					<span className={styles.githubBadge}><GitHubMark /></span>
+				<button
+					className={styles.githubSubmit}
+					type="button"
+					disabled={pending}
+					aria-busy={pending}
+					onClick={() => void continueWithGitHub()}
+				>
+					<span className={styles.githubBadge} aria-hidden="true">
+						<GitHubMark />
+					</span>
 					<strong>{pending ? ui.account.auth.buttonLoading : ui.account.auth.buttonIdle}</strong>
-					<ArrowRight aria-hidden="true" />
+					{pending ? <GitHubSpinner /> : <ArrowRight aria-hidden="true" />}
 				</button>
+				<span className="sr-only" role="status">
+					{pending ? ui.account.auth.buttonLoading : ""}
+				</span>
 				<p className={styles.authFootnote}>{ui.account.auth.footnote}</p>
 			</div>
 		</ModalDialog>
