@@ -1,11 +1,14 @@
 packages:
-  - "."
-
-# These packages install platform-specific binaries required by the build.
-# Keep this in pnpm 10-compatible workspace syntax so local, CI, and
-# Cloudflare installs use the same allowlist.
+  - .
 onlyBuiltDependencies:
   - esbuild
   - sharp
   - unrs-resolver
   - workerd
+overrides:
+  glob@>=10.2.0 <10.5.0: '>=10.5.0'
+  postcss@<8.5.10: '>=8.5.10'
+  postcss@<=8.5.11: '>=8.5.12'
+  postcss@<=8.5.22: '>=8.5.23'
+  postcss@<=8.5.17: '>=8.5.18'
+  vite@>=8.0.0 <=8.1.5: '>=8.1.6'
